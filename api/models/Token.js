@@ -8,7 +8,33 @@
 module.exports = {
 
   attributes: {
-
+		id: {
+			type: 'number',
+			required: true,
+			unique: true,
+    	autoIncrement: true,
+    	primaryKey: true,
+		},
+		user : {
+			model: 'User',
+			required: true
+		},
+		type: {
+			type: 'string',
+			required: true,
+			in: ['VALIDATION', 'FORGOT']
+		},
+		createdAt: {
+			type: 'datetime',
+			defaultsTo: Date.now()
+		},
+		usedAt: {
+			type: 'datetime'
+		},
+		usedLocation: {
+			type: 'string',
+			ipv4: true
+		}
   }
 };
 

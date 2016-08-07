@@ -11,7 +11,9 @@ module.exports = {
 		id : {
 			type: 'number',
 			required: true,
-			unique: true
+			unique: true,
+    	autoIncrement: true,
+    	primaryKey: true,
 		},
 		username: {
 			type: 'string',
@@ -50,17 +52,19 @@ module.exports = {
 			defaultsTo: 'fr'
 		},
 		created: {
-			type: 'string',
-			datetime: true
+			type: 'datetime',
+			defaultsTo: Date.now()
 		},
 		modified: {
-			type: 'string',
-			datetime: true
+			type: 'datetime'
 		},
-		state: {
-			type: 'string',
-			defaultsTo: 'UNCONFIRMED',
-			in: ['CONFIRMED', 'UNCONFIRMED']
+		tokens: {
+			collection: 'Token',
+			via: 'user'
+		},
+		licenses: {
+			collection: 'License',
+			via: 'user'
 		}
   }
 };
