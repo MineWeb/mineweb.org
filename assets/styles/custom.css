@@ -14,6 +14,14 @@
   font-style: normal;
 }
 
+/*
+  GLOBAL
+*/
+
+.text-center {
+  text-align: center;
+}
+
 
 /*
   NAVBAR
@@ -33,4 +41,30 @@
 
 .navbar-default .navbar-nav > li > a {
   color: #2880cc;
+}
+
+/*
+  CUSTOMERS
+*/
+
+.customer img {
+  /*width: 100%;*/
+  height: 100px;
+}
+
+/*
+  INTRO
+*/
+
+a#submit_intro {
+  text-decoration: none;
+}
+
+/*
+  SECTION
+*/
+section.background-secondary {
+  background: #4fb0c6;
+  border-top: solid 1px #2b7484;
+  border-bottom: solid 1px #2b7484;
 }

@@ -8,10 +8,10 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
             a.navbar-brand.scroll-to(href='#all')
               span.site_name MINEWEB
               span.sr-only Go to homepage
-            .navbar-buttons
-              button.navbar-toggle.navbar-btn(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-                | Menu
-                i.pe-7s-menu
+            div.navbar-buttons
+              button(data-toggle="collapse" data-target=".navbar-collapse" class="navbar-toggle navbar-btn")
+               | Menu
+               i.pe-7s-menu
           #navigation.collapse.navbar-collapse.navbar-right
             ul.nav.navbar-nav
               li
