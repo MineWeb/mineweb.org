@@ -41,9 +41,6 @@ module.exports = {
 		modified: {
 			type: 'datetime'
 		},
-		lastestCheck: {
-			type: 'string'
-		},
 		secretKey: {
 			type: 'string',
 			required: true,

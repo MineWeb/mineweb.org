@@ -40,8 +40,7 @@ module.exports = {
 		},
 		developer: {
 			type: 'boolean',
-			defaultsTo: false,
-			boolean: true
+			defaultsTo: false
 		},
 		ip: {
 			type: 'string',
