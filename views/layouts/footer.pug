@@ -3,19 +3,19 @@ footer.footer
     .container
       .row
         .col-md-7
-          p 2014 - #{(new Date).getFullYear()} - Tous droits réservés. Site développé avec par
+          p 2014 - #{(new Date).getFullYear()} - #{__('Tous droits réservés. Site développé avec par')}
             a(href='http://eywek.fr')  Eywek
-            |  et
+            |  #{__('et')}
             a(href='http://thisismac.fr')  Mac'
-            |  à l'aide de
+            |  #{__('à l\'aide de')}
             a(href='http://nodejs.org')  NodeJS
             |  .
             br
-            | En partenariat avec&nbsp;&nbsp;
+            | #{__('En partenariat avec')}&nbsp;&nbsp;
             img(src='http://mineweb.org/img/revolta-logo.png')
         .col-md-5
         p.credit.pull-right
-          | Template by
+          | #{__('Template by')}
           a.external(href='http://bootstrapious.com/landing-pages')  Bootstrapious
 // Javascript files
 script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
