@@ -1,1 +1,7 @@
-/* your styles go here */
+/*
+  NAVBAR
+*/
+
+.navbar-default .navbar-nav > li > a {
+  color: #2880cc;
+}

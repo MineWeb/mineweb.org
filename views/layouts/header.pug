@@ -2,27 +2,27 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
   #all
     // navbar
     header.header
-    .navbar.navbar-default.navbar-fixed-top(role='navigation')
-      .container
-      .navbar-header
-        a.navbar-brand.scroll-to(href='#all')
-        img.hidden-xs.hidden-sm(src='img/logo.png', alt='logo')
-        img.visible-xs.visible-sm(src='img/logo-small.png', alt='logo')
-        span.sr-only Go to homepage
-        .navbar-buttons
-        button.navbar-toggle.navbar-btn(type='button', data-toggle='collapse', data-target='.navbar-collapse')
-          | Menu
-          i.pe-7s-menu
-        #navigation.collapse.navbar-collapse.navbar-right
-          ul.nav.navbar-nav
-          li
-            a.scroll-to(href='#features') Features
-          li
-            a.scroll-to(href='#text') Text
-          li
-            a.scroll-to(href='#integrations') Integrations
-          li
-            a.scroll-to(href='#testimonials') Testimonials
-          li
-            a.scroll-to(href='#contact') Contact
-          a.btn.navbar-btn.btn-ghost(href='#', data-toggle='modal', data-target='#get-started') Get started
+      .navbar.navbar-default.navbar-fixed-top(role='navigation')
+        .container
+          .navbar-header
+            a.navbar-brand.scroll-to(href='#all')
+              img.hidden-xs.hidden-sm(src='img/logo.png', alt='logo')
+              img.visible-xs.visible-sm(src='img/logo-small.png', alt='logo')
+              span.sr-only Go to homepage
+            .navbar-buttons
+              button.navbar-toggle.navbar-btn(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+                | Menu
+                i.pe-7s-menu
+          #navigation.collapse.navbar-collapse.navbar-right
+            ul.nav.navbar-nav
+              li
+                a.scroll-to(href='#features') Features
+              li
+                a.scroll-to(href='#text') Text
+              li
+                a.scroll-to(href='#integrations') Integrations
+              li
+                a.scroll-to(href='#testimonials') Testimonials
+              li
+                a.scroll-to(href='#contact') Contact
+            //a.btn.navbar-btn.btn-ghost(href='#', data-toggle='modal', data-target='#get-started') Get started
