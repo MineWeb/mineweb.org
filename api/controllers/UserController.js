@@ -40,7 +40,7 @@ module.exports = {
 			action: 'TRY_LOGIN',
 			ip: request.ip,
 			createdAt: {
-				'>=': (new Date(Date.now() - (60 * 1000)))
+				'>=': (new Date(Date.now() - (60 * 60 * 1000)))
 			}
 		}).exec(function (err, retries) {
 
