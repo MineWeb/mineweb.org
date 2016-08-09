@@ -75,12 +75,12 @@ module.exports = {
 
 		plugins: {
 			collection: 'Plugin',
-			via: 'user'
+			via: 'author'
 		},
 
 		themes: {
 			collection: 'Theme',
-			via: 'user'
+			via: 'author'
 		}
   },
 
