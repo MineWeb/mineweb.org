@@ -13,9 +13,8 @@ section#intro.text-intro.no-padding-bottom
         .col-md-12
           p
             | #{__('Des centaines de serveurs nous font confiance, pourquoi pas vous ?')}
-            | .
             br
-            | #{__('Essayez par vous-même')}
+            | #{__('Essayez par vous-même.')}
           p
             a#submit_intro.btn.btn-primary(href='http://demo.craftwb.fr') #{__('Accéder au site de démonstration')}
         .col-md-12.col-lg-8.col-lg-offset-2
@@ -136,10 +135,9 @@ section#integrations.section-gray
         p.text-center.lead #{__('N\'attendez plus ! Télécharger dès maintenant le CMS et créez facilement et rapidement votre site internet pour votre serveur !')}
         div.text-center
           div.btn-group
-            a.btn.btn-outline-secondary.disabled #{__('Actuellement en version v%s', '1.1.3')}
+            if version != undefined && version != null
+              a.btn.btn-outline-secondary.disabled #{__('Actuellement en version v%s', version)}
             a.btn.btn-outline-info(href='#') #{__('Télécharger le CMS')}
 // *** INTEGRATIONS END ***
-
-
 
 include ./layouts/footer

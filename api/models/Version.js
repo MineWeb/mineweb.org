@@ -49,5 +49,16 @@ module.exports = {
       defaultsTo: null
     }
 
+  },
+
+  getLastVersion: function(callback) {
+    Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
+      if(err) {
+        console.error(err)
+        return callback(null)
+      }
+      return callback(version.version)
+    });
   }
+
 };
