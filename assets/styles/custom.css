@@ -27,19 +27,21 @@
   NAVBAR
 */
 
+.navbar .navbar-header a.navbar-brand {
+  position: relative;
+}
+
 .navbar .navbar-header a.navbar-brand span.site_name {
   font-family: 'Ridge';
   color: #2880cc;
   font-size: 40px;
+
   position: absolute;
-  text-align: center;
-  top: 50%;
-  -webkit-transform: translate(0, -50%);
-  -ms-transform: translate(0, -50%);
-  transform: translate(0, -50%);
+  bottom: 28px;
 }
 
-.navbar-default .navbar-nav > li > a {
+.navbar-default .navbar-nav > li > a,
+.navbar-toggle {
   color: #2880cc;
 }
 

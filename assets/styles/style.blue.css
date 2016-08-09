@@ -84,6 +84,13 @@ section.background-secondary {
 .img-responsive {
   margin: 0 auto;
 }
+
+@media screen and (max-width : 992px) {
+  .img-responsive {
+  width: 100%;
+  }
+}
+
 .no-space .box {
   margin: 0 -15px;
 }
@@ -325,15 +332,15 @@ INTRO
 }
 @media (min-width: 1200px) {
   .text-intro {
-    background-image: -webkit-linear-gradient(left, color-stop(#2065a1 0%), color-stop(#fc888a 60%));
-    background-image: linear-gradient(to right, #2065a1 0%, #fc888a 60%);
+    background-image: -webkit-linear-gradient(left, color-stop(#2065a1 0%), color-stop(#73c8fc 60%));
+    background-image: linear-gradient(to right, #2065a1 0%, #73c8fc 60%);
     background-repeat: repeat-x;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff2065a1', endColorstr='#fffc888a', GradientType=1);
   }
 }
 @media (max-width: 1199px) {
   .text-intro {
-    background: #fc888a;
+    background: #73c8fc;
   }
 }
 /*
