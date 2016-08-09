@@ -56,8 +56,8 @@ module.exports = {
   */
 	getLastVersion: function(callback) {
 		Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
-    	if (err) {
-      	sails.log.error(err);
+    	if (err || !version) {
+      	sails.log.error(err || "No CMS version has been found");
         return callback(undefined);
       }
       return callback(version.version)

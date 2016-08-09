@@ -44,8 +44,8 @@ module.exports = {
 
 		developer: {
 			type: 'string',
-			defaultsTo: 'CANDIDATE',
-			in: ['CANDIDATE', 'CONFIRMED']
+			defaultsTo: 'NONE',
+			in: ['NONE', 'CANDIDATE', 'CONFIRMED']
 		},
 
 		ip: {
@@ -81,35 +81,35 @@ module.exports = {
 		themes: {
 			collection: 'Theme',
 			via: 'author'
+		},
+
+		/**
+		 *  Before creating an account, hash his password using salt
+		 */
+		beforeCreate: function(user, callback) {
+			var hashed = crypto.createHash('sha1').update(salt + user.password).digest('hex');
+			user.password = hashed;
+			callback();
+		},
+
+		/**
+		 *  Before updating an user, hash his password using salt
+		 */
+		beforeUpdate: function(user, callback) {
+			var hashed = crypto.createHash('sha1').update(salt + user.password).digest('hex');
+			user.password = hashed;
+			callback();
+		},
+
+		toJSON: function() {
+			var user = this.toObject();
+			delete user.password;
+			delete user.tokens;
+			delete user.ip;
+			delete user.id;
+			delete user.mail;
+			return user;
 		}
+
   },
-
-	/**
-	 *  Before creating an account, hash his password using salt
-	 */
-	beforeCreate: function(user, callback) {
-		var hashed = crypto.createHash('sha1').update(salt + user.password).digest('hex');
-		user.password = hashed;
-		callback();
-  },
-
-	/**
-	 *  Before updating an user, hash his password using salt
-	 */
-	beforeUpdate: function(user, callback) {
-		var hashed = crypto.createHash('sha1').update(salt + user.password).digest('hex');
-		user.password = hashed;
-		callback();
-	},
-
-	toJson: function() {
-		var user = this.toObject();
-    delete user.password;
-		delete user.tokens;
-		delete user.ip;
-		delete user.id;
-		delete user.mail;
-    return user;
-	}
-
 };
