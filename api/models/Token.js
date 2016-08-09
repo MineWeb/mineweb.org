@@ -5,12 +5,13 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
+var uuid = require('node-uuid');
+
 module.exports = {
 
   attributes: {
 		id: {
-			type: 'number',
-			required: true,
+			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
@@ -19,14 +20,16 @@ module.exports = {
 			model: 'User',
 			required: true
 		},
+    token: {
+			type: 'string',
+      unique: true,
+			uuidv4: true,
+      defaultsTo: function (){ return uuid.v4(); }
+		},
 		type: {
 			type: 'string',
 			required: true,
 			in: ['VALIDATION', 'FORGOT']
-		},
-		createdAt: {
-			type: 'datetime',
-			defaultsTo: Date.now()
 		},
 		usedAt: {
 			type: 'datetime'
@@ -37,4 +40,3 @@ module.exports = {
 		}
   }
 };
-

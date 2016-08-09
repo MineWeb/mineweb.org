@@ -5,6 +5,8 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
+var uuid = require('node-uuid');
+
 module.exports = {
 
   attributes: {
@@ -21,7 +23,7 @@ module.exports = {
 		key: {
 			type: 'string',
 			unique: true,
-			uuidv4: true
+      defaultsTo: function (){ return uuid.v4().substr(4, 24); }
 		},
 		state: {
 			type: 'boolean',
