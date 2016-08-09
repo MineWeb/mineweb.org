@@ -1,49 +1,51 @@
 /**
- * Token.js
+ * History.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-var uuid = require('node-uuid');
-
 module.exports = {
 
   attributes: {
-		id: {
+
+		id : {
 			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
 		},
 
-		user : {
-			model: 'User',
+		action: {
+			type: 'string',
+			required: true,
+			in: ['GET_PLUGIN', 'UPDATE', 'KEY_VERIFY', 'ADD_TICKET', 'GET_SECRET_KEY', 'GET_PLUGIN', 'GET_THEME', 'LOGIN', 'DEBUG']
+		},
+
+		ip: {
+			type: 'string',
+			required: true,
+			ipv4: true
+		},
+
+		status: {
+			type: 'boolean',
 			required: true
 		},
 
-    token: {
-			type: 'string',
-      unique: true,
-			uuidv4: true,
-      defaultsTo: function () {
-				return uuid.v4();
-			}
+		error: {
+			type: 'string'
 		},
 
 		type: {
 			type: 'string',
 			required: true,
-			in: ['VALIDATION', 'FORGOT']
+			in: ['LICENSE', 'HOSTING']
 		},
 
-		usedAt: {
-			type: 'datetime'
-		},
-		
-		usedLocation: {
-			type: 'string',
-			ipv4: true
+		data: {
+			type: 'json'
 		}
   }
 };
+

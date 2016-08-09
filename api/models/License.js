@@ -10,38 +10,44 @@ var uuid = require('node-uuid');
 module.exports = {
 
   attributes: {
+		
 		id : {
 			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
 		},
+
 		user: {
 			model: 'User',
 			required: true
 		},
+
 		key: {
 			type: 'string',
 			unique: true,
-      defaultsTo: function (){ return uuid.v4().substr(4, 24); }
+      defaultsTo: function () { 
+				return uuid.v4().substr(4, 24);
+			}
 		},
+
 		state: {
 			type: 'boolean',
 			defaultsTo: true
 		},
+
 		host: {
 			type: 'string',
-      defaultsTo: null,
 			url: true
 		},
+
 		secretKey: {
 			type: 'string',
-			defaultsTo: null,
 			alphanumeric: true
 		},
+
 		suspended: {
-			type: 'string',
-			defaultsTo: null
+			type: 'string'
 		}
   }
 };

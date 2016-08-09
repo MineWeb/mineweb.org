@@ -36,35 +36,31 @@ module.exports = {
 
     state: {
       type: 'string',
-      in: ['PREPARATION', 'DEVELOPMENT', 'SNAPSHOT', 'RELEASE'],
-      defaultsTo: 'SNAPSHOT'
+      in: ['STAGING', 'DEVELOPMENT', 'SNAPSHOT', 'RELEASE'],
+      defaultsTo: 'DEVELOPMENT'
     },
 
     releaseDate: {
-			type: 'datetime',
-      defaultsTo: null
+			type: 'datetime'
 		},
 
     changelog: {
-      type: 'json',
-      defaultsTo: null
+      type: 'json'
     }
 
   },
 
   /*
     Récupère la dernière version disponible au public du CMS
-    Execute le callback passé en 1er paramètre en lui passant : *.*.* ou NULL.
+    Execute le callback passé en 1er paramètre en lui passant : *.*.* ou undefined.
   */
-
-    getLastVersion: function(callback) {
-      Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
-        if(err) {
-          console.error(err)
-          return callback(NULL)
-        }
-        return callback(version.version)
-      });
-    }
-
+	getLastVersion: function(callback) {
+		Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
+    	if (err) {
+      	sails.log.error(err);
+        return callback(undefined);
+      }
+      return callback(version.version)
+    });
+	}
 };
