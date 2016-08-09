@@ -49,15 +49,6 @@ module.exports = {
 			type: 'string',
 			defaultsTo: 'fr'
 		},
-		created: {
-			type: 'datetime',
-			defaultsTo: function () {
-        return new Date();
-      }
-		},
-		modified: {
-			type: 'datetime'
-		},
 		tokens: {
 			collection: 'Token',
 			via: 'user'
