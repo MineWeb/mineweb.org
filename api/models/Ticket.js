@@ -42,11 +42,6 @@ module.exports = {
       in: ['GENERAL', 'SERVER', 'DEVELOPMENT', 'SUGGESTION', 'QUESTION']
     },
 
-    content: {
-      type: 'string',
-      required: true
-    },
-
     state: {
       type: 'string',
       in: ['WAITING_STAFF_RESPONSE', 'WAITING_USER_RESPONSE', 'CLOSED'],
