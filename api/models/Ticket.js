@@ -61,7 +61,12 @@ module.exports = {
     closedDate: {
       type: 'datetime',
       defaultsTo: null
-    }
+    },
+
+    replies: {
+			collection: 'TicketReplies',
+			via: 'ticket'
+		},
 
   }
 };
