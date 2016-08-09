@@ -32,7 +32,9 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': 'StaticController.home'
+  '/': 'StaticController.home',
+  '/changelog': 'StaticController.changelog',
+  '/versions': 'StaticController.changelog'
 
   /***************************************************************************
   *                                                                          *

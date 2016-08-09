@@ -41,7 +41,8 @@ module.exports = {
     },
 
     releaseDate: {
-			type: 'datetime'
+			type: 'datetime',
+      defaultsTo: NULL
 		},
 
     changelog: {
@@ -51,14 +52,19 @@ module.exports = {
 
   },
 
-  getLastVersion: function(callback) {
-    Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
-      if(err) {
-        console.error(err)
-        return callback(null)
-      }
-      return callback(version.version)
-    });
-  }
+  /*
+    Récupère la dernière version disponible au public du CMS
+    Execute le callback passé en 1er paramètre en lui passant : *.*.* ou NULL.
+  */
+
+    getLastVersion: function(callback) {
+      Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
+        if(err) {
+          console.error(err)
+          return callback(NULL)
+        }
+        return callback(version.version)
+      });
+    }
 
 };
