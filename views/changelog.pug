@@ -30,27 +30,27 @@ section.section-gray.mini-section
                         |  #{changelog.text}
                 else
                   p.text-muted
-                    i Aucun changement lors de cette mise à jour
+                    i #{Aucun changement lors de cette mise à jour}
 
               div.col-md-3
                 if val.state == 'PREPARATION'
-                  span.text-primary En cours de préparation
+                  span.text-primary #{En cours de préparation}
                 else if val.state == 'DEVELOPMENT'
-                  span.text-warning En cours de développement
+                  span.text-warning #{En cours de développement}
                 else if val.state == 'SNAPSHOT'
-                  span.text-info En cours de test
+                  span.text-info #{En cours de test}
                 else if val.state == 'RELEASE'
-                  span.text-success Disponible
+                  span.text-success #{Disponible}
               div.col-md-3
                 if val.state == 'RELEASE'
-                  p Sortie le
+                  p #{Sortie le}
                     b  #{val.releaseDate.toLocaleString()}
                 else if val.releaseDate !== null
-                  p Prévue pour le
+                  p #{Prévue pour le}
                     b  #{val.releaseDate.toLocaleString()}
                 else
                   p.text-muted
-                    i Aucune date de prévue
+                    i #{Aucune date de prévue}
 
 
 include ./layouts/footer
