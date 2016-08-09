@@ -9,8 +9,7 @@ module.exports = {
 
   attributes: {
 		id : {
-			type: 'number',
-			required: true,
+			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
@@ -30,7 +29,7 @@ module.exports = {
 			required: true
 		},
 		money: {
-			type: 'number',
+			type: 'float',
 			defaultsTo: 0.0
 		},
 		role: {
@@ -52,7 +51,9 @@ module.exports = {
 		},
 		created: {
 			type: 'datetime',
-			defaultsTo: Date.now()
+			defaultsTo: function () {
+        return new Date();
+      }
 		},
 		modified: {
 			type: 'datetime'
@@ -67,4 +68,3 @@ module.exports = {
 		}
   }
 };
-
