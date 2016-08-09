@@ -9,8 +9,7 @@ module.exports = {
 
   attributes: {
 		id : {
-			type: 'number',
-			required: true,
+			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
@@ -22,7 +21,6 @@ module.exports = {
 		key: {
 			type: 'string',
 			unique: true,
-			required: true,
 			uuidv4: true
 		},
 		state: {
@@ -31,25 +29,17 @@ module.exports = {
 		},
 		host: {
 			type: 'string',
-			required: true,
+      defaultsTo: null,
 			url: true
-		},
-		created: {
-			type: 'datetime',
-			defaultsTo: Date.now()
-		},
-		modified: {
-			type: 'datetime'
 		},
 		secretKey: {
 			type: 'string',
-			required: true,
+			defaultsTo: null,
 			alphanumeric: true
 		},
 		suspended: {
-			type: 'boolean',
-			defaultsTo: false
+			type: 'string',
+			defaultsTo: null
 		}
   }
 };
-
