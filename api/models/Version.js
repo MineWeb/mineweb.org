@@ -34,9 +34,9 @@ module.exports = {
       defaultsTo: false
     },
 
-    is: {
+    state: {
       type: 'string',
-      in: ['SNAPSHOT', 'RELEASE'],
+      in: ['PREPARATION', 'DEVELOPMENT', 'SNAPSHOT', 'RELEASE'],
       defaultsTo: 'SNAPSHOT'
     },
 
