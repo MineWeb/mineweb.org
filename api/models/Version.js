@@ -42,7 +42,7 @@ module.exports = {
 
     releaseDate: {
 			type: 'datetime',
-      defaultsTo: NULL
+      defaultsTo: null
 		},
 
     changelog: {
