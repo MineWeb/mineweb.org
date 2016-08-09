@@ -35,8 +35,8 @@ module.exports = {
 
 			Version.find().sort('id DESC').exec(function(err, versions) {
 
-				if(err) {
-					console.error(err)
+				if (err) {
+					sails.log.error(err)
 					return response.serverError();
 				}
 

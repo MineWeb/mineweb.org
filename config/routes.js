@@ -32,9 +32,51 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  '/': 'StaticController.home',
-  '/changelog': 'StaticController.changelog',
-  '/versions': 'StaticController.changelog'
+  /*
+    STATIC/BASIC
+  */
+
+
+    '/': 'StaticController.home',
+    '/changelog': 'StaticController.changelog',
+    '/versions': 'StaticController.changelog',
+
+  /*
+    USER
+  */
+
+    '/sign': {
+      view: 'user/sign',
+      locals: {
+        title: 'Se connecter ou s\'enregistrer'
+      }
+    },
+    '/signup': {
+      view: 'user/sign',
+      locals: {
+        title: 'Se connecter ou s\'enregistrer'
+      }
+    },
+    '/signin': {
+      view: 'user/sign',
+      locals: {
+        title: 'Se connecter ou s\'enregistrer'
+      }
+    },
+    '/register': {
+      view: 'user/sign',
+      locals: {
+        title: 'Se connecter ou s\'enregistrer'
+      }
+    },
+    '/login': {
+      view: 'user/sign',
+      locals: {
+        title: 'Se connecter ou s\'enregistrer'
+      }
+    },
+
+    'post /user/login': 'UserController.login'
 
   /***************************************************************************
   *                                                                          *

@@ -18,8 +18,19 @@
   GLOBAL
 */
 
+b {
+  font-weight:bold;
+}
+
 .text-center {
   text-align: center;
+}
+
+.right-vertical-separator {
+  border-right: 1px solid rgb(217, 217, 217);
+}
+.left-vertical-separator {
+  border-left: 1px solid rgb(217, 217, 217);
 }
 
 /*

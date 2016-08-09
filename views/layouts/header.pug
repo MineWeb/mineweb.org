@@ -5,7 +5,7 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
       .navbar.navbar-default.navbar-fixed-top(role='navigation')
         .container
           .navbar-header
-            a.navbar-brand.scroll-to(href='#all')
+            a.navbar-brand.scroll-to.hidden-lg-down(href='#all')
               span.site_name MINEWEB
               span.sr-only Go to homepage
               div.clearfix
@@ -25,4 +25,9 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
                 a(href='/documentation') #{__('Documentation')}
               li
                 a(href='/support') #{__('Support')}
-            //a.btn.navbar-btn.btn-ghost(href='#', data-toggle='modal', data-target='#get-started') Get started
+              li.hidden-lg-up
+                a(href='sign') #{__('Connexion')}
+              li.hidden-md-down
+                div.btn-group
+                  a.btn.navbar-btn.btn-ghost(href='sign') #{__('Connexion')}
+                  a.btn.navbar-btn.btn-ghost(href='sign') #{__('Inscription')}

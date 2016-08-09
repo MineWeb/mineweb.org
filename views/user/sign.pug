@@ -1,0 +1,57 @@
+include ../layouts/head
+include ../layouts/header
+
+section.section-gray.mini-section
+  .container.clearfix
+    .row
+      .col-md-6
+        h3.heading #{__('Connectez-')}
+          span.accent #{__('vous')}
+
+        form(method="post", action="/user/login", data-ajax)
+          .form-group
+            label #{__("Nom d'utilisateur")}
+            input.form-control(type='text', name='username')
+          .form-group
+            label #{__('Mot de passe')}
+              small
+               a(href='/user/lost-password')  #{__("Vous avez oublié votre mot de passe ?")}
+            input.form-control(type='password', name="password")
+
+          .form-group.text-center
+            div.checkbox
+              label
+                input(type='checkbox', name='remember_me')
+                |  &nbsp;#{__("Se souvenir de moi")}
+
+          .form-group.text-center
+            button.btn.btn-outline-primary(type='submit') #{__('Se connecter')}
+
+
+
+      .col-md-6.left-vertical-separator
+        h3.heading #{__('Inscrivez-')}
+          span.accent #{__('vous')}
+
+        form(method="post", action="/user/", data-ajax)
+          .form-group
+            label #{__("Nom d'utilisateur")}
+            input.form-control(type='text', name='username')
+          .form-group
+            labe #{__('Email')}
+            input.form-control(type='email', name="email")
+            small.form-text.text-muted #{__("L'email devra être confirmé avant de pouvoir accéder à votre compte.")}
+          .form-group
+            label #{__('Mot de passe')}
+            input.form-control(type='password', name="password")
+            small.form-text.text-muted #{__("Choississez un mot de passe fort et unique pour que personne ne puiss accéder à votre compte.")}
+          .form-group
+            label #{__('Confirmation du mot de passe')}
+            input.form-control(type='password', name="password_confirmation")
+            small.form-text.text-muted #{__("Répéter votre mot de passe")}
+
+          .form-group.text-center
+            button.btn.btn-outline-primary(type='submit') #{__("S'inscrire")}
+
+
+include ../layouts/footer

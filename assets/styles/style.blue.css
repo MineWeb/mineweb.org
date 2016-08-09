@@ -1530,6 +1530,7 @@ fieldset[disabled] .btn-transparent.active {
   text-transform: uppercase;
 }
 /* forms.less */
+/*
 label {
   font-weight: normal;
 }
@@ -1567,6 +1568,7 @@ label {
 .form-group {
   margin-bottom: 20px;
 }
+*/
 /* pager*/
 .pager {
   margin: 24px 0;
