@@ -19,13 +19,13 @@ module.exports = {
 		action: {
 			type: 'string',
 			required: true,
-			in: ['GET_PLUGIN', 'UPDATE', 'KEY_VERIFY', 'ADD_TICKET', 'GET_SECRET_KEY', 'GET_PLUGIN', 'GET_THEME', 'LOGIN', 'DEBUG']
+			in: ['GET_PLUGIN', 'UPDATE', 'KEY_VERIFY', 'ADD_TICKET', 'GET_SECRET_KEY', 'GET_PLUGIN', 'GET_THEME', 'LOGIN', 'DEBUG', 'TRY_LOGIN']
 		},
 
 		ip: {
 			type: 'string',
 			required: true,
-			ipv4: true
+			ip: true
 		},
 
 		status: {
@@ -40,7 +40,7 @@ module.exports = {
 		type: {
 			type: 'string',
 			required: true,
-			in: ['LICENSE', 'HOSTING']
+			in: ['LICENSE', 'HOSTING', 'USER']
 		},
 
 		data: {
@@ -48,4 +48,3 @@ module.exports = {
 		}
   }
 };
-

@@ -47,5 +47,34 @@
 	"Disponible": "",
 	"Sortie le": "",
 	"Prévue pour le": "",
-	"Aucune date de prévue": ""
+	"Aucune date de prévue": "",
+
+
+	"Connectez-": "",
+	"vous": "",
+	"Nom d'utilisateur": "",
+	"Mot de passe": "",
+	"Vous avez oublié votre mot de passe ?": "",
+	"Se souvenir de moi": "",
+	"Se connecter": "",
+	"Inscrivez-": "",
+	"Email": "",
+	"L'email devra être confirmé avant de pouvoir accéder à votre compte.": "",
+	"Choississez un mot de passe fort et unique pour que personne ne puiss accéder à votre compte.": "",
+	"Confirmation du mot de passe": "",
+	"Répéter votre mot de passe": "",
+	"S'inscrire": "",
+	"Vous devez spécifier un nom d'utilisateur": "",
+	"Vous devez spécifier un mot de passe": "",
+	"Tous les champs ne sont pas remplis.": "",
+	"Vous êtes temporairement bloqué ! Vous avez essayé trop de fois le mauvais mot de passe.": "",
+	"Aucun utilisateur ne correspond à ces identifiants.": "",
+	"Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte.": "",
+
+
+	"Chargement en cours...": "",
+	"Succès": "",
+	"Erreur": "",
+	"Vous n'êtes pas autorisé à procéder à cette action !": "",
+	"Une erreur interne est survenue. Veuillez rééssayez.": ""
 }
