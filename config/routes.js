@@ -35,7 +35,7 @@ module.exports.routes = {
   '/': {
     view: 'homepage',
     locals: {
-      page_title: 'Accueil'
+      title: 'Accueil'
     }
   }
 
