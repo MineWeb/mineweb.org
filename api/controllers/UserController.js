@@ -13,6 +13,15 @@ module.exports = {
 
 	login: function (request, response) {
 
+		// On vérifie qu'il ne soit pas déjà connecté
+		if(request.session.authenticated !== undefined && request.session.authenticated === true) {
+			return response.json({
+				status: false,
+				msg: request.__("Vous êtes déjà connecté !"),
+				inputs: inputs
+			})
+		}
+
 		// On vérifie que les champs ne soient pas vides
 		if (request.body.username === undefined || request.body.username.length === 0 || request.body.password === undefined || request.body.password.length === 0) {
 			// Il manque des champs.
@@ -106,14 +115,25 @@ module.exports = {
 							return response.serverError()
 						}
 
-						// On sauvegarde le cookie, on le connecte, on gère le cookie de remember TODO
+						// On sauvegarde la session/on le connecte, on gère le cookie de remember
+						request.session.userId = user.id
 
-							// On lui envoie un message de succès
-							return response.json({
-								status: true,
-								msg: request.__("Vous vous êtes bien connecté !"),
-								inputs: {}
-							})
+						if(request.body.remember_me !== undefined && request.body.remember_me) {
+							response.cookie('remember_me', {
+								username: user.username,
+								password: user.password
+							},
+							{
+							  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 10000) // +1 week
+							});
+						}
+
+						// On lui envoie un message de succès
+						return response.json({
+							status: true,
+							msg: request.__("Vous vous êtes bien connecté !"),
+							inputs: {}
+						})
 
 					});
 
