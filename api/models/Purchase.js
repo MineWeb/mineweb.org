@@ -1,49 +1,36 @@
 /**
- * Token.js
+ * Purchase.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-var uuid = require('node-uuid');
-
 module.exports = {
 
   attributes: {
-		id: {
+
+    id: {
 			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
 		},
 
-		user : {
+    user : {
 			model: 'User',
 			required: true
 		},
 
-    token: {
-			type: 'string',
-      unique: true,
-			uuidv4: true,
-      defaultsTo: function () {
-				return uuid.v4();
-			}
-		},
-
-		type: {
+    type: {
 			type: 'string',
 			required: true,
-			in: ['VALIDATION', 'FORGOT']
+			in: ['PLUGIN', 'THEME']
 		},
 
-		usedAt: {
-			type: 'datetime'
-		},
+    item_id: {
+      type: 'integer',
+      required: true
+    }
 
-		usedLocation: {
-			type: 'string',
-			ip: true
-		}
   }
 };

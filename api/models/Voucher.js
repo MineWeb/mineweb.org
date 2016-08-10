@@ -1,43 +1,45 @@
 /**
- * Token.js
+ * Voucher.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-var uuid = require('node-uuid');
-
 module.exports = {
 
   attributes: {
-		id: {
+
+    id: {
 			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
 		},
 
-		user : {
-			model: 'User',
-			required: true
-		},
+    code: {
+      type: 'string',
+      required: true
+    },
 
-    token: {
-			type: 'string',
-      unique: true,
-			uuidv4: true,
-      defaultsTo: function () {
-				return uuid.v4();
-			}
-		},
+    amount: {
+      type: 'float',
+      required: true
+    },
 
-		type: {
-			type: 'string',
-			required: true,
-			in: ['VALIDATION', 'FORGOT']
-		},
+    itemType: {
+      type: 'string',
+      in: ['LICENSE', 'HOSTING']
+    },
 
-		usedAt: {
+    itemId: {
+      type: 'integer'
+    }
+
+    usedBy: {
+      model: 'User'
+    },
+
+    usedAt: {
 			type: 'datetime'
 		},
 
@@ -45,5 +47,6 @@ module.exports = {
 			type: 'string',
 			ip: true
 		}
+
   }
 };

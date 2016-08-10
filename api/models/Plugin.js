@@ -10,8 +10,7 @@ module.exports = {
   attributes: {
 
 		id: {
-			type: 'number',
-			required: true,
+			type: 'integer',
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
@@ -71,4 +70,3 @@ module.exports = {
 		}
   }
 };
-
