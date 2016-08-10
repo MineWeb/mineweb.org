@@ -33,7 +33,7 @@ section.section-gray.mini-section
         h3.heading #{__('Inscrivez-')}
           span.accent #{__('vous')}
 
-        form(method="post", action="/user/", data-ajax)
+        form(method="post", action="/user/signup", data-ajax)
           .form-group
             label #{__("Nom d'utilisateur")}
             input.form-control(type='text', name='username')
@@ -49,6 +49,11 @@ section.section-gray.mini-section
             label #{__('Confirmation du mot de passe')}
             input.form-control(type='password', name="password_confirmation")
             small.form-text.text-muted #{__("Répéter votre mot de passe")}
+          .form-group
+            label #{__('Sécurité anti-robot')}
+            script(src='https://www.google.com/recaptcha/api.js')
+            div.g-recaptcha(data-sitekey='6LfrRCcTAAAAANoEz52nauOX9tP-p2N_ryOfivnd')
+            input(type='hidden', name='captcha_msg')
 
           .form-group.text-center
             button.btn.btn-outline-primary(type='submit') #{__("S'inscrire")}

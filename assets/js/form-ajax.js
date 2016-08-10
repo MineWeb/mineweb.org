@@ -37,6 +37,7 @@ function initForms() {
 
     // On récupère les données
       var inputs = (window.FormData) ? new FormData(form[0]) : null
+      var captcha = (grecaptcha !== undefined)
 
 
     // On effectue la requête
@@ -50,6 +51,7 @@ function initForms() {
         success: function (json) {
 
           if (json.status === true) {
+
             if (form.attr('data-success-msg') === undefined || form.attr('data-success-msg') == "true") {
               msg.html('<div class="alert alert-success"><b>'+locals.SUCCESS_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             }
@@ -59,7 +61,13 @@ function initForms() {
             if (form.attr('data-redirect-url') !== undefined) {
               document.location.href=form.attr('data-redirect-url')+'?no-cache='+ (new Date()).getTime()
             }
-            submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false).fadeIn(500)
+
+            if(captcha) {
+              grecaptcha.reset();
+            }
+
+            submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false)
+
           } else if (json.status === false) {
 
 
@@ -79,6 +87,10 @@ function initForms() {
                 }
               }
 
+            if(captcha) {
+              grecaptcha.reset();
+            }
+
             msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false)
 
@@ -96,6 +108,11 @@ function initForms() {
           } else {
             msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.INTERNAL_ERROR_MSG+'</div>')
           }
+
+          if(captcha) {
+            grecaptcha.reset();
+          }
+
           submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false)
         }
       })

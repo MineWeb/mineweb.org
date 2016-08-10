@@ -16,9 +16,11 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.2.4",
     "include-all": "~0.1.6",
+    "mailgun-js": "^0.7.11",
     "node-schedule": "^1.1.1",
     "pug": "^2.0.0-beta4",
     "rc": "1.0.1",
+    "recaptcha2": "^1.0.8",
     "sails": "~0.12.3",
     "sails-disk": "~0.10.9"
   },

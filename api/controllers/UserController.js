@@ -5,6 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var reCAPTCHA = require('recaptcha2')
+var mailgun = require('mailgun-js')({apiKey: 'key-f9a20bc3fd43f45cd70e6dd6a6257c53'});
+
 module.exports = {
 
 	/*
@@ -153,7 +156,7 @@ module.exports = {
 		Action de déconnexion, aucune vue d'affiché
 	*/
 
-	logout: function(request, response) {
+	logout: function (request, response) {
 
 		// On clear le cookie de remember
 		response.clearCookie('remember_me')
@@ -169,6 +172,188 @@ module.exports = {
       return response.redirect('/login')
 
     });
+
+	},
+
+
+	/*
+		Action d'inscription, doit être call en ajax
+	*/
+
+	signup: function (request, response) {
+
+		// Vérifier qu'il est pas déjà connecté
+		if(request.session.authenticated !== undefined && request.session.authenticated === true) {
+			return response.json({
+				status: false,
+				msg: request.__("Vous êtes déjà connecté !"),
+				inputs: inputs
+			})
+		}
+
+		// Vérifier que tous les champs soient remplis
+		if (request.body.username === undefined || request.body.username.length === 0 || request.body.email === undefined || request.body.email.length === 0 || request.body.password === undefined || request.body.password.length === 0 || request.body.password_confirmation === undefined || request.body.password_confirmation.length === 0) {
+			// Il manque des champs.
+
+				// On gère la validation html
+				var inputs = {}
+
+				if (request.body.username === undefined || request.body.username.length === 0) {
+					inputs.username = request.__("Vous devez spécifier un nom d'utilisateur")
+				}
+				if (request.body.email === undefined || request.body.email.length === 0) {
+					inputs.email = request.__("Vous devez spécifier un email")
+				}
+				if (request.body.password === undefined || request.body.password.length === 0) {
+					inputs.password = request.__("Vous devez spécifier un mot de passe")
+				}
+				if (request.body.password_confirmation === undefined || request.body.password_confirmation.length === 0) {
+					inputs.password_confirmation = request.__("Vous devez confirmer votre mot de passe")
+				}
+
+				// On envoie le json en réponse
+				return response.json({
+					status: false,
+					msg: request.__("Tous les champs ne sont pas remplis."),
+					inputs: inputs
+				})
+		}
+
+		// Vérifier le captcha
+		recaptcha=new reCAPTCHA({
+			siteKey: '6LfrRCcTAAAAANoEz52nauOX9tP-p2N_ryOfivnd',
+			secretKey: '6LfrRCcTAAAAAFb1XIpRPgAkj9ya159l0Fl0zLgV'
+		})
+
+		recaptcha.validateRequest(request).then(function () {
+
+			// Vérifier que le pseudo soit valide
+
+			if (!(new RegExp("^([a-zA-Z0-9-_]{4,25})$").test(request.body.username))) {
+				return response.json({
+					status: false,
+					msg: request.__("Vous devez choisir un pseudo valide !"),
+					inputs: {
+						username: request.__("Le pseudo doit être alphanumérique et entre 3 et 25 caractères.")
+					}
+				})
+			}
+
+			User.count({username: request.body.username}).exec(function (err, count) {
+
+				if (err) {
+	      	sails.log.error(err)
+	        return response.serverError()
+	      }
+
+				// Pseudo déjà utilisé
+				if (count > 0) {
+					return response.json({
+						status: false,
+						msg: request.__("Vous devez choisir un pseudo non utilisé !"),
+						inputs: {
+							username: request.__("Cet pseudo est déjà utilisé.")
+						}
+					})
+				}
+
+				// Vérifier que l'email soit valide
+				if (!(new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(request.body.email))) {
+					return response.json({
+						status: false,
+						msg: request.__("Vous devez choisir un email valide !"),
+						inputs: {
+							email: request.__("Cet email n'a pas un format valide.")
+						}
+					})
+				}
+
+				User.count({email: request.body.email}).exec(function (err, count) {
+
+					if (err) {
+		      	sails.log.error(err)
+		        return response.serverError()
+		      }
+
+					// Pseudo déjà utilisé
+					if (count > 0) {
+						return response.json({
+							status: false,
+							msg: request.__("Vous devez choisir un email non utilisé !"),
+							inputs: {
+								email: request.__("Cet email est déjà utilisé.")
+							}
+						})
+					}
+
+					// Vérifier que les mots de passes sont identiques
+					if (request.body.password !== request.body.password_confirmation) {
+						return response.json({
+							status: false,
+							msg: request.__("Les mots de passes ne sont pas identiques !"),
+							inputs: {
+								password_confirmation: request.__("Le mot de passe doit être identique à celui fourni ci-dessus.")
+							}
+						})
+					}
+
+					// Sauvegarde de l'user
+					User.create({username: request.body.username, password: request.body.password, email: request.body.email}).exec(function (err, user) {
+
+						if (err) {
+			      	sails.log.error(err)
+			        return response.serverError()
+			      }
+
+						// Sauvegarde du token de validation, envoie de l'email de confirmation
+						Token.create({user: user.id, type: 'VALIDATION'}).exec(function (err, token) {
+
+							if (err) {
+								sails.log.error(err)
+								return response.serverError()
+							}
+
+							var email = {
+								from: 'MineWeb <noreply@mineweb.org>',
+								to: user.email,
+								subject: request.__('Confirmation de votre compte') + ' | MineWeb',
+								text: request.__('Vous vous êtes bien inscrit sur MineWeb.org lol, le token c sa : '+token.token)
+							};
+
+							mailgun.messages().send(email, function (err, body) {
+
+								if (err) {
+									sails.log.error(err)
+									return response.serverError()
+								}
+
+								// Envoyer le message de succès en JSON
+								return response.json({
+									status: true,
+									msg: request.__("Vous vous êtes bien inscrit ! Vous devez maintenant confirmer votre email pour pouvoir vous connecter."),
+									inputs: {}
+								})
+
+							})
+
+						})
+
+					})
+
+				})
+
+			})
+
+		}).catch(function (errorCodes) {
+			// invalid
+			return response.json({
+				status: false,
+				msg: request.__("Veuillez valider la sécurité anti-robots"),
+				inputs: {
+					captcha_msg: request.__("Vous devez prouver que vous êtes un humain en validant l'étape ci-dessus")
+				}
+			})
+		})
 
 	}
 
