@@ -21,8 +21,7 @@ section.section-gray.mini-section
                 h4.version
                   a(href='#') #{val.version}
                   p.version_changelog #{__('Liste des modifications :')}
-
-                if val.changelog !== undefined && typeof val.changelog === 'object'
+                if val.changelog !== undefined && typeof val.changelog === 'object' && val.changelog !== null
                   ul.changelog
                     each changelog, index in val.changelog['fr_FR']
                       li
@@ -45,7 +44,7 @@ section.section-gray.mini-section
                 if val.state == 'RELEASE'
                   p #{__('Sortie le')}
                     b  #{val.releaseDate.toLocaleString()}
-                else if val.releaseDate !== undefined
+                else if val.releaseDate !== undefined && val.releaseDate !== null
                   p #{__('Prévue pour le')}
                     b  #{val.releaseDate.toLocaleString()}
                 else
