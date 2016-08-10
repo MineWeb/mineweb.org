@@ -33,7 +33,7 @@ module.exports = {
 
     itemId: {
       type: 'integer'
-    }
+    },
 
     usedBy: {
       model: 'User'
