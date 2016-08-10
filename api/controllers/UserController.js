@@ -124,7 +124,8 @@ module.exports = {
 								password: user.password
 							},
 							{
-							  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 10000) // +1 week
+							  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 10000), // +1 week
+								signed: true
 							});
 						}
 

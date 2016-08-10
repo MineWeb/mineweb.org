@@ -13,13 +13,13 @@ module.exports = function(req, res, next) {
   if (req.session.userId === undefined) {
 
     // On regarde si y'a un cookie pour remember
-    if (req.cookies.remember_me === undefined) {
+    if (req.signedCookies.remember_me === undefined) {
       req.session.authenticated = false
       return next()
     }
 
     // On tente de le connecter
-    User.findOne({username: req.cookies.remember_me.username, password: req.cookies.remember_me.password}).exec(function (err, user) {
+    User.findOne({username: req.signedCookies.remember_me.username, password: req.signedCookies.remember_me.password}).exec(function (err, user) {
 
       if (err) {
         sails.log.error(err)
