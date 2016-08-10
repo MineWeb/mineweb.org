@@ -146,6 +146,30 @@ module.exports = {
 		})
 
 
+	},
+
+
+	/*
+		Action de déconnexion, aucune vue d'affiché
+	*/
+
+	logout: function(request, response) {
+
+		// On clear le cookie de remember
+		response.clearCookie('remember_me')
+
+		// On supprime les infos dans la session
+		request.session.destroy(function (err) {
+
+			if (err) {
+      	sails.log.error(err)
+        return response.serverError()
+      }
+
+      return response.redirect('/login')
+
+    });
+
 	}
 
 };
