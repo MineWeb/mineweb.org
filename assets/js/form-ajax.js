@@ -51,7 +51,7 @@ function initForms() {
 
           if (json.status === true) {
             if (form.attr('data-success-msg') === undefined || form.attr('data-success-msg') == "true") {
-              div_msg.html('<div class="alert alert-success"><b>'+locals.SUCCESS_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
+              msg.html('<div class="alert alert-success"><b>'+locals.SUCCESS_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             }
             if (form.attr('data-callback-function') !== undefined) {
               window[form.attr('data-callback-function')](inputs, json)

@@ -8,7 +8,7 @@ section.section-gray.mini-section
         h3.heading #{__('Connectez-')}
           span.accent #{__('vous')}
 
-        form(method="post", action="/user/login", data-ajax)
+        form(method="post", action="/user/login", data-ajax, data-redirect-url='/')
           .form-group
             label #{__("Nom d'utilisateur")}
             input.form-control(type='text', name='username')
@@ -27,7 +27,7 @@ section.section-gray.mini-section
           .form-group.text-center
             button.btn.btn-outline-primary(type='submit') #{__('Se connecter')}
 
-
+        hr.hidden-md-up
 
       .col-md-6.left-vertical-separator
         h3.heading #{__('Inscrivez-')}

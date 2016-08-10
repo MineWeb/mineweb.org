@@ -59,7 +59,7 @@ module.exports = {
 			}
 
 			// On vérifie qu'un utilisateur existe avec cet combinaison d'identifiants
-			User.findOne({username: request.body.username, password: request.body.password}).populate('tokens').exec(function (err, user) {
+			User.findOne({username: request.body.username, password: request.body.password}).populate('tokens', {where: {type: 'VALIDATION'}, limit: 1}).exec(function (err, user) {
 
 				if (err) {
 	      	sails.log.error(err)
@@ -88,8 +88,9 @@ module.exports = {
 
 				} else {
 
+
 					// On vérifie que l'email de l'account est bien confirmé
-					if(user.tokens.length > 0) { // TODO
+					if(user.tokens.length > 0 && user.tokens[0].usedAt === undefined) {
 						return response.json({
 							status: false,
 							msg: request.__("Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte."),
@@ -97,13 +98,24 @@ module.exports = {
 						})
 					}
 
-					// TODO
+					// On ajoute une connexion aux logs de connexions de l'utilisateur
+					Log.create({action: 'LOGIN', ip: request.ip, status: true, type: 'USER'}).exec(function (err, log) {
 
-						// On ajoute une connexion aux logs de connexions de l'utilisateur
+						if (err) {
+							sails.log.error(err)
+							return response.serverError()
+						}
 
-							// On sauvegarde le cookie, on le connecte, on gère le cookie de remember
+						// On sauvegarde le cookie, on le connecte, on gère le cookie de remember TODO
 
-								// On lui envoie un message de succès
+							// On lui envoie un message de succès
+							return response.json({
+								status: true,
+								msg: request.__("Vous vous êtes bien connecté !"),
+								inputs: {}
+							})
+
+					});
 
 				}
 
