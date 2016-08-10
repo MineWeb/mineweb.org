@@ -6,7 +6,7 @@
  */
 
 var reCAPTCHA = require('recaptcha2')
-var mailgun = require('mailgun-js')({apiKey: 'key-f9a20bc3fd43f45cd70e6dd6a6257c53'});
+var mailgun = require('mailgun-js')({apiKey: 'key-f9a20bc3fd43f45cd70e6dd6a6257c53', domain: 'mineweb.org'});
 
 module.exports = {
 
