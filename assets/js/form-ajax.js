@@ -25,9 +25,7 @@ function initForms() {
       submit_btn.addClass('disabled').attr('disabled', true).html(locals.LOADING_MSG)
 
     // On vire les éventuelles classes d'erreurs
-    console.log(form.find('.has-danger'));
       form.find('.has-danger').each(function() {
-        console.log(this)
         $(this).removeClass('has-danger')
       })
       form.find('.form-control-danger').each(function() {
