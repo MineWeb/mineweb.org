@@ -22,7 +22,7 @@ section.section-gray.mini-section
                   a(href='#') #{val.version}
                   p.version_changelog #{__('Liste des modifications :')}
 
-                if val.changelog != null
+                if val.changelog !== undefined && typeof val.changelog === 'object'
                   ul.changelog
                     each changelog, index in val.changelog['fr_FR']
                       li
@@ -33,7 +33,7 @@ section.section-gray.mini-section
                     i #{__('Aucun changement lors de cette mise à jour')}
 
               div.col-md-3
-                if val.state == 'PREPARATION'
+                if val.state == 'STAGING'
                   span.text-primary #{__('En cours de préparation')}
                 else if val.state == 'DEVELOPMENT'
                   span.text-warning #{__('En cours de développement')}
@@ -45,7 +45,7 @@ section.section-gray.mini-section
                 if val.state == 'RELEASE'
                   p #{__('Sortie le')}
                     b  #{val.releaseDate.toLocaleString()}
-                else if val.releaseDate !== null
+                else if val.releaseDate !== undefined
                   p #{__('Prévue pour le')}
                     b  #{val.releaseDate.toLocaleString()}
                 else
