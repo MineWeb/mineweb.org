@@ -11,7 +11,7 @@ var salt			= 'DR2G0FgaC9mYhGUubWwqyJfIxfs2vn93b0guVoii';
 module.exports = {
 
   attributes: {
-		
+
 		id : {
 			type: 'integer',
 			unique: true,
@@ -50,7 +50,7 @@ module.exports = {
 
 		ip: {
 			type: 'string',
-			ipv4: true
+			ip: true
 		},
 
 		lang: {
@@ -83,33 +83,36 @@ module.exports = {
 			via: 'author'
 		},
 
-		/**
-		 *  Before creating an account, hash his password using salt
-		 */
-		beforeCreate: function(user, callback) {
-			var hashed = crypto.createHash('sha1').update(salt + user.password).digest('hex');
-			user.password = hashed;
-			callback();
-		},
-
-		/**
-		 *  Before updating an user, hash his password using salt
-		 */
-		beforeUpdate: function(user, callback) {
-			var hashed = crypto.createHash('sha1').update(salt + user.password).digest('hex');
-			user.password = hashed;
-			callback();
-		},
-
 		toJSON: function() {
 			var user = this.toObject();
 			delete user.password;
 			delete user.tokens;
 			delete user.ip;
 			delete user.id;
-			delete user.mail;
+			delete user.email;
 			return user;
 		}
 
   },
+
+  hashPassword: function(password) {
+    return crypto.createHash('sha1').update(salt + password).digest('hex')
+  },
+
+  /**
+   *  Before creating an account, hash his password using salt
+   */
+  beforeCreate: function(user, callback) {
+    user.password = this.hashPassword(user.password);
+    callback();
+  },
+
+  /**
+   *  Before updating an user, hash his password using salt
+   */
+  beforeUpdate: function(user, callback) {
+    user.password = this.hashPassword(user.password);
+    callback();
+  }
+
 };

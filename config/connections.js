@@ -48,6 +48,19 @@ module.exports.connections = {
   //   database: 'YOUR_MYSQL_DB' //optional
   // },
 
+  /*mysql: {
+    module    : 'sails-mysql',
+    host      : 'localhost',
+    port      : 3306,
+    user      : 'root',
+    password  : 'root',
+    database  : 'mineweb_node',
+
+    // Optional
+    charset   : 'utf8',
+    collation : 'utf8_swedish_ci'
+  }*/
+
   /***************************************************************************
   *                                                                          *
   * MongoDB is the leading NoSQL database.                                   *

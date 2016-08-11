@@ -17,4 +17,20 @@ module.exports = {
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
 
+   connections: {
+     mysqlserver: {
+       adapter: 'sails-mysql',
+       host: 'status.hardfight.fr',
+       user: 'mineweb',
+       password: 'mineweb42', //optional
+       database: 'mineweb' //optional
+     },
+   },
+
+   config: {
+     orm: {
+       _hookTimeout: 40000
+     }
+   }
+
 };

@@ -55,7 +55,7 @@ module.exports = {
     Execute le callback passé en 1er paramètre en lui passant : *.*.* ou undefined.
   */
 	getLastVersion: function(callback) {
-		Version.findOne({is: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
+		Version.findOne({state: 'RELEASE'}).sort('id DESC').exec(function(err, version) {
     	if (err || !version) {
       	sails.log.error(err || "No CMS version has been found");
         return callback(undefined);

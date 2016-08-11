@@ -71,7 +71,7 @@ module.exports = {
 			}
 
 			// On vérifie qu'un utilisateur existe avec cet combinaison d'identifiants
-			User.findOne({username: request.body.username, password: request.body.password}).populate('tokens', {where: {type: 'VALIDATION'}, limit: 1}).exec(function (err, user) {
+			User.findOne({username: request.body.username, password: User.hashPassword(request.body.password)}).populate('tokens', {where: {type: 'VALIDATION'}, limit: 1}).exec(function (err, user) {
 
 				if (err) {
 	      	sails.log.error(err)
@@ -103,7 +103,7 @@ module.exports = {
 
 
 					// On vérifie que l'email de l'account est bien confirmé
-					if(user.tokens.length > 0 && user.tokens[0].usedAt === undefined) {
+					if(user.tokens.length > 0 && user.tokens[0].usedAt === null) {
 						return response.json({
 							status: false,
 							msg: request.__("Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte."),
@@ -299,7 +299,7 @@ module.exports = {
 					}
 
 					// Sauvegarde de l'user
-					User.create({username: request.body.username, password: request.body.password, email: request.body.email, lang: request.acceptedLanguages[0]}).exec(function (err, user) {
+					User.create({username: request.body.username, password: request.body.password, email: request.body.email, lang: request.acceptedLanguages[0], ip: request.ip}).exec(function (err, user) {
 
 						if (err) {
 			      	sails.log.error(err)
@@ -358,10 +358,10 @@ module.exports = {
 		if (request.param('token') === undefined) {
 			return response.notFound('Validation token is missing')
 		}
-		var token = request.param('token')
+		var key = request.param('token')
 
 		// On cherche le token
-		Token.findOne({token: token, type: 'VALIDATION', usedAt: undefined, usedLocation: undefined}).exec(function (err, token) {
+		Token.findOne({token: key, type: 'VALIDATION', usedAt: null, usedLocation: null}).exec(function (err, data) {
 
 			if (err) {
 				sails.log.error(err)
@@ -369,12 +369,12 @@ module.exports = {
 			}
 
 			// Si on ne trouve pas le token
-			if (token === undefined) {
-				return response.notFound('Unknown validation token')
+			if (data === undefined) {
+				return response.notFound('Unknown validation token or already used')
 			}
 
 			// On passe le token en validé
-			Token.update({id: token.id}, {usedAt: Date.now(), usedLocation: request.ip}).exec(function (err, token) {
+			Token.update({id: data.id}, {usedAt: (new Date()), usedLocation: request.ip}).exec(function (err, data) {
 
 				if (err) {
 					sails.log.error(err)

@@ -25,7 +25,7 @@ module.exports = {
 		var html = pug.renderFile(template_path + template + '.pug', vars)
 
 		var data = {
-			from: 'Mineweb <no-reply@mineweb.org>',
+			from: 'MineWeb <no-reply@mineweb.org>',
 			to: target,
 			subject: title,
 			html: html
