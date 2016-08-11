@@ -93,6 +93,8 @@ module.exports.routes = {
     },
     'post /user/lost-password': 'UserController.lostPassword',
 
+    'get /user/profile': 'UserController.profile'
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

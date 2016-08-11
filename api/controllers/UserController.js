@@ -575,6 +575,17 @@ module.exports = {
 
 		})
 
+	},
+
+	/*
+		Action affichant le profil avec les informations de l'utilisateur
+		Authentification requise
+	*/
+
+	profile: function (request, response) {
+
+
+		response.render('./user/profile')
 	}
 
 };
