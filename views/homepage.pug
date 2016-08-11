@@ -1,143 +1,141 @@
-include ./layouts/head
-include ./layouts/header
+extends ./layouts/layout
 
-section#intro.text-intro.no-padding-bottom
-  .container
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+        .row
+          .col-md-12
+            h1
+              | #{__('MineWeb c\'est un CMS ')}
+              span.rotate  #{__('à votre écoute')}, #{__('pensé pour vous')}, #{__('qui vous accompagne')}
+            h3.weight-300 #{__('C\'est complet, simple et rapide')}
+        .row
+          .col-md-12
+            p
+              | #{__('Des centaines de serveurs nous font confiance, pourquoi pas vous ?')}
+              br
+              | #{__('Essayez par vous-même.')}
+            p
+              a#submit_intro.btn.btn-primary(href='http://demo.craftwb.fr') #{__('Accéder au site de démonstration')}
+          .col-md-12.col-lg-8.col-lg-offset-2
+            p.margin-bottom--zero
+              img.img-responsive(alt='', src='img/features3_mb.png')
+
+  section#customers.section.background-gray-lightest.padding--small
+    .container
+      .row
+        .col-sm-4.col-md-3.col-xs-6
+          .customer
+            a(href='https://obsifight.net')
+              img.img-responsive(src='img/customers/obsifight.png', title='ObsiFight', data-placement='bottom', data-toggle='tooltip', alt='')
+        .col-sm-4.col-md-3.col-xs-6
+          .customer
+            a(href='http://hardfight.fr')
+              img.img-responsive(src='img/customers/hardfight.png', title='HardFight', data-placement='bottom', data-toggle='tooltip', alt='')
+        .col-sm-4.col-md-3.col-xs-6
+          .customer
+            a(href='http://hunterfight.fr')
+              img.img-responsive(src='img/customers/hunterfight.png', title='HunterFight', data-placement='bottom', data-toggle='tooltip', alt='')
+        .col-sm-4.col-md-3.col-xs-6
+          .customer
+            a(href='http://octonia.fr')
+              img.img-responsive(src='img/customers/octonia.png', title='Octonia', data-placement='bottom', data-toggle='tooltip', alt='')
+        //.col-sm-4.col-md-3.col-xs-6
+          .customer
+            a(href='http://mc-sunrise.fr')
+              img.img-responsive(src='img/customers/sunrise.png', title='Sunrise', data-placement='bottom', data-toggle='tooltip', alt='')
+
+
+
+  // *** TEXT ***
+  section#text.text-page.section-inverse.background-secondary
+    .container
       .row
         .col-md-12
-          h1
-            | #{__('MineWeb c\'est un CMS ')}
-            span.rotate  #{__('à votre écoute')}, #{__('pensé pour vous')}, #{__('qui vous accompagne')}
-          h3.weight-300 #{__('C\'est complet, simple et rapide')}
+          h2.text-center #{__('C\'est quoi MineWeb ?')}
+          p.lead.text-center #{__('Le CMS est en bêta depuis 15 août 2015 et en version finale depuis le 3 mai 2016.')}
+          .row
+            .col-sm-6
+              p #{__('MineWeb est un CMS (c\'est à dire un système de gestion de contenu), en plus simple, un site complètement personnalisable et intuitif, qui s\'adaptera parfaitement à vos serveurs Minecraft !')}
+              p #{__('Vous pourrez tenir vos joueurs au courant des actualités, leur faire acheter des articles sur la boutique... Vous pourrez personnaliser le CMS avec toutes sortes de thèmes ou plugins ! Ceux-ci sont disponibles sur le market ou peuvent être développé par vous-même.')}
+            .col-sm-6
+              p #{__('MineWeb est un CMS payant qui dispose de 2 offres différentes qui saura convenir à vos besoins.')}
+                br
+                | #{__('Toutes les informations sont disponibles')}
+                a(href='#')  #{__('ici')}
+                |  .
+              p #{__('Vous avez un problème ? Vous souhaitez modifier quelque chose ? Ou bien vous souhaitez développer votre propre plugin/thème ? Rendez-vous sur la documentation disponible')}
+               a(href='#')  #{__('ici')}
+               |  #{__('ou contactez notre support dans l\'espace support !')}
+  // *** TEXT END ***
+
+  section#features.section
+    .container
+      .row.text-center-mobile
+        .col-md-6
+          .icon
+            i.pe-7s-refresh
+          h2 #{__('Mises à jours régulières')}
+          p #{__('En effet, nous faisons de notre mieux pour sortir des mises à jours régulières et complètes, ajoutant un maximum de fonctionnalités et réglant les éventuels bugs rencontrés lors de l\'utilisation du CMS.')}
+          p #{__('Nous sommes à l\'écoute de toutes vos propositions sur notre support pour améliorer la qualité et le contenu du CMS.')}
+
+        .col-md-6
+          p
+            img.img-responsive(alt='', src='img/features1_mb.png')
+
+  section.section.background-gray-lightest
+    .container
+      .row.text-center-mobile
+        .col-md-6
+          p
+            img.img-responsive(alt='', src='img/features2_mb.png', style='width: 100%')
+        .col-md-6
+          .icon.brand-terciary
+            i.pe-7s-plugin
+          h2 #{__('Système de plugins')}
+          p #{__('Nous avons mis en place un système de plugins/extensions permettant de rajouter des fonctionnalités facilement à votre CMS.')}
+           br
+           | #{__('Les plugins peuvent être développés par la communauté, par un développeur indépendant ou par nous même. Cela permet à quiconque d\'ajouter facilement des fonctionnalités à son site facilement grâce à la documentaion mise en place.')}
+
+          p #{__('Nous avons aussi mis en place un système de thème permettant de changer l\'apparence de votre site facilement et rapidement. Thèmes qui eux aussi peuvent être développé par n\'importe qui.')}
+
+  section.section.no-padding-bottom
+    .container
       .row
-        .col-md-12
-          p
-            | #{__('Des centaines de serveurs nous font confiance, pourquoi pas vous ?')}
-            br
-            | #{__('Essayez par vous-même.')}
-          p
-            a#submit_intro.btn.btn-primary(href='http://demo.craftwb.fr') #{__('Accéder au site de démonstration')}
-        .col-md-12.col-lg-8.col-lg-offset-2
+        .col-md-12.col-lg-8.col-lg-offset-2.text-center
+          .icon.brand-secondary
+            i.pe-7s-plus
+          h2 #{__('Original et complet')}
+          p #{__('Nous disposons de nombreuses fonctionnalités non disponible chez la concurrence, comme par exemple un système de multi-serveur poussé grâce à notre plugin de liaison site-serveur personnalisé.')}
+          p #{__('Tous les messages du site sont customisables depuis le panel administrateur, un système de permission complet avec des grades personnalisés est disponible, des API sont fournies pour lier votre site et votre launcher (skins, capes, utilisateurs, news)...')}
           p.margin-bottom--zero
             img.img-responsive(alt='', src='img/features3_mb.png')
+  // *** FEATURES END ***
 
-section#customers.section.background-gray-lightest.padding--small
-  .container
-    .row
-      .col-sm-4.col-md-3.col-xs-6
-        .customer
-          a(href='https://obsifight.net')
-            img.img-responsive(src='img/customers/obsifight.png', title='ObsiFight', data-placement='bottom', data-toggle='tooltip', alt='')
-      .col-sm-4.col-md-3.col-xs-6
-        .customer
-          a(href='http://hardfight.fr')
-            img.img-responsive(src='img/customers/hardfight.png', title='HardFight', data-placement='bottom', data-toggle='tooltip', alt='')
-      .col-sm-4.col-md-3.col-xs-6
-        .customer
-          a(href='http://hunterfight.fr')
-            img.img-responsive(src='img/customers/hunterfight.png', title='HunterFight', data-placement='bottom', data-toggle='tooltip', alt='')
-      .col-sm-4.col-md-3.col-xs-6
-        .customer
-          a(href='http://octonia.fr')
-            img.img-responsive(src='img/customers/octonia.png', title='Octonia', data-placement='bottom', data-toggle='tooltip', alt='')
-      //.col-sm-4.col-md-3.col-xs-6
-        .customer
-          a(href='http://mc-sunrise.fr')
-            img.img-responsive(src='img/customers/sunrise.png', title='Sunrise', data-placement='bottom', data-toggle='tooltip', alt='')
+  // *** TEXT ***
+  section#text.text-page.section-inverse.background-secondary
+    .container
+      .row
+        .col-md-12
+          h2.text-center #{__('Pourquoi nous ?')}
+          p.lead.text-center #{__('Nous sommes à votre écoute pour toutes suggestions')}
+          .row
+            .col-sm-6
+              p #{__('Nous sommes présent tout le long de l\'utilisation de nos services. Nous sommes disponibles à travers notre support pour toute question ou aide.')}
+            .col-sm-6
+              p #{__('Si vous avez une quelconque suggestion, n\'hésitez pas et venez nous en parler, nous seront présent et à votre écoute. Nous ferons au mieux pour intégrer ces nouveautés au CMS si celle-ci sont jugées utiles.')}
+  // *** TEXT END ***
 
-
-
-// *** TEXT ***
-section#text.text-page.section-inverse.background-secondary
-  .container
-    .row
-      .col-md-12
-        h2.text-center #{__('C\'est quoi MineWeb ?')}
-        p.lead.text-center #{__('Le CMS est en bêta depuis 15 août 2015 et en version finale depuis le 3 mai 2016.')}
-        .row
-          .col-sm-6
-            p #{__('MineWeb est un CMS (c\'est à dire un système de gestion de contenu), en plus simple, un site complètement personnalisable et intuitif, qui s\'adaptera parfaitement à vos serveurs Minecraft !')}
-            p #{__('Vous pourrez tenir vos joueurs au courant des actualités, leur faire acheter des articles sur la boutique... Vous pourrez personnaliser le CMS avec toutes sortes de thèmes ou plugins ! Ceux-ci sont disponibles sur le market ou peuvent être développé par vous-même.')}
-          .col-sm-6
-            p #{__('MineWeb est un CMS payant qui dispose de 2 offres différentes qui saura convenir à vos besoins.')}
-              br
-              | #{__('Toutes les informations sont disponibles')}
-              a(href='#')  #{__('ici')}
-              |  .
-            p #{__('Vous avez un problème ? Vous souhaitez modifier quelque chose ? Ou bien vous souhaitez développer votre propre plugin/thème ? Rendez-vous sur la documentation disponible')}
-             a(href='#')  #{__('ici')}
-             |  #{__('ou contactez notre support dans l\'espace support !')}
-// *** TEXT END ***
-
-section#features.section
-  .container
-    .row.text-center-mobile
-      .col-md-6
-        .icon
-          i.pe-7s-refresh
-        h2 #{__('Mises à jours régulières')}
-        p #{__('En effet, nous faisons de notre mieux pour sortir des mises à jours régulières et complètes, ajoutant un maximum de fonctionnalités et réglant les éventuels bugs rencontrés lors de l\'utilisation du CMS.')}
-        p #{__('Nous sommes à l\'écoute de toutes vos propositions sur notre support pour améliorer la qualité et le contenu du CMS.')}
-
-      .col-md-6
-        p
-          img.img-responsive(alt='', src='img/features1_mb.png')
-
-section.section.background-gray-lightest
-  .container
-    .row.text-center-mobile
-      .col-md-6
-        p
-          img.img-responsive(alt='', src='img/features2_mb.png', style='width: 100%')
-      .col-md-6
-        .icon.brand-terciary
-          i.pe-7s-plugin
-        h2 #{__('Système de plugins')}
-        p #{__('Nous avons mis en place un système de plugins/extensions permettant de rajouter des fonctionnalités facilement à votre CMS.')}
-         br
-         | #{__('Les plugins peuvent être développés par la communauté, par un développeur indépendant ou par nous même. Cela permet à quiconque d\'ajouter facilement des fonctionnalités à son site facilement grâce à la documentaion mise en place.')}
-
-        p #{__('Nous avons aussi mis en place un système de thème permettant de changer l\'apparence de votre site facilement et rapidement. Thèmes qui eux aussi peuvent être développé par n\'importe qui.')}
-
-section.section.no-padding-bottom
-  .container
-    .row
-      .col-md-12.col-lg-8.col-lg-offset-2.text-center
-        .icon.brand-secondary
-          i.pe-7s-plus
-        h2 #{__('Original et complet')}
-        p #{__('Nous disposons de nombreuses fonctionnalités non disponible chez la concurrence, comme par exemple un système de multi-serveur poussé grâce à notre plugin de liaison site-serveur personnalisé.')}
-        p #{__('Tous les messages du site sont customisables depuis le panel administrateur, un système de permission complet avec des grades personnalisés est disponible, des API sont fournies pour lier votre site et votre launcher (skins, capes, utilisateurs, news)...')}
-        p.margin-bottom--zero
-          img.img-responsive(alt='', src='img/features3_mb.png')
-// *** FEATURES END ***
-
-// *** TEXT ***
-section#text.text-page.section-inverse.background-secondary
-  .container
-    .row
-      .col-md-12
-        h2.text-center #{__('Pourquoi nous ?')}
-        p.lead.text-center #{__('Nous sommes à votre écoute pour toutes suggestions')}
-        .row
-          .col-sm-6
-            p #{__('Nous sommes présent tout le long de l\'utilisation de nos services. Nous sommes disponibles à travers notre support pour toute question ou aide.')}
-          .col-sm-6
-            p #{__('Si vous avez une quelconque suggestion, n\'hésitez pas et venez nous en parler, nous seront présent et à votre écoute. Nous ferons au mieux pour intégrer ces nouveautés au CMS si celle-ci sont jugées utiles.')}
-// *** TEXT END ***
-
-// *** INTEGRATIONS ***
-section#integrations.section-gray
-  .container.clearfix
-    .row
-      .col-md-12
-        h3.text-center #{__('Rejoignez-nous')}
-        p.text-center.lead #{__('N\'attendez plus ! Télécharger dès maintenant le CMS et créez facilement et rapidement votre site internet pour votre serveur !')}
-        div.text-center
-          div.btn-group
-            if version != undefined && version != null
-              a.btn.btn-outline-secondary.disabled #{__('Actuellement en version v%s', version)}
-            a.btn.btn-outline-info(href='#') #{__('Télécharger le CMS')}
-// *** INTEGRATIONS END ***
-
-include ./layouts/footer
+  // *** INTEGRATIONS ***
+  section#integrations.section-gray
+    .container.clearfix
+      .row
+        .col-md-12
+          h3.text-center #{__('Rejoignez-nous')}
+          p.text-center.lead #{__('N\'attendez plus ! Télécharger dès maintenant le CMS et créez facilement et rapidement votre site internet pour votre serveur !')}
+          div.text-center
+            div.btn-group
+              if version != undefined && version != null
+                a.btn.btn-outline-secondary.disabled #{__('Actuellement en version v%s', version)}
+              a.btn.btn-outline-info(href='#') #{__('Télécharger le CMS')}
+  // *** INTEGRATIONS END ***

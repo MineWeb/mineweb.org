@@ -1,23 +1,6 @@
-extends ./layout
+extends ./layouts/layout
 
-//
-  |
-  |   ____   ___   ___
-  |  | ___| / _ \ / _ \
-  |  |___ \| | | | | | |
-  |   ___) | |_| | |_| |
-  |  |____/ \___/ \___/
-  |
-  | This is the default "500: Server Error" page.
-  |
-  | User agents that don't "Accept" HTML will see a JSON version instead.
-  | You can customize the control logic for your needs in `config/500.js`
-  |
-  | Sails responds to a request with a "500: Server Error" state when
-  | either `next(err)` is called in a controller or policy, or your app
-  | throws an error.
-
-block body
+block content
   link(href='http://sailsjs.org/styles/fonts.css', rel='stylesheet')
   style.
     /* Styles included inline since you'll probably be deleting this page anyway */

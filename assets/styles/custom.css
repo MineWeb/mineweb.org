@@ -18,6 +18,19 @@
   GLOBAL
 */
 
+html, body { height:100%; }
+
+#all {
+  position: relative;
+  min-height: 100%;
+}
+
+#main {
+  position: relative;
+  min-height: 100%;
+	padding-bottom: 126px;
+}
+
 b {
   font-weight:bold;
 }
@@ -38,7 +51,11 @@ b {
 */
 
 footer {
-  margin-top: 60px;
+  /*margin-top: 60px;*/
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 96px;
 }
 
 /*
