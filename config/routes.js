@@ -93,6 +93,11 @@ module.exports.routes = {
     },
     'post /user/lost-password': 'UserController.lostPassword',
 
+		 /*
+    	MARKETPLACE
+  	*/
+		'get /market': 'MarketController.show'
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

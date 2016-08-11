@@ -17,7 +17,7 @@ module.exports = {
     	primaryKey: true,
 		},
 
-		title: {
+		slug: {
 			type: 'string',
 			unique: true,
 			required: true,
