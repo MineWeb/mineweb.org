@@ -299,7 +299,7 @@ module.exports = {
 					}
 
 					// Sauvegarde de l'user
-					User.create({username: request.body.username, password: request.body.password, email: request.body.email}).exec(function (err, user) {
+					User.create({username: request.body.username, password: request.body.password, email: request.body.email, lang: request.acceptedLanguages[0]}).exec(function (err, user) {
 
 						if (err) {
 			      	sails.log.error(err)
@@ -342,6 +342,51 @@ module.exports = {
 					captcha_msg: request.__("Vous devez prouver que vous êtes un humain en validant l'étape ci-dessus")
 				}
 			})
+		})
+
+	},
+
+
+	/*
+		Action de confirmation d'email
+		@params Token
+	*/
+
+	confirmEmail: function(request, response) {
+
+		// On récupère le token de validation
+		if (request.param('token') === undefined) {
+			return response.notFound('Validation token is missing')
+		}
+		var token = request.param('token')
+
+		// On cherche le token
+		Token.findOne({token: token, type: 'VALIDATION', usedAt: undefined, usedLocation: undefined}).exec(function (err, token) {
+
+			if (err) {
+				sails.log.error(err)
+        return response.serverError('An error occured on token select')
+			}
+
+			// Si on ne trouve pas le token
+			if (token === undefined) {
+				return response.notFound('Unknown validation token')
+			}
+
+			// On passe le token en validé
+			Token.update({id: token.id}, {usedAt: Date.now(), usedLocation: request.ip}).exec(function (err, token) {
+
+				if (err) {
+					sails.log.error(err)
+	        return response.serverError('An error occured on token update')
+				}
+
+				// On redirige l'utilisateur sur son compte
+				return response.redirect('/user/profile')
+
+
+			})
+
 		})
 
 	}

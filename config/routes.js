@@ -76,7 +76,8 @@ module.exports.routes = {
       }
     },
 
-    'post /user/login': 'UserController.login'
+    'post /user/login': 'UserController.login',
+    'get /user/confirm-email/:token': 'UserController.confirmEmail'
 
   /***************************************************************************
   *                                                                          *
