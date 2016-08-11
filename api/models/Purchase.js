@@ -24,7 +24,8 @@ module.exports = {
     type: {
 			type: 'string',
 			required: true,
-			in: ['PLUGIN', 'THEME']
+			in: ['PLUGIN', 'THEME'],
+      size: 6
 		},
 
     item_id: {

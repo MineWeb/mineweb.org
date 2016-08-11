@@ -22,13 +22,14 @@ module.exports = {
     },
 
     answer: {
-      type: 'string',
+      type: 'text',
       required: true
     },
 
     locale: {
       type: 'string',
-      in: ['fr_FR', 'en_US', 'en_UK']
+      in: ['fr_FR', 'en_US', 'en_UK'],
+      size: 5
     }
 
   }

@@ -22,7 +22,10 @@ module.exports = {
 		username: {
 			type: 'string',
 			required: true,
-			unique: true
+			unique: true,
+      min: 4,
+      max: 25,
+      size: 25
 		},
 
 		email: {
@@ -39,13 +42,15 @@ module.exports = {
 		role: {
 			type: 'string',
 			defaultsTo: 'USER',
-			in: ['USER', 'DEVELOPER', 'MOD', 'ADMIN', 'FOUNDER']
+			in: ['USER', 'DEVELOPER', 'MOD', 'ADMIN', 'FOUNDER'],
+      size: 9
 		},
 
 		developer: {
 			type: 'string',
 			defaultsTo: 'NONE',
-			in: ['NONE', 'CANDIDATE', 'CONFIRMED']
+			in: ['NONE', 'CANDIDATE', 'CONFIRMED'],
+      size: 9
 		},
 
 		ip: {
@@ -55,7 +60,8 @@ module.exports = {
 
 		lang: {
 			type: 'string',
-			defaultsTo: 'fr'
+			defaultsTo: 'fr-fr',
+      size: 5
 		},
 
 		tokens: {

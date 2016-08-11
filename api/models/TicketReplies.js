@@ -8,7 +8,7 @@
 module.exports = {
 
   attributes: {
-		
+
     id: {
 			type: 'integer',
 			unique: true,
@@ -27,7 +27,7 @@ module.exports = {
     },
 
     content: {
-      type: 'string',
+      type: 'text',
       required: true
     }
 

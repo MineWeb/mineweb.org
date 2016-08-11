@@ -34,7 +34,8 @@ module.exports = {
 		type: {
 			type: 'string',
 			required: true,
-			in: ['VALIDATION', 'FORGOT']
+			in: ['VALIDATION', 'FORGOT'],
+      size: 10
 		},
 
 		usedAt: {

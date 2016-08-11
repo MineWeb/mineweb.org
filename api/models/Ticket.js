@@ -33,7 +33,10 @@ module.exports = {
 
     title: {
       type: 'string',
-      required: true
+      required: true,
+      min: 5,
+      max: 20,
+      size: 20
     },
 
     category: {

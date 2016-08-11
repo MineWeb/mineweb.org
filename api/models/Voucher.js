@@ -18,7 +18,8 @@ module.exports = {
 
     code: {
       type: 'string',
-      required: true
+      required: true,
+      size: 10
     },
 
     amount: {
@@ -28,7 +29,8 @@ module.exports = {
 
     itemType: {
       type: 'string',
-      in: ['LICENSE', 'HOSTING']
+      in: ['LICENSE', 'HOSTING'],
+      size: 7
     },
 
     itemId: {

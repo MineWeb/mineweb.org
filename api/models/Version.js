@@ -26,7 +26,8 @@ module.exports = {
     type: {
       type: 'string',
       in: ['CHOICE', 'FORCED'],
-      defaultsTo: 'CHOICE'
+      defaultsTo: 'CHOICE',
+      size: 6
     },
 
     visible: {
@@ -37,7 +38,8 @@ module.exports = {
     state: {
       type: 'string',
       in: ['STAGING', 'DEVELOPMENT', 'SNAPSHOT', 'RELEASE'],
-      defaultsTo: 'DEVELOPMENT'
+      defaultsTo: 'DEVELOPMENT',
+      size: 11
     },
 
     releaseDate: {
