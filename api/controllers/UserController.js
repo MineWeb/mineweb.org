@@ -325,8 +325,7 @@ module.exports = {
 							MailService.send('confirm_email', {
 								url: RouteService.getBaseUrl() + '/user/confirm-email/' + token.token,
 								username: user.username,
-								ip: user.ip,
-								request: request
+								ip: user.ip
 							}, request.__('Confirmation de votre email'), user.email);
 
 
@@ -463,8 +462,7 @@ module.exports = {
 				MailService.send('reset_password', {
 					url: RouteService.getBaseUrl() + '/user/reset-password/' + token.token,
 					username: user.username,
-					ip: user.ip,
-					request: request
+					ip: user.ip
 				}, request.__('Rénitialisation de votre mot de passe'), user.email);
 
 
