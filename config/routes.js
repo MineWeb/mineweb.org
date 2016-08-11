@@ -77,7 +77,21 @@ module.exports.routes = {
     },
 
     'post /user/login': 'UserController.login',
-    'get /user/confirm-email/:token': 'UserController.confirmEmail'
+    'get /user/confirm-email/:token': 'UserController.confirmEmail',
+    'get /user/reset-password/:token': {
+      view: 'user/reset_password',
+      locals: {
+        title: "Rénitiliser mon mot de passe"
+      }
+    },
+    'post /user/reset-password': 'UserController.resetPassword',
+    'get /user/lost-password': {
+      view: 'user/lost_password',
+      locals: {
+        title: "J'ai perdu mon mot de passe"
+      }
+    },
+    'post /user/lost-password': 'UserController.lostPassword',
 
   /***************************************************************************
   *                                                                          *

@@ -35,7 +35,7 @@ function initForms() {
 
     // On récupère les données
       var inputs = (window.FormData) ? new FormData(form[0]) : null
-      var captcha = (grecaptcha !== undefined)
+      var captcha = (typeof grecaptcha !== 'undefined')
 
 
     // On effectue la requête

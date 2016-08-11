@@ -25,12 +25,6 @@ module.exports = {
        password: 'mineweb42', //optional
        database: 'mineweb' //optional
      },
-   },
-
-   config: {
-     orm: {
-       _hookTimeout: 40000
-     }
    }
 
 };

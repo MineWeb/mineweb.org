@@ -21,7 +21,7 @@ module.exports = {
 			return response.json({
 				status: false,
 				msg: request.__("Vous êtes déjà connecté !"),
-				inputs: inputs
+				inputs: {}
 			})
 		}
 
@@ -188,7 +188,7 @@ module.exports = {
 			return response.json({
 				status: false,
 				msg: request.__("Vous êtes déjà connecté !"),
-				inputs: inputs
+				inputs: {}
 			})
 		}
 
@@ -218,6 +218,17 @@ module.exports = {
 					msg: request.__("Tous les champs ne sont pas remplis."),
 					inputs: inputs
 				})
+		}
+
+		// Vérifier que les mots de passes sont identiques
+		if (request.body.password !== request.body.password_confirmation) {
+			return response.json({
+				status: false,
+				msg: request.__("Les mots de passes ne sont pas identiques !"),
+				inputs: {
+					password_confirmation: request.__("Le mot de passe doit être identique à celui fourni ci-dessus.")
+				}
+			})
 		}
 
 		// Vérifier le captcha
@@ -287,17 +298,6 @@ module.exports = {
 						})
 					}
 
-					// Vérifier que les mots de passes sont identiques
-					if (request.body.password !== request.body.password_confirmation) {
-						return response.json({
-							status: false,
-							msg: request.__("Les mots de passes ne sont pas identiques !"),
-							inputs: {
-								password_confirmation: request.__("Le mot de passe doit être identique à celui fourni ci-dessus.")
-							}
-						})
-					}
-
 					// Sauvegarde de l'user
 					User.create({username: request.body.username, password: request.body.password, email: request.body.email, lang: request.acceptedLanguages[0], ip: request.ip}).exec(function (err, user) {
 
@@ -352,7 +352,7 @@ module.exports = {
 		@params Token
 	*/
 
-	confirmEmail: function(request, response) {
+	confirmEmail: function (request, response) {
 
 		// On récupère le token de validation
 		if (request.param('token') === undefined) {
@@ -386,6 +386,184 @@ module.exports = {
 
 
 			})
+
+		})
+
+	},
+
+	/*
+		Action pour envoyer un mail avec un token de rénitialisation de mot de passe
+		Doit être call en AJAX
+		Data: [email]
+	*/
+
+	lostPassword: function (request, response) {
+		// On vérifie qu'il ne soit pas déjà connecté
+		if(request.session.authenticated !== undefined && request.session.authenticated === true) {
+			return response.json({
+				status: false,
+				msg: request.__("Vous êtes déjà connecté !"),
+				inputs: {}
+			})
+		}
+
+		// On vérifie que les champs ne soient pas vides
+		if (request.body.email === undefined || request.body.email.length === 0) {
+			// Il manque des champs.
+				// On envoie le json en réponse
+				return response.json({
+					status: false,
+					msg: request.__("Tous les champs ne sont pas remplis."),
+					inputs: {
+						email: request.__("Vous devez spécifier un email")
+					}
+				})
+		}
+
+		// On vérifie que l'email appartient à un utilisateur
+		User.findOne({email: request.body.email}).exec(function (err, user) {
+
+			if (err) {
+				sails.log.error(err)
+				return response.serverError()
+			}
+
+			// Si aucun utilisateur ne correspond
+			if (user === undefined) {
+				return response.json({
+					status: false,
+					msg: request.__("Aucun utilisateur ne correspond à ces informations"),
+					inputs: {
+						email: request.__("Vous devez spécifier l'email appartenant à votre compte")
+					}
+				})
+			}
+
+			// On génére le token
+			Token.create({user: user.id, type: 'FORGOT'}).exec(function (err, token) {
+
+				if (err) {
+					sails.log.error(err)
+					return response.serverError()
+				}
+
+				// Envoyer le message de succès en JSON
+				response.json({
+					status: true,
+					msg: request.__("Un email de rénitilisation vous a été envoyé ! Cliquez sur le lien contenu dans celui-ci pour suivre les étapes de rénitilisation."),
+					inputs: {}
+				})
+
+				// On envoie l'email
+				MailService.send('reset_password', { url: RouteService.getBaseUrl() + '/user/reset-password/' + token.token }, request.__('Rénitialisation de votre mot de passe'), user.email);
+
+
+			})
+
+
+		})
+
+	},
+
+	/*
+		Action pour rénitialiser son mot de passe à partir d'un token de rénitialisation envoyé par email
+		Doit être call en AJAX
+		Data: [token, password, password_confirmation]
+	*/
+
+	resetPassword: function (request, response) {
+		// On vérifie qu'il ne soit pas déjà connecté
+		if(request.session.authenticated !== undefined && request.session.authenticated === true) {
+			return response.json({
+				status: false,
+				msg: request.__("Vous êtes déjà connecté !"),
+				inputs: {}
+			})
+		}
+
+		// On vérifie que les champs ne soient pas vides
+		if (request.body.token === undefined || request.body.token.length === 0 || request.body.password === undefined || request.body.password.length === 0 || request.body.password_confirmation === undefined || request.body.password_confirmation.length === 0) {
+			// Il manque des champs.
+
+				// On gère la validation html
+				var inputs = {}
+
+				if (request.body.password === undefined || request.body.password.length === 0) {
+					inputs.password = request.__("Vous devez spécifier un mot de passe")
+				}
+				if (request.body.password_confirmation === undefined || request.body.password_confirmation.length === 0) {
+					inputs.password_confirmation = request.__("Vous devez répéter votre mot de passe")
+				}
+
+				// On envoie le json en réponse
+				return response.json({
+					status: false,
+					msg: request.__("Tous les champs ne sont pas remplis."),
+					inputs: inputs
+				})
+		}
+
+		// On vérifie que les mots de passes sont identiques
+		if (request.body.password !== request.body.password_confirmation) {
+			return response.json({
+				status: false,
+				msg: request.__("Les mots de passes ne sont pas identiques !"),
+				inputs: {
+					password_confirmation: request.__("Le mot de passe doit être identique à celui fourni ci-dessus.")
+				}
+			})
+		}
+
+		// Vérifie le token (expire au bout d'une heure)
+		Token.findOne({
+			token: request.body.token,
+			type: 'FORGOT',
+			usedAt: null,
+			usedLocation: null,
+			createdAt: {
+				'>=': (new Date(Date.now() - (60 * 60 * 1000)))
+			}
+		}).exec(function (err, token) {
+
+			if (err) {
+				sails.log.error(err)
+        return response.serverError('An error occured on token select')
+			}
+
+			// Si on ne trouve pas le token
+			if (token === undefined) {
+				return response.json({
+					status: false,
+					msg: request.__("Le token utilisé n'est pas valide ou a déjà expiré"),
+					inputs: {}
+				})
+			}
+
+			// On update le mot de passe
+			User.update({id: token.user}, {password: request.body.password}).exec(function (err, user) {
+
+				if (err) {
+					sails.log.error(err)
+	        return response.serverError('An error occured on token select')
+				}
+
+
+				// On passe le token en utilisé
+				Token.update({id: token.id}, {usedAt: (new Date()), usedLocation: request.ip}).exec(function (err, token) {
+					if (err) {
+						sails.log.error(err)
+					}
+				})
+
+				// On envoie la réponse
+				return response.json({
+					status: true,
+					msg: request.__("Vous avez bien éditer votre mot de passe ! Vous pouvez maintenant vous connecter !"),
+					inputs: {}
+				})
+
+			})
+
 
 		})
 
