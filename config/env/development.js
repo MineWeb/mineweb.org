@@ -17,6 +17,4 @@ module.exports = {
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
 
-	MAILGUN_APIKEY: "key-f9a20bc3fd43f45cd70e6dd6a6257c53",
-	MAILGUN_DOMAIN: "mineweb.org"
 };

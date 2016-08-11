@@ -89,14 +89,15 @@ module.exports = {
 			        return response.serverError()
 			      }
 
-						// on renvoie le json
-						return response.json({
-							status: false,
-							msg: request.__("Aucun utilisateur ne correspond à ces identifiants."),
-							inputs: {}
-						})
-
 					});
+
+					// on renvoie le json
+					return response.json({
+						status: false,
+						msg: request.__("Aucun utilisateur ne correspond à ces identifiants."),
+						inputs: {}
+					})
+
 
 				} else {
 
@@ -110,6 +111,27 @@ module.exports = {
 						})
 					}
 
+					// On sauvegarde la session/on le connecte, on gère le cookie de remember
+					request.session.userId = user.id
+
+					if(request.body.remember_me !== undefined && request.body.remember_me) {
+						response.cookie('remember_me', {
+							username: user.username,
+							password: user.password
+						},
+						{
+							expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 10000), // +1 week
+							signed: true
+						});
+					}
+
+					// On lui envoie un message de succès
+					response.json({
+						status: true,
+						msg: request.__("Vous vous êtes bien connecté !"),
+						inputs: {}
+					})
+
 					// On ajoute une connexion aux logs de connexions de l'utilisateur
 					Log.create({action: 'LOGIN', ip: request.ip, status: true, type: 'USER'}).exec(function (err, log) {
 
@@ -117,27 +139,6 @@ module.exports = {
 							sails.log.error(err)
 							return response.serverError()
 						}
-
-						// On sauvegarde la session/on le connecte, on gère le cookie de remember
-						request.session.userId = user.id
-
-						if(request.body.remember_me !== undefined && request.body.remember_me) {
-							response.cookie('remember_me', {
-								username: user.username,
-								password: user.password
-							},
-							{
-							  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 10000), // +1 week
-								signed: true
-							});
-						}
-
-						// On lui envoie un message de succès
-						return response.json({
-							status: true,
-							msg: request.__("Vous vous êtes bien connecté !"),
-							inputs: {}
-						})
 
 					});
 
@@ -220,9 +221,9 @@ module.exports = {
 		}
 
 		// Vérifier le captcha
-		recaptcha=new reCAPTCHA({
-			siteKey: '6LfrRCcTAAAAANoEz52nauOX9tP-p2N_ryOfivnd',
-			secretKey: '6LfrRCcTAAAAAFb1XIpRPgAkj9ya159l0Fl0zLgV'
+		recaptcha = new reCAPTCHA({
+			siteKey: sails.config.recaptcha.siteKey,
+			secretKey: sails.config.recaptcha.secretKey
 		})
 
 		recaptcha.validateRequest(request).then(function () {
@@ -313,28 +314,16 @@ module.exports = {
 								return response.serverError()
 							}
 
-							var email = {
-								from: 'MineWeb <noreply@mineweb.org>',
-								to: user.email,
-								subject: request.__('Confirmation de votre compte') + ' | MineWeb',
-								text: request.__('Vous vous êtes bien inscrit sur MineWeb.org lol, le token c sa : '+token.token)
-							};
-
-							mailgun.messages().send(email, function (err, body) {
-
-								if (err) {
-									sails.log.error(err)
-									return response.serverError()
-								}
-
-								// Envoyer le message de succès en JSON
-								return response.json({
-									status: true,
-									msg: request.__("Vous vous êtes bien inscrit ! Vous devez maintenant confirmer votre email pour pouvoir vous connecter."),
-									inputs: {}
-								})
-
+							// Envoyer le message de succès en JSON
+							response.json({
+								status: true,
+								msg: request.__("Vous vous êtes bien inscrit ! Vous devez maintenant confirmer votre email pour pouvoir vous connecter."),
+								inputs: {}
 							})
+
+							// On envoie l'email de confirmation
+							MailService.send('confirm_email', { url: RouteService.getBaseUrl() + '/user/confirm-email/' + token.token }, request.__('Confirmation de votre email'), user.email);
+
 
 						})
 

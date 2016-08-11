@@ -1,0 +1,67 @@
+doctype html
+html
+  head
+    meta(http-equiv='Content-Type', content='text/html; charset=utf-8')
+
+    title #{title}
+
+  body
+    link(href='http://fonts.googleapis.com/css?family=Roboto:400', rel='stylesheet', type='text/css')
+
+    style(type='text/css').
+      body{
+      margin:0;
+      background-color:#f1f1f1
+      }
+      .container{
+      margin-right:auto;
+      margin-left:auto;
+      padding-left:15px;
+      padding-right:15px
+      }
+      @media (min-width:544px) {
+      .container {max-width: 576px}
+      }
+      @media (min-width:768px){
+      .container{width:750px}
+      }
+      @media (min-width:992px){
+      .container{width:970px}
+      }
+      @media (min-width:1200px){
+      .container{width:1170px}
+      }
+      .bloc{
+      border-top:5px solid #4dbfd9;
+      -webkit-box-sizing:border-box;
+      box-sizing:border-box;
+      background-color:#fff;
+      box-shadow:inset 1px 1px 0 rgba(0,0,0,.1),inset 0 -1px 0 rgba(0,0,0,.07);
+      display:inline-block;
+      padding:15px;
+      margin-top:7px;
+      margin-bottom:7px;
+      width:auto
+      }
+      .bloc h2{
+      color:#262626;
+      display:inline-block;
+      font-size:20px;
+      font-family:'Roboto',sans-serif;
+      font-weight:300
+      }
+      .bloc p{
+      font-family:'Roboto',sans-serif;
+      font-weight:400
+      }
+      a:hover{
+      color:#2a6496;
+      text-decoration:underline
+      }
+
+    div(style='margin:0;background-color:#f1f1f1;')
+      div(style='margin-right:auto;margin-left:auto;padding-left:15px;padding-right:15px')
+        .bloc(style='border-top:5px solid #4dbfd9;-webkit-box-sizing:border-box;box-sizing:border-box;background-color:#fff;box-shadow:inset 1px 1px 0 rgba(0,0,0,.1),inset 0 -1px 0 rgba(0,0,0,.07);display:inline-block;padding:15px;margin-top:7px;margin-bottom:7px;width:auto')
+          h2(style="color:#262626;display:inline-block;font-size:20px;font-family:'Roboto',sans-serif;font-weight:300") #{title}
+          p(style="font-family:'Roboto',sans-serif;font-weight:400")
+            block message

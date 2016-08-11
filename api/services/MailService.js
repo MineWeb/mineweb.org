@@ -5,8 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Services
  */
 
-var mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_APIKEY, domain: process.env.MAILGUN_DOMAIN});
+var mailgun = require('mailgun-js')({apiKey: sails.config.mailgun.apiKey, domain: sails.config.mailgun.domain});
 var pug			= require('pug');
+var path    = require('path');
 
 module.exports = {
 
@@ -19,20 +20,22 @@ module.exports = {
    *   The first name of the recipient.
    */
   send: function (template, vars, title, target) {
-		var html = pug.renderFile('./templates/' + template + '.pug', { globals: vars });
+    var template_path = path.join(__dirname, '../../views/emails/')
+    vars.title = title
+		var html = pug.renderFile(template_path + template + '.pug', vars)
 
 		var data = {
 			from: 'Mineweb <no-reply@mineweb.org>',
 			to: target,
 			subject: title,
-			text: html
-		};
+			html: html
+		}
 
 		mailgun.messages().send(data, function (error, body) {
 			if (error)
 				sails.log.error(error);
 			else
-				sails.log.info("Successfuly sended a mail from template " + template + " to " + target);
+				sails.log.info("Successfuly sended a mail from template " + template + " to " + target)
 		});
 	}
 };
