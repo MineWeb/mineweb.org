@@ -7,6 +7,7 @@
 
 var reCAPTCHA = require('recaptcha2')
 var mailgun = require('mailgun-js')({apiKey: 'key-f9a20bc3fd43f45cd70e6dd6a6257c53', domain: 'mineweb.org'});
+var moment = require('moment')
 
 module.exports = {
 
@@ -583,9 +584,142 @@ module.exports = {
 	*/
 
 	profile: function (request, response) {
+		response.locals.title = request.__("Profil")
 
+		moment.locale(request.acceptedLanguages[0])
+		response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
 
 		response.render('./user/profile')
+	},
+
+	/*
+		Action modifiant l'email de l'utilisateur
+		Data: [email]
+		Authentification requise
+	*/
+
+	editEmail: function (request, response) {
+		// Vérifier que tous les champs soient remplis
+		if (request.body.email === undefined || request.body.email.length === 0) {
+			// Il manque des champs.
+
+				// On envoie le json en réponse
+				return response.json({
+					status: false,
+					msg: request.__("Tous les champs ne sont pas remplis."),
+					inputs: {
+						email: request.__("Vous devez spécifier un email")
+					}
+				})
+		}
+
+		// Vérifier que l'email soit valide
+		if (!(new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/).test(request.body.email))) {
+			return response.json({
+				status: false,
+				msg: request.__("Vous devez choisir un email valide !"),
+				inputs: {
+					email: request.__("Cet email n'a pas un format valide.")
+				}
+			})
+		}
+
+		// On vérifie que l'email n'est pas déjà utilisé
+		User.count({email: request.body.email}).exec(function (err, count) {
+
+			if (err) {
+      	sails.log.error(err)
+        return response.serverError()
+      }
+
+			// L'email est déjà utilisé
+			if (count > 0) {
+				return response.json({
+					status: false,
+					msg: request.__("L'email est déjà utilisé par un autre utilisateur !"),
+					inputs: {
+						email: request.__("Vous devez choisir un email différent")
+					}
+				})
+			}
+
+			// On modifie l'email
+			User.update({id: response.locals.user.id}, {email: request.body.email}).exec(function (err, user) {
+
+				if (err) {
+	      	sails.log.error(err)
+	        return response.serverError()
+	      }
+
+				// On envoie une réponse à l'utilisateur
+				return response.json({
+					status: true,
+					msg: request.__("Votre email a bien été modifié !"),
+					inputs: {}
+				})
+
+			})
+
+		})
+
+	},
+
+	/*
+		Action modifiant le mot de passe de l'utilisateur
+		Data: [password, password_confirmation]
+		Authentification requise
+	*/
+
+	editPassword: function (request, response) {
+		// Vérifier que tous les champs soient remplis
+		if (request.body.password === undefined || request.body.password.length === 0 || request.body.password_confirmation === undefined || request.body.password_confirmation.length === 0) {
+			// Il manque des champs.
+				var inputs = {}
+
+				if (request.body.password === undefined || request.body.password.length === 0) {
+					inputs.password = request.__("Vous devez spécifier un mot de passe")
+				}
+				if (request.body.password_confirmation === undefined || request.body.password_confirmation.length === 0) {
+					inputs.password_confirmation = request.__("Vous devez confirmer votre mot de passe")
+				}
+
+				// On envoie le json en réponse
+				return response.json({
+					status: false,
+					msg: request.__("Tous les champs ne sont pas remplis."),
+					inputs: inputs
+				})
+		}
+
+		// Vérifier que les mots de passes sont identiques
+		if (request.body.password !== request.body.password_confirmation) {
+			return response.json({
+				status: false,
+				msg: request.__("Les mots de passes ne sont pas identiques !"),
+				inputs: {
+					password_confirmation: request.__("Le mot de passe doit être identique à celui fourni ci-dessus.")
+				}
+			})
+		}
+
+		// On modifie le password
+		User.update({id: response.locals.user.id}, {password: request.body.password}).exec(function (err, user) {
+
+			if (err) {
+				sails.log.error(err)
+				return response.serverError()
+			}
+
+			// On envoie une réponse à l'utilisateur
+			return response.json({
+				status: true,
+				msg: request.__("Votre mot de passe a bien été modifié !"),
+				inputs: {}
+			})
+
+		})
+
+
 	}
 
 };

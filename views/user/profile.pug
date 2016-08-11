@@ -1,1 +1,51 @@
-| Hello world !
+extends ../layouts/layout
+
+block content
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
+        .col-md-12
+          h3.heading #{__('Bonjour')}
+            span.accent &nbsp;#{user.username}
+            | ,
+            p #{__('Vous êtes inscrit depuis le')} #{user.createdAt}
+
+          h4 #{__('Vos informations')}
+            span.accent &nbsp;#{__('personnelles')}
+
+      .row
+        .col-md-6
+
+          form(method="post", action="/user/edit-email", data-ajax, data-custom-callback='emailUpdated')
+            .form-group
+              label #{__("Adresse email actuelle")}
+              input.form-control.disabled#current_email(type='email', disabled, value=user.email)
+            .form-group
+              label #{__("Vous souhaitez changer d'email ?")}
+              input.form-control(type='email', name="email", placeholder=__("Entrez ici votre nouvelle adresse email"))
+
+            .form-group.text-center
+              button.btn.btn-outline-success(type='submit') #{__("Changer mon adresse email")}
+
+          hr.hidden-md-up
+
+        .col-md-6.left-vertical-separator
+
+          form(method="post", action="/user/edit-password", data-ajax)
+            .form-group
+              label #{__('Mot de passe')}
+              input.form-control(type='password', name="password")
+              small.form-text.text-muted #{__("Choississez un mot de passe fort et unique pour que personne ne puisse accéder à votre compte.")}
+            .form-group
+              label #{__('Confirmation du mot de passe')}
+              input.form-control(type='password', name="password_confirmation")
+              small.form-text.text-muted #{__("Répéter votre mot de passe")}
+
+            .form-group.text-center
+              button.btn.btn-outline-success(type='submit') #{__("Changer mon mot de passe")}
+
+block custom
+  script(type='text/javascript').
+    function emailUpdated(data, response) {
+      $('#current_email').val($('input[name="email"]').val())
+    }

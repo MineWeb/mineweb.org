@@ -37,7 +37,9 @@ module.exports.policies = {
   ***************************************************************************/
 
   UserController: {
-    profile: ['isAuthenticated', 'sessionAuth']
+    profile: ['isAuthenticated', 'sessionAuth'],
+    editEmail: ['isAuthenticated', 'sessionAuth'],
+    editPassword: ['isAuthenticated', 'sessionAuth']
   }
 
 	// RabbitController: {
