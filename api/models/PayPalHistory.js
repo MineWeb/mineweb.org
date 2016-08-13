@@ -48,12 +48,8 @@ module.exports = {
       required: true
     },
 
-    license: {
-      model: 'License'
-    },
-
-    hosting: {
-      model: 'Hosting'
+    purchase: {
+      model: 'Purchase'
     },
 
     state: {

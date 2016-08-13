@@ -24,13 +24,22 @@ module.exports = {
     type: {
 			type: 'string',
 			required: true,
-			in: ['PLUGIN', 'THEME'],
-      size: 6
+			in: ['PLUGIN', 'THEME', 'LICENSE', 'HOSTING'],
+      size: 7
 		},
 
-    item_id: {
+    itemId: {
       type: 'integer',
       required: true
+    },
+
+    paymentId: {
+      type: 'integer'
+    },
+
+    paymentType: {
+      type: 'string',
+      in: ['PAYPAL', 'DEDIPASS']
     }
 
   }

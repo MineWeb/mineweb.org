@@ -28,7 +28,8 @@ module.exports = {
 			unique: true,
       defaultsTo: function () {
 				return uuid.v4().substr(4, 24);
-			}
+			},
+      size: 19
 		},
 
 		state: {
@@ -48,6 +49,11 @@ module.exports = {
 
 		suspended: {
 			type: 'text'
-		}
+		},
+
+    purchase: {
+      model: 'Purchase'
+    }
+    
   }
 };

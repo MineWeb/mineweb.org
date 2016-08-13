@@ -67,6 +67,11 @@ module.exports = {
 		suspended: {
 			type: 'text',
 			defaultsTo: null
-		}
+		},
+
+    purchase: {
+      model: 'Purchase'
+    }
+    
   }
 };
