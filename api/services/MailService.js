@@ -9,6 +9,7 @@ var mailgun = require('mailgun-js')({apiKey: sails.config.mailgun.apiKey, domain
 var pug			= require('pug');
 var path    = require('path');
 
+
 module.exports = {
 
   /**
@@ -22,6 +23,7 @@ module.exports = {
   send: function (template, vars, title, target) {
     var template_path = path.join(__dirname, '../../views/emails/')
     vars.title = title
+    vars.sails = sails
 		var html = pug.renderFile(template_path + template + '.pug', vars)
 
 		var data = {

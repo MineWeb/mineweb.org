@@ -10,7 +10,7 @@ var uuid = require('node-uuid');
 module.exports = {
 
   attributes: {
-		
+
 		id : {
 			type: 'integer',
 			unique: true,
@@ -26,9 +26,10 @@ module.exports = {
 		key: {
 			type: 'string',
 			unique: true,
-      defaultsTo: function () { 
+      defaultsTo: function () {
 				return uuid.v4().substr(4, 24);
-			}
+			},
+      size: 19
 		},
 
 		state: {
@@ -47,7 +48,12 @@ module.exports = {
 		},
 
 		suspended: {
-			type: 'string'
-		}
+			type: 'text'
+		},
+
+    purchase: {
+      model: 'Purchase'
+    }
+    
   }
 };

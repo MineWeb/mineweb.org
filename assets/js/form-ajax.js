@@ -53,11 +53,13 @@ function initForms() {
             if (form.attr('data-success-msg') === undefined || form.attr('data-success-msg') == "true") {
               msg.html('<div class="alert alert-success"><b>'+locals.SUCCESS_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             }
-            if (form.attr('data-callback-function') !== undefined) {
-              window[form.attr('data-callback-function')](inputs, json)
+            if (form.attr('data-custom-callback') !== undefined) {
+              window[form.attr('data-custom-callback')](inputs, json)
             }
-            if (form.attr('data-redirect-url') !== undefined) {
+            if (form.attr('data-redirect-url') !== undefined && QueryString.from === undefined) {
               document.location.href=form.attr('data-redirect-url')+'?no-cache='+ (new Date()).getTime()
+            } else if (QueryString.from !== undefined) {
+              document.location.href=QueryString.from+'?no-cache='+ (new Date()).getTime()
             }
 
             if(captcha) {

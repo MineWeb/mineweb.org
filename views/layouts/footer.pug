@@ -3,17 +3,18 @@ footer.footer
     .container
       .row
         .col-md-7
-          p 2014 - #{(new Date).getFullYear()} - #{__('Tous droits réservés. Site développé avec par')}
+          p 2014 - #{(new Date).getFullYear()} - #{__('Tous droits réservés.')}
+            br
+            |  #{__('Developpé avec')}&nbsp;
+            span.pe-7s-like
+            | #{__('par')}
             a(href='http://eywek.fr')  Eywek
             |  #{__('et')}
-            a(href='http://thisismac.fr')  Mac'
-            |  #{__('à l\'aide de')}
-            a(href='http://nodejs.org')  NodeJS
-            |  .
-            br
-            | #{__('En partenariat avec')}&nbsp;&nbsp;
-            img(src='http://mineweb.org/img/revolta-logo.png')
+            a(href='https://github.com/vmarchaud')  ThisIsMac
+            |  #{__('en utilisant')}
+            a(href='http://sailsjs.org/')  Sails
         .col-md-5
         p.credit.pull-right
-          | #{__('Template by')}
-          a.external(href='http://bootstrapious.com/landing-pages')  Bootstrapious
+          | #{__('En partenariat avec')}&nbsp;&nbsp;
+          a(href='http://revolta-hosting.fr')
+            img(src='/img/revolta-logo.png')

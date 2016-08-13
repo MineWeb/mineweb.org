@@ -25,6 +25,8 @@ module.exports = {
        password: '', //optional
        database: 'test' //optional
      },
-   }
+   },
+
+   hookTimeout: 40000
 
 };

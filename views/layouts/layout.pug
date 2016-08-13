@@ -7,7 +7,7 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
         include ./header
 
       block content
-      
+
     block footer
       include ./footer
 
@@ -16,11 +16,10 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
     script(src='/js/tether.min.js')
     script(src='/js/bootstrap.min.js')
-    script(src='/js/jquery.cookie.js')
-    script(src='/js/ekko-lightbox.js')
     script(src='/js/jquery.simple-text-rotator.min.js')
-    script(src='/js/jquery.scrollTo.min.js')
-    script(src='/js/owl.carousel.min.js')
+    script(src='/js/functions.js')
+    script(src='/js/moment-with-locales.js')
+    script(src='/js/functions.js')
     script(src='/js/front.js')
 
     script(type='text/javascript').
@@ -33,3 +32,5 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
       }
 
     script(src='/js/form-ajax.js')
+
+  block custom

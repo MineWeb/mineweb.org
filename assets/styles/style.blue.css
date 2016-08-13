@@ -888,13 +888,17 @@ ul.dropdown-menu li a:hover {
   z-index: 1035;
 }
 .footer__copyright {
-  background: #37123c;
+  background: #4fb0c6;
   color: #ccc;
   padding: 20px 0;
   font-size: 14px;
   line-height: 28px;
 }
+.footer__copyright a {
+	color: #2065a1;
+}
 .footer__copyright p {
+	color: white;
   margin: 0;
 }
 @media (max-width: 991px) {

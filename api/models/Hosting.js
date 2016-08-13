@@ -28,7 +28,8 @@ module.exports = {
 			unique: true,
       defaultsTo: function () {
 				return uuid.v4().substr(4, 24);
-			}
+			},
+      size: 19
 		},
 
 		state: {
@@ -40,7 +41,8 @@ module.exports = {
 			type: 'string',
 			required: true,
       defaultsTo: 'SUBDOMAIN',
-			in: ['SUBDOMAIN', 'DOMAIN']
+			in: ['SUBDOMAIN', 'DOMAIN'],
+      size: 9
 		},
 
 		host: {
@@ -63,8 +65,13 @@ module.exports = {
 		},
 
 		suspended: {
-			type: 'string',
+			type: 'text',
 			defaultsTo: null
-		}
+		},
+
+    purchase: {
+      model: 'Purchase'
+    }
+    
   }
 };

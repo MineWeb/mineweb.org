@@ -21,12 +21,9 @@ module.exports = {
 			type: 'string',
 			unique: true,
 			required: true,
-		},
-
-		name: {
-			type: 'string',
-			unique: true,
-			required: true
+      min: 5,
+      max: 20,
+      size: 20
 		},
 
 		author: {
@@ -50,7 +47,7 @@ module.exports = {
 			required: true
 		},
 
-		dependencies: {
+		supported: {
 			type: 'json',
 			defaultsTo: { 'CMS': "1.0.0" }
 		},
@@ -61,14 +58,13 @@ module.exports = {
 		},
 
 		downloads: {
-			type: 'number',
+			type: 'integer',
 			defaultTo: 0
 		},
 
 		price: {
-			type: 'number',
-			defaultsTo: 0
+			type: 'float',
+			defaultsTo: 0.0
 		}
   }
 };
-

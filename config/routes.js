@@ -92,6 +92,10 @@ module.exports.routes = {
       }
     },
     'post /user/lost-password': 'UserController.lostPassword',
+    'get /user/profile': 'UserController.profile',
+
+    'post /user/edit-email': 'UserController.editEmail',
+    'post /user/edit-password': 'UserController.editPassword',
 
 		 /*
     	MARKETPLACE
