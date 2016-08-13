@@ -27,7 +27,18 @@ module.exports = {
       required: true
     },
 
+    rate: {
+      type: 'string',
+      size: 30,
+      required: true
+    },
+
     payout: {
+      type: 'float',
+      required: true
+    },
+
+    amount: {
       type: 'float',
       required: true
     },

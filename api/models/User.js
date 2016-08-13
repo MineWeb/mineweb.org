@@ -89,6 +89,16 @@ module.exports = {
 			via: 'author'
 		},
 
+    paypalPayments: {
+			collection: 'PayPalHistory',
+			via: 'user'
+		},
+
+		dedipassPayments: {
+			collection: 'DedipassHistory',
+			via: 'user'
+		},
+
 		toJSON: function() {
 			var user = this.toObject();
 			delete user.password;

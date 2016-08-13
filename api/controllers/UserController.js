@@ -589,7 +589,7 @@ module.exports = {
 		moment.locale(request.acceptedLanguages[0])
 
 		// On cherche l'utilisateur avec plus d'infos
-		User.findOne({id: request.session.userId}).populate(['hostings', 'licenses']).exec(function (err, user) {
+		User.findOne({id: request.session.userId}).populate(['hostings', 'licenses', 'paypalPayments', 'dedipassPayments']).exec(function (err, user) {
 
 			response.locals.user = user
 			response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')

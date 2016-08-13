@@ -174,6 +174,63 @@ block content
                  ====== Liste des transactions =====
                  ===================================
 
+              h4 #{__('Vos transactions')}
+                span.accent &nbsp;#{__('PayPal')}
+
+              if user.paypalPayments !== undefined && user.paypalPayments.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('ID de la transaction')}
+                        th #{__('Montant de la transaction')}
+                        th #{__('Email PayPal')}
+                        th #{__('Date du paiement')}
+                        th #{__('Statut')}
+                    tbody
+                      each payment, index in user.paypalPayments
+                        tr
+                          td
+                            a(href='https://www.paypal.com/fr/cgi-bin/webscr?cmd=_view-a-trans&id='+payment.paymentId, target='_blank') #{payment.paymentId}
+                          td #{payment.paymentAmount} €
+                          td #{payment.buyerEmail}
+                          td.moment-date(data-format='Le {L} à {LT}') #{payment.paymentDate}
+                          td
+                            if payment.state === 'COMPLETED'
+                              span.tag.tag-success #{__('Complété')}
+                            else if payment.state === 'SUSPENDED'
+                              span.tag.tag-warning #{__('Suspendu')}
+                            else
+                              span.tag.tag-danger #{__('Remboursé')}
+              else
+                div.alert.alert-warning !{__("Vous n'avez pas encore effectué de transaction PayPal sur votre compte.")}
+
+              hr
+
+              h4 #{__('Vos transactions')}
+                span.accent &nbsp;#{__('Dédipass')}
+
+              if user.dedipassPayments !== undefined && user.dedipassPayments.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('ID de la transaction')}
+                        th #{__('Montant de la transaction')}
+                        th #{__('Code utilisé')}
+                        th #{__('Palier utilisé')}
+                        th #{__('Date du paiement')}
+                    tbody
+                      each payment, index in user.dedipassPayments
+                        tr
+                          td #{payment.id}
+                          td #{payment.amount} €
+                          td #{payment.code}
+                          td #{payment.rate}
+                          td.moment-date(data-format='Le {L} à {LT}') #{payment.createdAt}
+              else
+                div.alert.alert-warning !{__("Vous n'avez pas encore effectué de transaction Dédipass sur votre compte.")}
+
 block custom
   script(type='text/javascript').
     function emailUpdated(data, response) {
