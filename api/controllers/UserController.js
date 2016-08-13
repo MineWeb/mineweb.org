@@ -587,9 +587,17 @@ module.exports = {
 		response.locals.title = request.__("Profil")
 
 		moment.locale(request.acceptedLanguages[0])
-		response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
 
-		response.render('./user/profile')
+		// On cherche l'utilisateur avec plus d'infos
+		User.findOne({id: request.session.userId}).populate(['hostings', 'licenses']).exec(function (err, user) {
+
+			response.locals.user = user
+			response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
+
+			response.render('./user/profile')
+
+		})
+
 	},
 
 	/*

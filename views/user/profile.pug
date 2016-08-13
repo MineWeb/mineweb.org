@@ -10,39 +10,169 @@ block content
             | ,
             p #{__('Vous êtes inscrit depuis le')} #{user.createdAt}
 
-          h4 #{__('Vos informations')}
-            span.accent &nbsp;#{__('personnelles')}
+          ul.nav.nav-tabs(role="tablist")
+            li.nav-item
+              a.nav-link.active(data-toggle="tab" href="#infos" role="tab") #{__('Vos informations')} #{__('personnelles')}
+            li.nav-item
+              a.nav-link(data-toggle="tab" href="#licenses" role="tab") #{__('Vos licences')}
+            li.nav-item
+              a.nav-link(data-toggle="tab" href="#hostings" role="tab") #{__('Vos hébergements')}
+            li.nav-item
+              a.nav-link(data-toggle="tab" href="#transactions" role="tab") #{__('Vos transactions')}
 
-      .row
-        .col-md-6
 
-          form(method="post", action="/user/edit-email", data-ajax, data-custom-callback='emailUpdated')
-            .form-group
-              label #{__("Adresse email actuelle")}
-              input.form-control.disabled#current_email(type='email', disabled, value=user.email)
-            .form-group
-              label #{__("Vous souhaitez changer d'email ?")}
-              input.form-control(type='email', name="email", placeholder=__("Entrez ici votre nouvelle adresse email"))
 
-            .form-group.text-center
-              button.btn.btn-outline-success(type='submit') #{__("Changer mon adresse email")}
+          div.tab-content
+            div.tab-pane.fade.in.active(id="infos" role="tabpanel")
 
-          hr.hidden-md-up
+              // ===================================
+                 ==== Informations personnelles ====
+                 ===================================
 
-        .col-md-6.left-vertical-separator
+              h4 #{__('Vos informations')}
+                span.accent &nbsp;#{__('personnelles')}
 
-          form(method="post", action="/user/edit-password", data-ajax)
-            .form-group
-              label #{__('Mot de passe')}
-              input.form-control(type='password', name="password")
-              small.form-text.text-muted #{__("Choississez un mot de passe fort et unique pour que personne ne puisse accéder à votre compte.")}
-            .form-group
-              label #{__('Confirmation du mot de passe')}
-              input.form-control(type='password', name="password_confirmation")
-              small.form-text.text-muted #{__("Répéter votre mot de passe")}
+              .row
+                .col-md-6
 
-            .form-group.text-center
-              button.btn.btn-outline-success(type='submit') #{__("Changer mon mot de passe")}
+                   form(method="post", action="/user/edit-email", data-ajax, data-custom-callback='emailUpdated')
+                     .form-group
+                       label #{__("Adresse email actuelle")}
+                       input.form-control.disabled#current_email(type='email', disabled, value=user.email)
+                     .form-group
+                       label #{__("Vous souhaitez changer d'email ?")}
+                       input.form-control(type='email', name="email", placeholder=__("Entrez ici votre nouvelle adresse email"))
+
+                     .form-group.text-center
+                       button.btn.btn-outline-success(type='submit') #{__("Changer mon adresse email")}
+
+                   hr.hidden-md-up
+
+                .col-md-6.left-vertical-separator
+
+                   form(method="post", action="/user/edit-password", data-ajax)
+                     .form-group
+                       label #{__('Mot de passe')}
+                       input.form-control(type='password', name="password")
+                       small.form-text.text-muted #{__("Choississez un mot de passe fort et unique pour que personne ne puisse accéder à votre compte.")}
+                     .form-group
+                       label #{__('Confirmation du mot de passe')}
+                       input.form-control(type='password', name="password_confirmation")
+                       small.form-text.text-muted #{__("Répéter votre mot de passe")}
+
+                     .form-group.text-center
+                       button.btn.btn-outline-success(type='submit') #{__("Changer mon mot de passe")}
+
+            div.tab-pane.fade(id="licenses" role="tabpanel")
+
+              // ===================================
+                 ======== Liste des licenses =======
+                 ===================================
+
+              div.alert.alert-info
+                b #{__('Hébergeur compatible :')}
+                | &nbsp;!{__("L'hébergeur <a href=\"http://revolta-hosting.fr\" target=\"_blank\">Revolta-Hosting</a> est 100% <b>compatible</b> avec notre CMS ! Vous pouvez d'ailleurs utilisez le code de promotion <i>MINEWEB</i> pour obtenir 20% de réduction sur l'offre <b>Start</b> de leur hébergement mutualisé.")}
+
+              if user.licenses !== undefined && user.licenses.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('Site')}
+                        th #{__("Clé d'activation")}
+                        th #{__('Statut')}
+                        th #{__("Date d'achat")}
+                        th #{__('Actions')}
+                    tbody
+                      each license, index in user.licenses
+                        tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
+                          td
+                            a(href=license.host, target='_blank')
+                              | #{license.host}
+                          td #{license.key}
+                          td
+                            if license.state
+                              span.tag.tag-success #{__('Activée')}
+                            else
+                              span.tag.tag-danger #{__('Désactivée')}
+                          td.moment-date(data-format='Le {L} à {LT}') #{license.createdAt}
+                          td
+                            div.btn-group-vertical
+                              if license.state
+                                button.btn.btn-danger.disable-license(data-license-id=license.id) #{__('Désactiver')}
+                              else if !license.state && license.suspended === null
+                                button.btn.btn-success.enable-license(data-license-id=license.id) #{__('Activer')}
+                              else
+                                button.btn.btn-success.disabled(disabled) #{__('Activer')}
+                              button.btn.btn-info.edit-host-license(data-license-id=license.id) #{__("Modifier l'URL")}
+                              a.btn.btn-success(href='/license/download/'+license.id) #{__('Télécharger')}
+                          if license.suspended !== null
+                            tr(style="position: absolute;margin-top: -112px;")
+                              td(style='border-top: none;')
+                                h3.text-danger(style="opacity:1;")
+                                  | #{__('Licence désactivée pour :')} #{license.suspended}
+              else
+                div.alert.alert-danger !{__('Vous ne disposez pas encore de license ! Vous pouvez dès maintenant en achetez une sur <a href="/download">cette page</a>.')}
+
+            div.tab-pane.fade(id="hostings" role="tabpanel")
+
+              // ===================================
+                 ====== Liste des hébergements =====
+                 ===================================
+
+
+              if user.hostings !== undefined && user.hostings.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('Site')}
+                        th #{__("Clé d'activation")}
+                        th #{__('Statut')}
+                        th #{__("Date d'expiration")}
+                        th #{__("Date d'achat")}
+                        th #{__('Actions')}
+                    tbody
+                      each hosting, index in user.hostings
+                        tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
+                          td
+                            if hosting.host_type === 'SUBDOMAIN'
+                               a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
+                                 | http://#{hosting.host}.craftwb.fr
+                            else
+                              a(href='http://'+hosting.host, target='_blank')
+                                | http://#{hosting.host}
+                          td #{hosting.key}
+                          td
+                            if hosting.state
+                              span.tag.tag-success #{__('Activé')}
+                            else
+                              span.tag.tag-danger #{__('Désactivé')}
+                          td
+                            // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
+                            if (new Date(hosting.endDate)).getTime() < (new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)))
+                              span.text-danger.moment-date(data-format='Le {L} à {LT}') #{hosting.endDate}
+                            else
+                              span.moment-date(data-format='Le {L} à {LT}') #{hosting.endDate}
+                          td.moment-date(data-format='Le {L} à {LT}') #{hosting.createdAt}
+                          td
+                            div.btn-group-vertical
+                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id) #{__("Modifier le nom de domaine")}
+                              a(href='/hosting/renew/'+hosting.id).btn.btn-success #{__('Renouveler')}
+                        if hosting.suspended !== null
+                          tr(style="position: absolute;margin-top: -112px;")
+                            td(style='border-top: none;')
+                              h3.text-danger(style="opacity:1;")
+                                | #{__('Hébergement désactivé pour :')} #{hosting.suspended}
+              else
+                div.alert.alert-danger !{__('Vous ne disposez pas encore d\'hébergement ! Vous pouvez dès maintenant en louer un sur <a href="/download">cette page</a>.')}
+
+
+            div.tab-pane.fade(id="transactions" role="tabpanel")
+
+              // ===================================
+                 ====== Liste des transactions =====
+                 ===================================
 
 block custom
   script(type='text/javascript').

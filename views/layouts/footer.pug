@@ -5,7 +5,9 @@ footer.footer
         .col-md-7
           p 2014 - #{(new Date).getFullYear()} - #{__('Tous droits réservés.')}
             br
-            |  #{__('Developpé avec ♥ par')}
+            |  #{__('Developpé avec')}&nbsp;
+            span.pe-7s-like
+            | #{__('par')}
             a(href='http://eywek.fr')  Eywek
             |  #{__('et')}
             a(href='https://github.com/vmarchaud')  ThisIsMac
@@ -14,4 +16,5 @@ footer.footer
         .col-md-5
         p.credit.pull-right
           | #{__('En partenariat avec')}&nbsp;&nbsp;
-          img(src='http://mineweb.org/img/revolta-logo.png')
+          a(href='http://revolta-hosting.fr')
+            img(src='/img/revolta-logo.png')
