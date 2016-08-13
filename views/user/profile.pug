@@ -215,7 +215,6 @@ block content
                   table.table
                     thead
                       tr
-                        th #{__('ID de la transaction')}
                         th #{__('Montant de la transaction')}
                         th #{__('Code utilisé')}
                         th #{__('Palier utilisé')}
@@ -223,7 +222,6 @@ block content
                     tbody
                       each payment, index in user.dedipassPayments
                         tr
-                          td #{payment.id}
                           td #{payment.amount} €
                           td #{payment.code}
                           td #{payment.rate}

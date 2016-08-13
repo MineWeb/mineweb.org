@@ -25,6 +25,8 @@ module.exports = {
        password: 'mineweb42', //optional
        database: 'mineweb' //optional
      },
-   }
+   },
+
+   hookTimeout: 40000
 
 };
