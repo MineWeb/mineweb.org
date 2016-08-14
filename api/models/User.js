@@ -64,6 +64,11 @@ module.exports = {
       size: 5
 		},
 
+    twoFactorAuthKey: {
+      type: 'string',
+      size: 32
+    },
+
 		tokens: {
 			collection: 'Token',
 			via: 'user'

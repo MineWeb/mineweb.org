@@ -61,7 +61,11 @@ module.exports.routes = {
     'get /user/profile': 'UserController.profile',
 
     'post /user/edit-email': 'UserController.editEmail',
-    'post /user/edit-password': 'UserController.editPassword'
+    'post /user/edit-password': 'UserController.editPassword',
+
+    'get /user/two-factor-auth/disable': 'UserController.disableTwoFactorAuthentification',
+    'get /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentificationPage',
+    'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification'
 
   /***************************************************************************
   *                                                                          *

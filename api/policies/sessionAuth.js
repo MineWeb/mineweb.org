@@ -16,6 +16,16 @@ module.exports = function(req, res, next) {
   }
 
   // User is not allowed
+
+  // Si on veux du JSON (ajax)
+  if (req.wantsJSON) {
+    res.status(403);
+    return res.jsonx({
+      status: false,
+      msg: req.__("Vous n'êtes pas autorisé à accèder a cette partie du site sans être connecté.")
+    });
+  }
+
   // On le redirige vers la page de connexion, en donnant en paramètre la page d'où il vient
   return res.redirect('/login?from=' + req.path);
 };

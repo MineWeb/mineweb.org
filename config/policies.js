@@ -40,7 +40,10 @@ module.exports.policies = {
     '*': ['isAuthenticated', 'flash', 'notification'],
     profile: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     editEmail: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    disableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    enableTwoFactorAuthentificationPage: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    enableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   }
 
 	// RabbitController: {

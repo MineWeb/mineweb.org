@@ -7,6 +7,8 @@
 
 var reCAPTCHA = require('recaptcha2')
 var moment = require('moment')
+var async	= require('async')
+var twoFactor = require('two-factor')
 
 module.exports = {
 
@@ -121,7 +123,7 @@ module.exports = {
 						})
 
 						// On ajoute une connexion aux logs de connexions de l'utilisateur
-						Log.create({action: 'LOGIN', ip: request.ip, status: true, type: 'USER'}).exec(function (err, log) {
+						Log.create({action: 'LOGIN', ip: request.ip, data: {userId: user.id}, status: true, type: 'USER'}).exec(function (err, log) {
 
 							if (err) {
 								sails.log.error(err)
@@ -558,11 +560,42 @@ module.exports = {
 
 		moment.locale(request.acceptedLanguages[0])
 
-		// On cherche l'utilisateur avec plus d'infos
-		User.findOne({id: request.session.userId}).populate(['hostings', 'licenses', 'paypalPayments', 'dedipassPayments']).exec(function (err, user) {
+		async.parallel([
 
-			response.locals.user = user
+			// On cherche l'utilisateur avec plus d'infos
+			function (callback) {
+
+				User.findOne({id: request.session.userId}).populate(['hostings', 'licenses', 'paypalPayments', 'dedipassPayments']).exec(function (err, user) {
+					if (err)
+						callback(err, null)
+					else
+						callback(null, user);
+				})
+
+			},
+
+			// On cherche ses logs de connexions
+			function (callback) {
+
+				Log.find({data: '{"userId":'+request.session.userId+'}', action: 'LOGIN'}).limit(5).sort('createdAt DESC').exec(function (err, logs) {
+					if (err)
+						callback(err, null)
+					else
+						callback(null, logs);
+				})
+
+			}
+
+		], function (err, results) {
+
+			if (err) {
+				sails.log.error(err);
+				return response.serverError();
+			}
+
+			response.locals.user = results[0]
 			response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
+			response.locals.user.connectionLogs = results[1]
 
 			response.render('./user/profile')
 
@@ -674,6 +707,116 @@ module.exports = {
 
 		})
 
-	}
+	},
+
+	/*
+		Action passant la secret key de la double auth à null, redirigeant vers le profil
+	*/
+
+	disableTwoFactorAuthentification: function (request, response) {
+		// On set la key à null
+		User.update({id: response.locals.user.id}, {twoFactorAuthKey: null}).exec(function (err, user) {
+
+			if (err) {
+				sails.log.error(err)
+				return response.serverError()
+			}
+
+			// On set une notification
+			NotificationService.success(request, request.__('Vous avez désactivé la double authentification !'))
+
+			// On envoie l'utilisateur sur son profil
+			response.redirect('/user/profile')
+
+		})
+
+	},
+
+	/*
+		Action générant la secret key de la double auth, affichant le QRCode
+	*/
+
+	enableTwoFactorAuthentificationPage: function (request, response) {
+
+		// On génére la clé secrète
+		var secret = twoFactor.generate.key();
+
+		// On la met temporairement dans la session, pour la sauvegarder après
+		request.session.twoFactorAuthKey = secret
+
+		// On génère le QRCode
+		var code = twoFactor.generate.qrcode(secret, 'MineWeb.org - '+response.locals.user.username, {
+    	type: 'svg',
+		  sync: true
+		});
+
+		// On rend la view
+		response.view('user/enable-two-factor-auth', {
+			title: request.__('Activer la double authentification'),
+			qrcode: code
+		})
+
+	},
+
+	/*
+		Action vérifiant le premier code de vérification, sauvegadant la clé de double auth (redirection vers le profil ensuite)
+	*/
+
+	enableTwoFactorAuthentification: function (request, response) {
+
+		// On vérifie que la double auth ne soit pas déjà config
+		if(response.locals.user.twoFactorAuthKey !== undefined && response.locals.user.twoFactorAuthKey !== null) {
+			return response.json({
+				status: false,
+				msg: request.__("Vous avez déjà la double authentification d'activée !"),
+				inputs: {}
+			})
+		}
+
+		// On vérifie que le champ est rempli
+		RequestManagerService.setRequest(request).setResponse(response).valid({
+			"Tous les champs ne sont pas remplis.": [
+				['code', "Vous devez rentrer le code de vérification"],
+			]
+		}, function () {
+
+			// On set le secret selon ce qui a été enregistré
+			var secret = request.session.twoFactorAuthKey
+
+			// On vérifie que le code est valide
+			if (!twoFactor.verify(request.body.code, secret)) {
+				return response.json({
+					status: false,
+					msg: request.__("Le code entré est invalide"),
+					inputs: {
+						email: request.__("Veuillez entrer un code de vérification valide.")
+					}
+				})
+			}
+
+			// On sauvegarde la clé dans la db
+			User.update({id: request.session.userId}, {twoFactorAuthKey: secret}).exec(function (err, user) {
+
+				if (err) {
+					sails.log.error(err)
+					return response.serverError()
+				}
+
+				// On set la notification
+				NotificationService.success(request, request.__('Vous avez bien activé la double authentification !'))
+
+				// On envoie le message de succès pour qu'il soit redirigé
+				return response.json({
+					status: true,
+					msg: request.__('Vous avez bien activé la double authentification !'),
+					inputs: {}
+				})
+
+			})
+
+		})
+
+
+	},
 
 };

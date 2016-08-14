@@ -24,6 +24,9 @@ block content
               a.nav-link(data-toggle="tab" href="#hostings" role="tab") #{__('Vos hébergements')}
             li.nav-item
               a.nav-link(data-toggle="tab" href="#transactions" role="tab") #{__('Vos transactions')}
+            li.nav-item
+              a.nav-link(data-toggle="tab" href="#connections" role="tab") #{__('Vos connexions')}
+
 
           div.tab-content
             div.tab-pane.fade.in.active(id="infos" role="tabpanel")
@@ -170,7 +173,6 @@ block content
               else
                 div.alert.alert-danger !{__('Vous ne disposez pas encore d\'hébergement ! Vous pouvez dès maintenant en louer un sur <a href="/download">cette page</a>.')}
 
-
             div.tab-pane.fade(id="transactions" role="tabpanel")
 
               // ===================================
@@ -231,6 +233,49 @@ block content
                           td.moment-date(data-format='Le {L} à {LT}') #{payment.createdAt}
               else
                 div.alert.alert-warning !{__("Vous n'avez pas encore effectué de transaction Dédipass sur votre compte.")}
+
+            div.tab-pane.fade(id="connections" role="tabpanel")
+
+              // ==========================================
+                 ===== Liste des dernières connexions =====
+                 ==========================================
+
+              h4 #{__('Vos dernières')}
+                span.accent &nbsp;#{__('connexions')}
+
+              if user.connectionLogs !== undefined && user.connectionLogs.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('Date de la connexion')}
+                        th #{__('Adresse IP de connexion')}
+                    tbody
+                      each connection, index in user.connectionLogs
+                        tr
+                          td.moment-date(data-format='Le {L} à {LT}') #{connection.createdAt}
+                          td #{connection.ip}
+
+
+              hr
+              // =================================================
+                 ===== Gestion de la double authentification =====
+                 =================================================
+
+              h4 #{__('Gestion de la')}
+                span.accent &nbsp;#{__('double authentification')}
+
+              p.lead
+                small
+                  em #{__("La double authentification est une fonctionnalité permettant de renforcer l'accès à votre compte utilisateur. Elle utilise pour cela un code à usage unique en plus du traditionnel mot de passe.")}
+
+              if user.twoFactorAuthKey === undefined || user.twoFactorAuthKey === null
+                div.text-center
+                  a(href='/user/two-factor-auth/enable').btn.btn-outline-success #{__('Activer la double authentification sur mon compte')}
+              else
+                div.text-center
+                  a(href='/user/two-factor-auth/disable').btn.btn-outline-danger #{__('Désactiver la double authentification sur mon compte')}
+
 
 block custom
   script(type='text/javascript').

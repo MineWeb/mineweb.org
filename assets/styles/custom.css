@@ -46,6 +46,13 @@ b {
   border-left: 1px solid rgb(217, 217, 217);
 }
 
+.lead small {
+  font-size: 70%;
+}
+.lead small em {
+  font-weight: 300;
+}
+
 /*
   FOOTER
 */
