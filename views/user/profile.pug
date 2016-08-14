@@ -95,7 +95,7 @@ block content
                               span.tag.tag-success #{__('Activée')}
                             else
                               span.tag.tag-danger #{__('Désactivée')}
-                          td.moment-date(data-format='Le {L} à {LT}') #{license.createdAt}
+                          td.moment-date(data-format=__('Le {L} à {LT}')) #{license.createdAt}
                           td
                             div.btn-group-vertical
                               if license.state
@@ -151,10 +151,10 @@ block content
                           td
                             // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
                             if (new Date(hosting.endDate)).getTime() < (new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)))
-                              span.text-danger.moment-date(data-format='Le {L} à {LT}') #{hosting.endDate}
+                              span.text-danger.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.endDate}
                             else
-                              span.moment-date(data-format='Le {L} à {LT}') #{hosting.endDate}
-                          td.moment-date(data-format='Le {L} à {LT}') #{hosting.createdAt}
+                              span.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.endDate}
+                          td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
                           td
                             div.btn-group-vertical
                               button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id) #{__("Modifier le nom de domaine")}
@@ -194,7 +194,7 @@ block content
                             a(href='https://www.paypal.com/fr/cgi-bin/webscr?cmd=_view-a-trans&id='+payment.paymentId, target='_blank') #{payment.paymentId}
                           td #{payment.paymentAmount} €
                           td #{payment.buyerEmail}
-                          td.moment-date(data-format='Le {L} à {LT}') #{payment.paymentDate}
+                          td.moment-date(data-format=__('Le {L} à {LT}')) #{payment.paymentDate}
                           td
                             if payment.state === 'COMPLETED'
                               span.tag.tag-success #{__('Complété')}
@@ -225,7 +225,7 @@ block content
                           td #{payment.amount} €
                           td #{payment.code}
                           td #{payment.rate}
-                          td.moment-date(data-format='Le {L} à {LT}') #{payment.createdAt}
+                          td.moment-date(data-format=__('Le {L} à {LT}')) #{payment.createdAt}
               else
                 div.alert.alert-warning !{__("Vous n'avez pas encore effectué de transaction Dédipass sur votre compte.")}
 

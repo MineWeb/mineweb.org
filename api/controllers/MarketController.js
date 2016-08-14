@@ -8,8 +8,8 @@
 var async			= require('async');
 
 module.exports = {
-	
-	/** 
+
+	/**
 	 * Render the index view of the marketplace
 	 */
 	show: function (request, response) {
@@ -40,7 +40,7 @@ module.exports = {
 					return response.serverError();
 				}
 
-				return response.view('market', {
+				return response.view('market/market', {
 					title: 'Market',
 					themes: results[0],
 					plugins: results[1]
@@ -48,4 +48,3 @@ module.exports = {
 		});
 	}
 };
-
