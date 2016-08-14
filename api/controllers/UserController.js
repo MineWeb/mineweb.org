@@ -162,6 +162,14 @@ module.exports = {
 
 	},
 
+	/*
+		Action statique, affichage de la page
+	*/
+
+	loginPage: function(request, response) {
+		response.locals.title = 'Se connecter ou s\'enregistrer'
+		response.render('user/sign')
+	},
 
 	/*
 		Action d'inscription, doit être call en ajax
@@ -342,6 +350,12 @@ module.exports = {
 	        return response.serverError('An error occured on token update')
 				}
 
+				// On sauvegarde la session/on le connecte
+				request.session.userId = data[0].user
+
+				// On set le flash message
+				FlashService.success(request, request.__('Vous avez bien validé votre adresse email !'))
+
 				// On redirige l'utilisateur sur son compte
 				return response.redirect('/user/profile')
 
@@ -350,6 +364,15 @@ module.exports = {
 
 		})
 
+	},
+
+	/*
+		Action statique, affichage de la page
+	*/
+
+	lostPasswordPage: function(request, response) {
+		response.locals.title = "J'ai perdu mon mot de passe"
+		response.render('user/lost_password')
 	},
 
 	/*
@@ -424,6 +447,16 @@ module.exports = {
 		})
 
 	},
+
+	/*
+		Action statique, affichage de la page
+	*/
+
+	resetPasswordPage: function(request, response) {
+		response.locals.title = "Rénitiliser mon mot de passe"
+		response.render('user/reset_password')
+	},
+
 
 	/*
 		Action pour rénitialiser son mot de passe à partir d'un token de rénitialisation envoyé par email

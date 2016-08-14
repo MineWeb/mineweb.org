@@ -45,52 +45,17 @@ module.exports.routes = {
     USER
   */
 
-    '/sign': {
-      view: 'user/sign',
-      locals: {
-        title: 'Se connecter ou s\'enregistrer'
-      }
-    },
-    '/signup': {
-      view: 'user/sign',
-      locals: {
-        title: 'Se connecter ou s\'enregistrer'
-      }
-    },
-    '/signin': {
-      view: 'user/sign',
-      locals: {
-        title: 'Se connecter ou s\'enregistrer'
-      }
-    },
-    '/register': {
-      view: 'user/sign',
-      locals: {
-        title: 'Se connecter ou s\'enregistrer'
-      }
-    },
-    '/login': {
-      view: 'user/sign',
-      locals: {
-        title: 'Se connecter ou s\'enregistrer'
-      }
-    },
+    '/sign': 'UserController.loginPage',
+    '/signup': 'UserController.loginPage',
+    '/signin': 'UserController.loginPage',
+    '/register': 'UserController.loginPage',
+    '/login': 'UserController.loginPage',
 
     'post /user/login': 'UserController.login',
     'get /user/confirm-email/:token': 'UserController.confirmEmail',
-    'get /user/reset-password/:token': {
-      view: 'user/reset_password',
-      locals: {
-        title: "Rénitiliser mon mot de passe"
-      }
-    },
+    'get /user/reset-password/:token': 'UserController.resetPasswordPage',
     'post /user/reset-password': 'UserController.resetPassword',
-    'get /user/lost-password': {
-      view: 'user/lost_password',
-      locals: {
-        title: "J'ai perdu mon mot de passe"
-      }
-    },
+    'get /user/lost-password': 'UserController.lostPasswordPage',
     'post /user/lost-password': 'UserController.lostPassword',
 
     'get /user/profile': 'UserController.profile',

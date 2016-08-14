@@ -1,0 +1,15 @@
+if messages && messages.error.length > 0
+  each message, index in messages.error
+    div.alert.alert-danger
+      strong #{__('Erreur')} :
+      | &nbsp;#{message}
+if messages && messages.warning.length > 0
+  each message, index in messages.warning
+    div.alert.alert-warning
+      strong #{__('Attention')} :
+      | &nbsp;#{message}
+if messages && messages.success.length > 0
+  each message, index in messages.success
+    div.alert.alert-success
+      strong #{__('Succès')} :
+      | &nbsp;#{message}

@@ -1,5 +1,7 @@
 extends ../layouts/layout
 
+block flash
+
 block content
   section.section-gray.mini-section
     .container.clearfix
@@ -10,6 +12,9 @@ block content
             | ,
             p #{__('Vous êtes inscrit depuis le')} #{user.createdAt}
 
+
+          include ../Elements/flash
+
           ul.nav.nav-tabs(role="tablist")
             li.nav-item
               a.nav-link.active(data-toggle="tab" href="#infos" role="tab") #{__('Vos informations')} #{__('personnelles')}
@@ -19,8 +24,6 @@ block content
               a.nav-link(data-toggle="tab" href="#hostings" role="tab") #{__('Vos hébergements')}
             li.nav-item
               a.nav-link(data-toggle="tab" href="#transactions" role="tab") #{__('Vos transactions')}
-
-
 
           div.tab-content
             div.tab-pane.fade.in.active(id="infos" role="tabpanel")

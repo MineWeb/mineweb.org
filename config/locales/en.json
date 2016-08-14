@@ -1,4 +1,9 @@
 {
+
+	"Succès": "",
+	"Attention": "",
+	"Erreur": "",
+
 	"Accueil": "",
 	"MineWeb c'est un CMS ": "",
 	"à votre écoute": "",
@@ -174,6 +179,7 @@
 	"Palier utilisé": "",
 	"Date du paiement": "",
 	"Vous n'avez pas encore effectué de transaction Dédipass sur votre compte.": "",
+	"Vous avez bien validé votre adresse email !":"",
 
 
 	"Developpé avec": "",
