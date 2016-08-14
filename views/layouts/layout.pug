@@ -16,7 +16,6 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
 
   block javascript
     // Javascript files
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js')
     script(src='/js/tether.min.js')
     script(src='/js/bootstrap.min.js')
     script(src='/js/jquery.simple-text-rotator.min.js')
@@ -35,5 +34,26 @@ body(data-spy='scroll', data-target='#navigation', data-offset='120')
       }
 
     script(src='/js/form-ajax.js')
+
+    // Notifications
+    if notifications
+      script(src="/js/toastr.min.js")
+
+      if notifications.error.length > 0
+        each notification, index in notifications.error
+          script(type='text/javascript').
+            toastr.error("#{notification}")
+      if notifications.warning.length > 0
+        each notification, index in notifications.warning
+          script(type='text/javascript').
+            toastr.warning("#{notification}")
+      if notifications.success.length > 0
+        each notification, index in notifications.success
+          script(type='text/javascript').
+            toastr.success("#{notification}")
+      if notifications.info.length > 0
+        each notification, index in notifications.info
+          script(type='text/javascript').
+            toastr.info("#{notification}")
 
   block custom

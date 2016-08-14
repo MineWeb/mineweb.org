@@ -110,6 +110,9 @@ module.exports = {
 							});
 						}
 
+						// On set la notification toastr
+						NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+
 						// On lui envoie un message de succès
 						response.json({
 							status: true,

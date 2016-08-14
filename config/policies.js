@@ -26,7 +26,7 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-  '*': ['isAuthenticated', 'flash'],
+  '*': ['isAuthenticated', 'flash', 'notification'],
   // '*': true,
 
   /***************************************************************************
@@ -37,10 +37,10 @@ module.exports.policies = {
   ***************************************************************************/
 
   UserController: {
-    '*': ['isAuthenticated', 'flash'],
-    profile: ['isAuthenticated', 'sessionAuth', 'flash'],
-    editEmail: ['isAuthenticated', 'sessionAuth', 'flash'],
-    editPassword: ['isAuthenticated', 'sessionAuth', 'flash']
+    '*': ['isAuthenticated', 'flash', 'notification'],
+    profile: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    editEmail: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   }
 
 	// RabbitController: {
