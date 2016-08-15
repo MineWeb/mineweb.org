@@ -40,6 +40,7 @@ module.exports.routes = {
     '/': 'StaticController.home',
     '/changelog': 'StaticController.changelog',
     '/versions': 'StaticController.changelog',
+    '/download': 'StaticController.downloadPage',
 
   /*
     USER

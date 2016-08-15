@@ -16,7 +16,7 @@ module.exports = {
 
 			Version.getLastVersion(function(version) {
 
-				return response.view('homepage', {
+				return response.view('basic-pages/homepage', {
 					title: 'Accueil',
 					version: version
 				});
@@ -40,13 +40,20 @@ module.exports = {
 					return response.serverError();
 				}
 
-				return response.view('changelog', {
+				return response.view('basic-pages/changelog', {
 					title: 'Historique des versions',
 					versions: versions
 				});
 
 			})
 
-		}
+		},
+
+
+	downloadPage: function (request, response) {
+		return response.view('basic-pages/download', {
+			title: 'Acheter le CMS'
+		});
+	}
 
 };
