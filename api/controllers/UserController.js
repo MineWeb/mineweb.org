@@ -98,6 +98,20 @@ module.exports = {
 							})
 						}
 
+						// On vérifie si la double auth est active
+						if (user.twoFactorAuthKey !== undefined && user.twoFactorAuthKey !== null) {
+							// On stocke l'user dans la session temporairement pour la vérification
+							request.session.loginUser = user
+
+							// On répond à l'user pour qu'il soit redirigé
+							return response.json({
+								status: true,
+								msg: request.__("Vous vous êtes bien connecté !"),
+								inputs: {},
+								twoFactorAuth: true
+							})
+						}
+
 						// On sauvegarde la session/on le connecte, on gère le cookie de remember
 						request.session.userId = user.id
 
@@ -818,5 +832,81 @@ module.exports = {
 
 
 	},
+
+	/*
+		Action statique, affichage de la page
+	*/
+
+	loginTwoFactorAuthVerificationPage: function(request, response) {
+		response.locals.title = 'Double authentification'
+		response.render('user/login-verification-two-factor-auth')
+	},
+
+	/*
+		Action vérifiant le code de double authentification et connectant l'utilisateur si valide
+	*/
+	loginTwoFactorAuthVerification: function (request, response) {
+
+		if (request.session.loginUser === undefined || request.session.loginUser.length === 0) {
+			return response.json({
+				status: false,
+				msg: request.__("Re-connectez-vous, votre session a expirée."),
+				inputs: {}
+			})
+		}
+
+		// On vérifie que le champ est rempli
+		RequestManagerService.setRequest(request).setResponse(response).valid({
+			"Tous les champs ne sont pas remplis.": [
+				['code', "Vous devez rentrer le code de vérification"],
+			]
+		}, function () {
+
+			// On set le secret selon ce qui a été enregistré
+			var secret = request.session.loginUser.twoFactorAuthKey
+
+			// On vérifie que le code est valide
+			if (!twoFactor.verify(request.body.code, secret)) {
+				return response.json({
+					status: false,
+					msg: request.__("Le code entré est invalide"),
+					inputs: {
+						email: request.__("Veuillez entrer un code de vérification valide.")
+					}
+				})
+			}
+
+			// On supprime l'utilisation temporairement de la session
+			var user = request.session.loginUser
+			request.session.loginUser = undefined
+
+			// On sauvegarde la session/on le connecte, on gère le cookie de remember
+			request.session.userId = user.id
+
+			// On set la notification toastr
+			NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+
+			// On lui envoie un message de succès
+			response.json({
+				status: true,
+				msg: request.__("Vous vous êtes bien connecté !"),
+				inputs: {}
+			})
+
+			// On ajoute une connexion aux logs de connexions de l'utilisateur
+			Log.create({action: 'LOGIN', ip: request.ip, data: {userId: user.id}, status: true, type: 'USER'}).exec(function (err, log) {
+
+				if (err) {
+					sails.log.error(err)
+					return response.serverError()
+				}
+
+			});
+
+
+		})
+
+
+	}
 
 };

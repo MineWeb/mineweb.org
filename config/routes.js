@@ -65,7 +65,9 @@ module.exports.routes = {
 
     'get /user/two-factor-auth/disable': 'UserController.disableTwoFactorAuthentification',
     'get /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentificationPage',
-    'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification'
+    'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification',
+    'get /user/login/twoFactorAuth': 'UserController.loginTwoFactorAuthVerificationPage',
+    'post /user/login/twoFactorAuth': 'UserController.loginTwoFactorAuthVerification',
 
   /***************************************************************************
   *                                                                          *

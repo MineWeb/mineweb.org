@@ -104,13 +104,13 @@ function initForms() {
         error : function (xhr, textStatus, errorThrown) {
 
           if (xhr.status == "403") {
-            if (xhr.responseJSON.msg === undefined) {
+            if (xhr.responseJSON === undefined || xhr.responseJSON.msg === undefined) {
               msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.FORBIDDEN_ERROR_MSG+'</div>')
             } else {
               msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+xhr.responseJSON.msg+'</div>')
             }
           } else {
-            if (xhr.responseJSON.msg === undefined) {
+            if (xhr.responseJSON === undefined || xhr.responseJSON.msg === undefined) {
               msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.INTERNAL_ERROR_MSG+'</div>')
             } else {
               msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+xhr.responseJSON.msg+'</div>')
