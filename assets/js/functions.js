@@ -30,6 +30,7 @@ $(document).ready(function() {
       // On set nos variables
       var element = $(this)
       var format = element.attr('data-format')
+      var fromNow = element.attr('fromNow')
       var content = format
       var date = new Date(element.html())
       var moment_instance = moment(date)
@@ -37,21 +38,25 @@ $(document).ready(function() {
       // La langue
       moment_instance.locale(navigator.language)
 
-      // La REGEX
-      var regex = /{([A-Z])+}/g;
+			if (fromNow !== undefined) {
+				// if requested just set relative time
+				content =  moment_instance.fromNow();
+			} else {
+				// La REGEX
+				var regex = /{([A-Z])+}/g;
 
-      // On récupère les formats moment
+				// On récupère les formats moment
 
-      var matches = format.match(new RegExp(regex))
-      for (var i = 0; i < matches.length; i++) {
+				var matches = format.match(new RegExp(regex))
+				for (var i = 0; i < matches.length; i++) {
 
-        var moment_format = matches[i].substr(1).slice(0, -1)
-        var moment_date = moment_instance.format(moment_format)
+					var moment_format = matches[i].substr(1).slice(0, -1)
+					var moment_date = moment_instance.format(moment_format);
 
-        content = content.replace(matches[i], moment_date)
-
-      }
-
+					content = content.replace(matches[i], moment_date)
+				}
+			}
+			
       // On set l'HTML
       element.html(content)
 
