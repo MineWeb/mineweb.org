@@ -42,14 +42,18 @@ module.exports = {
 			required: true
 		},
 
-		version: {
+    version : {
+      type: 'string'
+    },
+
+		versions: {
 			type: 'json',
 			required: true
 		},
 
 		supported: {
 			type: 'json',
-			defaultsTo: { 'CMS': "1.0.0" }
+			defaultsTo: { 'CMS': '1.0.0' }
 		},
 
 		official: {
@@ -66,5 +70,18 @@ module.exports = {
 			type: 'float',
 			defaultsTo: 0.0
 		}
+  },
+
+  retrieveVersion : function (model) {
+    if (!model.versions)
+      return 'none'
+    
+    var sorted = Object.keys(model.versions).sort(Utils.compareVersion);
+    return sorted[sorted.length - 1];
+  },
+
+  beforeUpdate: function (theme, cb) {
+    theme.version = retrieveVersion(theme);
+    cb()
   }
 };

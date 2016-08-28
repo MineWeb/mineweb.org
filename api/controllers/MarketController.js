@@ -12,7 +12,7 @@ module.exports = {
 	/**
 	 * Render the index view of the marketplace
 	 */
-	show: function (request, response) {
+	index: function (request, response) {
 		async.parallel([
 			// request 10 most populars themes
 			function(callback) {
@@ -45,6 +45,50 @@ module.exports = {
 					themes: results[0],
 					plugins: results[1]
 				})
+		});
+	},
+
+  /**
+	 * Render a theme page
+	 */
+	theme: function (request, response) {
+		
+    var slug = request.params.slug;
+    if (slug === undefined)
+      return res.notFound();
+
+	  Theme.find({ 'slug': slug }).populate('author').exec(function (err, results) {
+		  if (err) return res.serverError(err);
+			
+      if (results.length == 0)
+        return res.notFound();
+
+			return response.view('market/theme', {
+				title: 'Market',
+				theme: results[0],
+			})
+		});
+	},
+
+  /**
+	 * Render a plugin page
+	 */
+	plugin: function (request, response) {
+		
+    var slug = request.params.slug;
+    if (slug === undefined)
+      return res.notFound();
+
+	  Plugin.find({ 'slug': slug }).populate('author').exec(function (err, results) {
+		  if (err) return res.serverError(err);
+			
+      if (results.length == 0)
+        return res.notFound();
+
+			return response.view('market/plugin', {
+				title: 'Mineweb - ' + slug,
+				plugin: results[0],
+			})
 		});
 	}
 };

@@ -65,5 +65,18 @@ module.exports = {
 			type: 'float',
 			defaultsTo: 0
 		}
+  },
+
+  retrieveVersion : function (model) {
+    if (!model.versions)
+      return 'none'
+    
+    var sorted = Object.keys(model.versions).sort(Utils.compareVersion);
+    return sorted[sorted.length - 1];
+  },
+
+  beforeUpdate: function (plugin, cb) {
+    plugin.version = retrieveVersion(plugin);
+    cb()
   }
 };

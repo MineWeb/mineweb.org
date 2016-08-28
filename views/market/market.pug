@@ -20,27 +20,27 @@ block content
             li.nav-item(style="width:49%")
               a.text-center.nav-link(data-toggle="tab" href="#themes" role="tab") #{__('Themes')}
       .tab-content
-        #plugins.tab-pane.fade.in.active(role='tabpanel')
+        #plugins.tab-pane.fade.in.active(role='tabpanel', style="text-align: center; display: inline-flex")
           each plugin in plugins
-            .card
-              .card-block
-                h4.card-title #{plugin.title}
+            .card(style="width: 100%; margin-left:60px")
+              .card-header
+                h4.card-title #{plugin.slug}
                 h6.card-subtitle.text-muted #{plugin.downloads} #{__('Téléchargements')}
               img(src=plugin.img, style="height: 80px", alt='Plugin background')
               .card-block
                 p.card-text #{plugin.description}
-                a.btn.btn-primary(href='#')
+                a.btn.btn-primary(href='/plugin/' + plugin.slug)
                   i.pe-7s-plus
                   | &nbsp;#{__("Plus d'informations")}
               .card-footer.text-muted  #{__('Dernière mise à jour')} 
                 span.moment-date(fromNow) #{plugin.updatedAt}
-                span  : v#{plugin.version}
+                span : v#{plugin.version}
         #themes.tab-pane.fade(role='tabpanel')
           each theme in themes
             .card
-              .card-block
-                h4.card-title #{theme.title}
-                h6.card-subtitle.text-muted v #{theme.version[0]} | #{theme.downloads} #{__('Téléchargements')}
+              .card-header
+                h4.card-title #{theme.slug}
+                h6.card-subtitle.text-muted #{plugin.downloads} #{__('Téléchargements')}
               img(src=theme.img, style="height: 80px", alt='Theme background')
               .card-block
                 p.card-text #{theme.description}
