@@ -226,7 +226,9 @@ section.background-secondary {
   TABS
 */
 
-.nav.nav-tabs>li>a:focus, .nav.nav-tabs>li>a:hover {
+.nav.nav-tabs>li>a:focus,
+.nav.nav-tabs>li>a:hover,
+section.background-gray-lightest .nav.nav-tabs>li>a.active {
   background-color: transparent;
 }
 

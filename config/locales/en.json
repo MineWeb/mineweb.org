@@ -1,10 +1,9 @@
 {
-
 	"Succès": "",
 	"Attention": "",
 	"Erreur": "",
 	"Vous n'êtes pas autorisé à accèder a cette partie du site sans être connecté.": "",
-
+	"Le {L} à {LT}": "",
 	"Accueil": "",
 	"MineWeb c'est un CMS ": "",
 	"à votre écoute": "",
@@ -210,6 +209,17 @@
 	"et": "",
 	"en utilisant": "",
 	"En partenariat avec": "",
+
+
+	"Découvrez nos": "",
+	"plugins": "",
+	"et nos": "",
+	"thèmes": "",
+	"Plugins": "",
+	"Thèmes": "",
+	"Téléchargements": "",
+	"Plus d'informations": "",
+	"Dernière mise à jour": "",
 
 
 	"Chargement en cours...": "",

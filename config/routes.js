@@ -57,7 +57,6 @@ module.exports.routes = {
     'post /user/reset-password': 'UserController.resetPassword',
     'get /user/lost-password': 'UserController.lostPasswordPage',
     'post /user/lost-password': 'UserController.lostPassword',
-
     'get /user/profile': 'UserController.profile',
 
     'post /user/edit-email': 'UserController.editEmail',
@@ -65,7 +64,14 @@ module.exports.routes = {
 
     'get /user/two-factor-auth/disable': 'UserController.disableTwoFactorAuthentification',
     'get /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentificationPage',
-    'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification'
+    'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification',
+    
+		 /*
+    	MARKETPLACE
+  	*/
+		'get /market': 'MarketController.index',
+    'get /theme/:slug': 'MarketController.theme',
+    'get /plugin/:slug': 'MarketController.plugin',
 
   /***************************************************************************
   *                                                                          *

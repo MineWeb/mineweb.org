@@ -1,0 +1,15 @@
+extends ../layouts/layout
+
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+        .row
+          .col-md-12
+            h3.heading #{plugin.slug} &nbsp;
+              span.accent version #{plugin.version} &nbsp;
+              | by &nbsp;
+              span.accent #{plugin.author.username}
+
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
