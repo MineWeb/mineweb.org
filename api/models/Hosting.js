@@ -84,9 +84,10 @@ module.exports = {
       host: host
     }).exec(function (err, hosting) {
 
-      if (err)
+      if (err) {
         sails.log.error(err)
         return false
+      }
 
       // Send command to server for generate hosting TODO
       var command = 'sh /home/mineweb.sh generate ' + hosting.id

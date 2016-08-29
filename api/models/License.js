@@ -66,9 +66,10 @@ module.exports = {
       host: host
     }).exec(function (err, license) {
 
-      if (err)
+      if (err) {
         sails.log.error(err)
         return false
+      }
 
       // Return license id
       return next(err, license.id)
