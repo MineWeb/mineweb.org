@@ -21,9 +21,9 @@ module.exports = {
      mysqlserver: {
        adapter: 'sails-mysql',
        host: 'status.hardfight.fr',
-       user: 'test',
-       password: '', //optional
-       database: 'test' //optional
+       user: 'mineweb',
+       password: 'mineweb42', //optional
+       database: 'mineweb' //optional
      },
    },
 
