@@ -9,6 +9,8 @@ var uuid = require('node-uuid');
 
 module.exports = {
 
+  price: 1.5,
+
   attributes: {
 
 		id : {
@@ -72,6 +74,27 @@ module.exports = {
     purchase: {
       model: 'Purchase'
     }
-    
+
+  },
+
+  generate: function(userId, host, next) {
+    // Save hosting
+    Hosting.create({
+      user: userId,
+      host: host
+    }).exec(function (err, hosting) {
+
+      if (err)
+        sails.log.error(err)
+        return false
+
+      // Send command to server for generate hosting TODO
+      var command = 'sh /home/mineweb.sh generate ' + hosting.id
+
+        // Return hosting id
+        return next(err, hosting.id)
+
+    })
   }
+
 };

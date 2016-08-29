@@ -34,6 +34,12 @@ module.exports = {
 			unique: true
 		},
 
+    paypalDeveloperEmail: {
+			type: 'string',
+			required: false,
+			unique: true
+		},
+
 		password: {
 			type: 'string',
 			required: true
