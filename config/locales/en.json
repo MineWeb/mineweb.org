@@ -237,6 +237,19 @@
 	"Total": "",
 	"Dépend de Dédipass": "",
 	"Passer au paiement": "",
+	"Acheter une licence": "",
+
+	"Louer une": "",
+	"licence": "",
+	"hébergement": "",
+	"En payant la location d'un hébergement, vous y aurez accès pendant 1 mois. Vous n'aurez <b>pas accès à tous les fichiers</b> et vous pourrez pas les modifier comme vous le souhaitez.": "",
+	"<b>L'hébergement</b> et le <b>sous-domaine</b> sont fournis, inutile donc de se prendre la tête pour trouver un hébergeur compatible.": "",
+	"Vous pouvez bien sûr à tout moment changer l'adresse de votre site (configurer un domaine personalisé ou un nouveau sous-domaine) depuis votre profil sur mineweb.org.": "",
+	"Votre licence peut aussi être <b>suspendue sans préavis</b> si vous <b>supprimez la ligne mentionnant MineWeb</b> (propulsé par <a href="http://mineweb.org">mineweb.org</a>) dans le footer de votre site.": "",
+	"Accès FTP et MySQL": "",
+	"Nom de domaine (sous-domaine .craftwb.fr)": "",
+	"Licence MineWeb & Hébergement": "",
+	"Louer un hébergement": "",
 
 
 	"Developpé avec": "",
