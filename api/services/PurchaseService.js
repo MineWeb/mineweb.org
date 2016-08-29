@@ -124,7 +124,7 @@ module.exports = {
         */
 
           // Check if purchase.voucher exist
-          purchase.voucher.findOne({code: purchase.voucher}).exec(function (err, purchase.voucher) {
+          Voucher.findOne({code: purchase.voucher}).exec(function (err, voucher) {
 
             if (err) {
               sails.log.error(err)
@@ -132,9 +132,9 @@ module.exports = {
             }
 
             // If purchase.voucher exist with this code
-            if (purchase.voucher !== undefined) {
+            if (voucher !== undefined) {
               // Calculate new price without purchase.voucher purchase.amount
-              offer.price -= purchase.voucher.purchase.amount
+              offer.price -= voucher.purchase.amount
             }
 
             // If it's paypal payment
