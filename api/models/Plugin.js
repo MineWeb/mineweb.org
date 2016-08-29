@@ -16,19 +16,13 @@ module.exports = {
     	primaryKey: true,
 		},
 
-		name: {
+		slug: {
 			type: 'string',
 			unique: true,
 			required: true,
       min: 5,
       max: 20,
       size: 20
-		},
-
-		slug: {
-			type: 'string',
-			unique: true,
-			required: true
 		},
 
 		author: {
@@ -71,5 +65,18 @@ module.exports = {
 			type: 'float',
 			defaultsTo: 0
 		}
+  },
+
+  retrieveVersion : function (model) {
+    if (!model.versions)
+      return 'none'
+    
+    var sorted = Object.keys(model.versions).sort(Utils.compareVersion);
+    return sorted[sorted.length - 1];
+  },
+
+  beforeUpdate: function (plugin, cb) {
+    plugin.version = retrieveVersion(plugin);
+    cb()
   }
 };
