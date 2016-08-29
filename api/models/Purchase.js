@@ -165,11 +165,13 @@ module.exports = {
             // If voucher exist with this code
             if (voucher !== undefined) {
               // Calculate new price without voucher amount
+              offer.price -= voucher.amount
             }
 
             // If it's paypal payment
             if (receiver !== undefined) {
               // Calculate fees if PayPal payment (if receiver !== undefined)
+              offer.price = PayPalHistory.calculateFees(offer.price)
             }
 
             // Check price with offer price
