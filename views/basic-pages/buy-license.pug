@@ -1,0 +1,139 @@
+extends ../layouts/layout
+
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+      .row
+        .col-md-12
+          h3.heading #{__('Acheter une')}
+            span.accent  #{__('licence')}
+
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
+        .col-md-12
+
+          h4 #{__('Description et conditions')}
+
+          p.lead
+            small(style='font-size:60%;font-weight: 300;') - !{__('En payant la licence, vous y aurez accès indeterminément. Vous aurez <b>accès à tous les fichiers</b> et vous pourrez les modifier comme vous le souhaitez.')}
+              br
+              | - !{__('Vous pourrez donc facilement ajouter et créer des plugins ou thèmes personnalisés pour votre site (fonctionnement expliqué sur la documentation).')}
+              br
+              | - !{__("<b>Aucun hébergement</b> ni nom de domaine n'est fourni, c'est à vous avec vos propre moyens d'héberger cette licence sur un hébergeur compatible et de gérer l'éventuel nom de domaine.")}
+              br
+              | - !{__("Une licence n'est par contre <b>utilisable que sur 1 seul site à la fois</b> (1 seul nom de domaine), mais vous pouvez bien sûr à tout moment changer l'adresse de votre site depuis votre profil sur mineweb.org.")}
+              br
+              | - !{__("Une licence ne peux pas être revendue et peut être <b>suspendue à tout moment sans préavis</b> si la condition ci-dessus n'est pas respectée.")}
+              br
+              | - !{__('Votre licence peut aussi être suspendue sans préavis si vous <b>supprimez la ligne mentionnant MineWeb</b> (propulsé par <a href="http://mineweb.org">mineweb.org</a>) dans le footer de votre site.')}
+
+          hr
+
+          h4 #{__("Contenu de l'offre :")}
+
+          ul.features
+            li
+              i.fa.fa-check.text-success
+              | &nbsp;&nbsp;&nbsp;#{__('Accès aux fichiers')}
+            li
+              i.fa.fa-check.text-success
+              | &nbsp;&nbsp;&nbsp;#{__('Accès à la documentation')}
+            li
+              i.fa.fa-check.text-success
+              | &nbsp;&nbsp;&nbsp;#{__('Accès au support')}
+            li
+              i.fa.fa-check.text-success
+              | &nbsp;&nbsp;&nbsp;#{__('Accès aux mises à jours gratuitement')}
+            li
+              i.fa.fa-times.text-danger
+              | &nbsp;&nbsp;&nbsp;#{__('Hébergement du site')}
+            li
+              i.fa.fa-times.text-danger
+              | &nbsp;&nbsp;&nbsp;#{__('Nom de domaine')}
+
+          hr
+
+          h4 #{__('Choix du moyen de paiement')}
+
+          div.col-md-6
+            a.btn-pay.active(data-payment-type="paypal")
+              i.pull-left.fa.fa-paypal
+              h5 PayPal
+              span #{__('Payez avec votre compte PayPal ou votre carte bancaire')}
+
+          div.col-md-6
+            a.btn-pay(data-payment-type="dedipass")
+              i.pull-left.fa.fa-phone
+              h5 Dédipass
+              span #{__('Payez avec votre crédit mobile ou PaySafeCard')}
+
+          div.clearfix
+
+          hr
+
+          h4 #{__('Facture')}
+
+          div.table-responsive
+
+            table.table.table-striped.table-bordered
+              thead
+                tr
+                  th #{__('Description')}
+                  th #{__("Prix à l'unité")}
+                  th #{__('Total')}
+              tbody
+                tr
+                  td !{__('Licence MineWeb')}
+                  td #{License.price} €
+                  td #{License.price} €
+                tr
+                  td
+                  td
+                    input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
+                  td - 0.00 €
+                tr#paypalFees
+                  td
+                  th #{__('Taxes')}
+                  td #{PayPalService.calculateFees(License.price)} €
+                tr
+                  td
+                  th #{__('Total')}
+                  th#paypalAmount #{PayPalService.calculateFees(License.price) + License.price} €
+                  td#dedipassAmount(style='display:none;')
+                    em #{__("Dépend de Dédipass")}
+
+            hr
+
+            div.col-md-4.pull-right
+              a.btn.btn-primary.btn-block(href='#', id="pay") Passer au paiement
+
+            div.clear-fix
+
+block custom
+  script(type='text/javascript').
+
+    $('.btn-pay').on('click', function(e) {
+      e.preventDefault()
+
+      var btn = $(this)
+      var paymentType = btn.attr('data-payment-type')
+
+      $('.btn-pay').removeClass('active')
+      btn.addClass('active')
+
+      if (paymentType === 'paypal') {
+        $('th#paypalAmount').fadeIn(100)
+        $('td#dedipassAmount').fadeOut(100)
+        $('tr#paypalFees').fadeIn(100)
+      }
+      else if (paymentType === 'dedipass') {
+        $('th#paypalAmount').fadeOut(100)
+        $('td#dedipassAmount').fadeIn(100)
+        $('tr#paypalFees').fadeOut(100)
+      }
+      else {
+        alert('Unknown payment type !')
+      }
+
+    })

@@ -54,6 +54,18 @@ module.exports = {
 		return response.view('basic-pages/download', {
 			title: 'Acheter le CMS'
 		});
+	},
+
+	buyLicense: function (request, response) {
+		return response.view('basic-pages/buy-license', {
+			title: 'Acheter une licence'
+		});
+	},
+
+	rentHosting: function (request, response) {
+		return response.view('basic-pages/rent-hosting', {
+			title: 'Louer un hébergement'
+		});
 	}
 
 };

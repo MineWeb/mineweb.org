@@ -44,6 +44,12 @@ module.exports.policies = {
     disableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     enableTwoFactorAuthentificationPage: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     enableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+  },
+
+  StaticController: {
+    '*': ['isAuthenticated', 'flash', 'notification'],
+    buyLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    rentHosting: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   }
 
 	// RabbitController: {

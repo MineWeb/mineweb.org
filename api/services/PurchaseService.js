@@ -140,7 +140,7 @@ module.exports = {
             // If it's paypal payment
             if (purchase.receiver !== undefined) {
               // Calculate fees if PayPal payment (if purchase.receiver !== undefined)
-              offer.price = PayPalService.calculateFees(offer.price)
+              offer.price = offer.price + PayPalService.calculateFees(offer.price)
             }
 
             // Check price with offer price

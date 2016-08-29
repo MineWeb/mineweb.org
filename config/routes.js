@@ -42,6 +42,11 @@ module.exports.routes = {
     '/versions': 'StaticController.changelog',
     '/download': 'StaticController.downloadPage',
 
+    '/buy-license': 'StaticController.buyLicense',
+    '/purchase/license': 'StaticController.buyLicense',
+    '/rent-hosting': 'StaticController.rentHosting',
+    '/purchase/hosting': 'StaticController.rentHosting',
+
   /*
     USER
   */

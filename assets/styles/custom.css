@@ -53,6 +53,13 @@ b {
   font-weight: 300;
 }
 
+ul.features {
+  list-style-type:none;
+}
+ul.features li {
+  font-size: 18px;
+}
+
 /*
   FOOTER
 */
@@ -271,4 +278,54 @@ section.background-secondary {
 .alert.alert-danger a {
   color: #a70315;
   text-decoration: underline;
+}
+
+/*
+  BUTTONS
+*/
+
+.btn-pay {
+  -webkit-transition: border .4s;
+  -moz-transition: border .4s;
+  -ms-transition: border .4s;
+  -o-transition: border .4s;
+  transition: border .4s;
+  border: 2px solid #DADADA;
+  border-radius: 5px;
+  padding: 14px 14px;
+  display: inline-block;
+  background: #FCFCFC;
+  color: #777;
+  margin-top: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-pay:hover,
+.btn-pay.active {
+  text-decoration: none;
+  border: 2px solid #2065a1;
+  color: #777;
+}
+
+.btn-pay i {
+  font-size: 50px;
+  color: #0082b9;
+}
+
+.btn-pay h5 {
+  font-size: 20px;
+  font-weight: normal;
+  font-family: Roboto;
+  color: #777;
+}
+
+.btn-pay span {
+  font-size: 15px;
+  font-weight: normal;
+  color: #777;
+}
+
+.btn-pay:not(.active) {
+  opacity: 0.8;
 }
