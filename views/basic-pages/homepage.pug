@@ -1,4 +1,4 @@
-extends ./layouts/layout
+extends ../layouts/layout
 
 block content
   section#intro.text-intro.no-padding-bottom
@@ -137,5 +137,5 @@ block content
             div.btn-group
               if version != undefined && version != null
                 a.btn.btn-outline-secondary.disabled #{__('Actuellement en version v%s', version)}
-              a.btn.btn-outline-info(href='#') #{__('Télécharger le CMS')}
+              a.btn.btn-outline-info(href='/download') #{__('Télécharger le CMS')}
   // *** INTEGRATIONS END ***

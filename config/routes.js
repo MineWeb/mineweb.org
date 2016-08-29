@@ -40,6 +40,7 @@ module.exports.routes = {
     '/': 'StaticController.home',
     '/changelog': 'StaticController.changelog',
     '/versions': 'StaticController.changelog',
+    '/download': 'StaticController.downloadPage',
 
   /*
     USER
@@ -65,6 +66,8 @@ module.exports.routes = {
     'get /user/two-factor-auth/disable': 'UserController.disableTwoFactorAuthentification',
     'get /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentificationPage',
     'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification',
+    'get /user/login/twoFactorAuth': 'UserController.loginTwoFactorAuthVerificationPage',
+    'post /user/login/twoFactorAuth': 'UserController.loginTwoFactorAuthVerification',
     
 		 /*
     	MARKETPLACE

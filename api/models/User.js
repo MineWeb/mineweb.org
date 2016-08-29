@@ -34,6 +34,12 @@ module.exports = {
 			unique: true
 		},
 
+    paypalDeveloperEmail: {
+			type: 'string',
+			required: false,
+			unique: true
+		},
+
 		password: {
 			type: 'string',
 			required: true
@@ -66,7 +72,7 @@ module.exports = {
 
     twoFactorAuthKey: {
       type: 'string',
-      size: 32
+      size: 100
     },
 
 		tokens: {
@@ -109,7 +115,7 @@ module.exports = {
 			delete user.password;
 			delete user.tokens;
 			delete user.ip;
-			delete user.id;
+			//delete user.id;
 			delete user.email;
 			return user;
 		}

@@ -5,9 +5,12 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-var uuid = require('node-uuid');
+var uuid = require('node-uuid')
+var exec = require('ssh-exec')
 
 module.exports = {
+
+  price: 1.5,
 
   attributes: {
 
@@ -72,6 +75,42 @@ module.exports = {
     purchase: {
       model: 'Purchase'
     }
-    
+
+  },
+
+  generate: function(userId, host, next) {
+    // Save hosting
+    Hosting.create({
+      user: userId,
+      host: host
+    }).exec(function (err, hosting) {
+
+      if (err) {
+        sails.log.error(err)
+        return false
+      }
+
+      // Send command to server for generate hosting
+      exec('/home/mineweb.sh creation '+hosting.id+' '+hosting.host+' sdomain', {
+        user: 'root',
+        host: '188.165.141.113',
+        port: '2435',
+        password: 'Ly9bt5Q2'
+      }, function (err, stdout, stderr) {
+
+        if (err) {
+          sails.log.error(err)
+          return false
+        }
+
+        // TODO -> Save ftp ids
+
+        // Return hosting id
+        return next(err, hosting.id)
+
+      })
+
+    })
   }
+
 };

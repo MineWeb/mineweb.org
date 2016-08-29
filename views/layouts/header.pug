@@ -27,7 +27,10 @@ header.header
           if req.session.authenticated !== undefined && req.session.authenticated
             li.hidden-lg-up
               a(href='/user/profile') #{__('Mon profil')}
-              a(href='/user/logout') #{__('Se déconnecter')}
+              a(href='/user/logout')
+                span.hidden-md-down #{__('Se déconnecter')}
+                span.hidden-lg-up
+                  i.fa.fa-sign-out
             li.hidden-md-down
               div.btn-group
                 a.btn.navbar-btn.btn-ghost(href='/user/profile') #{__('Mon profil')}

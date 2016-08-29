@@ -9,6 +9,8 @@ var uuid = require('node-uuid');
 
 module.exports = {
 
+  price: 9.99,
+
   attributes: {
 
 		id : {
@@ -54,6 +56,25 @@ module.exports = {
     purchase: {
       model: 'Purchase'
     }
-    
+
+  },
+
+  generate: function(userId, host, next) {
+    // Save license
+    License.create({
+      user: userId,
+      host: host
+    }).exec(function (err, license) {
+
+      if (err) {
+        sails.log.error(err)
+        return false
+      }
+
+      // Return license id
+      return next(err, license.id)
+
+    })
   }
+
 };

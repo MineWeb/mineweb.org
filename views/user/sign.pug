@@ -8,7 +8,7 @@ block content
           h3.heading #{__('Connectez-')}
             span.accent #{__('vous')}
 
-          form(method="post", action="/user/login", data-ajax, data-redirect-url='/')
+          form(method="post", action="/user/login", data-ajax, data-custom-callback="afterLogin")
             .form-group
               label #{__("Nom d'utilisateur")}
               input.form-control(type='text', name='username')
@@ -57,3 +57,27 @@ block content
 
             .form-group.text-center
               button.btn.btn-outline-primary(type='submit') #{__("S'inscrire")}
+
+block custom
+  script(type='text/javascript').
+    function afterLogin(inputs, json) {
+
+      // Connexion normale
+      if (json.twoFactorAuth === undefined) {
+        if (QueryString.from === undefined) {
+          return document.location.href='/?'+ (new Date()).getTime()
+        } else if (QueryString.from !== undefined) {
+          return document.location.href=QueryString.from+'?'+ (new Date()).getTime()
+        }
+      }
+
+      // Double auth
+      if (json.twoFactorAuth) {
+
+        return document.location.href='/user/login/twoFactorAuth'
+
+      }
+
+      return
+
+    }
