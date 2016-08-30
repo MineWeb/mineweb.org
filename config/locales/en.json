@@ -239,7 +239,7 @@
 	"Acheter une licence": "",
 	"Attention !": "",
 	"Vous ne pouvez pas payer avec le moyen de paiement \"Dédipass\" si vous utilisez un code promotionnel.": "",
-	"Vérifier": "",
+	"Utiliser": "",
 	"Obtenir la licence": "",
 
 	"Louer une": "",
@@ -265,6 +265,12 @@
 	"PayPal": "",
 	"Nous avons bien reçu votre paiement PayPal, vous allez recevoir votre produit sous peu, veuillez patientez.": "",
 	"Vous pouvez quitter cette page sans problème, cela n'influera pas sur la réception de votre produit": "",
+
+	"Payer avec Dédipass": "",
+	"Payer avec": "",
+	"Dédipass": "",
+	"Choississez votre solution de paiement": "",
+	"Chargement de Dédipass en cours ...": "",
 
 
 	"Developpé avec": "",
