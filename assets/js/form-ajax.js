@@ -58,8 +58,6 @@ function initForms() {
             }
             if (form.attr('data-redirect-url') !== undefined && QueryString.from === undefined) {
               document.location.href=form.attr('data-redirect-url')+'?no-cache='+ (new Date()).getTime()
-            } else if (QueryString.from !== undefined) {
-              document.location.href=QueryString.from+'?no-cache='+ (new Date()).getTime()
             }
 
             if(captcha) {

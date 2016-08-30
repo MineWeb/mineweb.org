@@ -101,6 +101,7 @@ module.exports = {
 						// On vérifie si la double auth est active
 						if (user.twoFactorAuthKey !== undefined && user.twoFactorAuthKey !== null) {
 							// On stocke l'user dans la session temporairement pour la vérification
+							user.wantRemember = (request.body.remember_me !== undefined && request.body.remember_me)
 							request.session.loginUser = user
 
 							// On répond à l'user pour qu'il soit redirigé
@@ -116,25 +117,45 @@ module.exports = {
 						request.session.userId = user.id
 
 						if(request.body.remember_me !== undefined && request.body.remember_me) {
-							response.cookie('remember_me', {
-								username: user.username,
-								password: user.password
-							},
-							{
-								expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 10000), // +1 week
-								signed: true
-							});
+
+							// On créé l'entrée dans la table de remember
+							var expire = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+							RememberTokens.create({user: user.id, expireAt: expire}).exec(function (err, token) {
+
+								response.cookie('remember_me', {
+									userId: token.user,
+									token: token.token
+								},
+								{
+									expires: expire, // +1 week
+									signed: true
+								});
+
+								// On set la notification toastr
+								NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+
+								// On lui envoie un message de succès
+								response.json({
+									status: true,
+									msg: request.__("Vous vous êtes bien connecté !"),
+									inputs: {}
+								})
+
+							})
 						}
+						else { // Pas de cookie de remember
 
-						// On set la notification toastr
-						NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+							// On set la notification toastr
+							NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
 
-						// On lui envoie un message de succès
-						response.json({
-							status: true,
-							msg: request.__("Vous vous êtes bien connecté !"),
-							inputs: {}
-						})
+							// On lui envoie un message de succès
+							response.json({
+								status: true,
+								msg: request.__("Vous vous êtes bien connecté !"),
+								inputs: {}
+							})
+
+						}
 
 						// On ajoute une connexion aux logs de connexions de l'utilisateur
 						Log.create({action: 'LOGIN', ip: request.ip, data: {userId: user.id}, status: true, type: 'USER'}).exec(function (err, log) {
@@ -883,15 +904,46 @@ module.exports = {
 			// On sauvegarde la session/on le connecte, on gère le cookie de remember
 			request.session.userId = user.id
 
-			// On set la notification toastr
-			NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+			if (user.wantRemember) {
 
-			// On lui envoie un message de succès
-			response.json({
-				status: true,
-				msg: request.__("Vous vous êtes bien connecté !"),
-				inputs: {}
-			})
+				// On créé l'entrée dans la table de remember
+				var expire = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+				RememberTokens.create({user: user.id, expireAt: expire}).exec(function (err, token) {
+
+					response.cookie('remember_me', {
+						userId: token.user,
+						token: token.token
+					},
+					{
+						expires: expire, // +1 week
+						signed: true
+					});
+
+					// On set la notification toastr
+					NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+
+					// On lui envoie un message de succès
+					response.json({
+						status: true,
+						msg: request.__("Vous vous êtes bien connecté !"),
+						inputs: {}
+					})
+
+				})
+			}
+			else {
+
+				// On set la notification toastr
+				NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+
+				// On lui envoie un message de succès
+				response.json({
+					status: true,
+					msg: request.__("Vous vous êtes bien connecté !"),
+					inputs: {}
+				})
+
+			}
 
 			// On ajoute une connexion aux logs de connexions de l'utilisateur
 			Log.create({action: 'LOGIN', ip: request.ip, data: {userId: user.id}, status: true, type: 'USER'}).exec(function (err, log) {

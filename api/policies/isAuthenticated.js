@@ -7,6 +7,8 @@
  * @docs        :: http://sailsjs.org/#!/documentation/concepts/Policies
  *
  */
+var async	= require('async')
+
 module.exports = function(req, res, next) {
 
   // On check si on a l'userId
@@ -18,15 +20,49 @@ module.exports = function(req, res, next) {
       return next()
     }
 
-    // On tente de le connecter
-    User.findOne({username: req.signedCookies.remember_me.username, password: req.signedCookies.remember_me.password}).exec(function (err, user) {
+    async.parallel([
+
+      // On cherche le token
+      function (callback) {
+
+        RememberTokens.count({user: req.signedCookies.remember_me.userId, token: req.signedCookies.remember_me.token}).exec(function (err, count) {
+          if (err)
+            callback(err, null)
+          else
+            callback(null, (count > 0))
+        })
+
+      },
+
+      // On cherche l'user
+      function (callback) {
+
+        User.findOne({id:req.signedCookies.remember_me.userId}).exec(function (err, user) {
+          if (err)
+            callback(err, null)
+          else
+            callback(null, user)
+        })
+
+      }
+
+    ], function (err, results) {
 
       if (err) {
         sails.log.error(err)
         return response.serverError()
       }
 
-      // On trouve pas d'user
+      var token = results[0]
+      var user = results[1]
+
+      // On trouve pas de token
+      if (!token) {
+        req.session.authenticated = false
+        return next()
+      }
+
+      // On trouve pas l'user
       if (user === undefined) {
         req.session.authenticated = false
         return next()
