@@ -303,7 +303,7 @@ section.background-gray-lightest .nav.nav-tabs>li>a.active {
   width: 100%;
 }
 
-.btn-pay:hover,
+.btn-pay:hover:not(.disabled),
 .btn-pay.active {
   text-decoration: none;
   border: 2px solid #2065a1;
@@ -330,4 +330,49 @@ section.background-gray-lightest .nav.nav-tabs>li>a.active {
 
 .btn-pay:not(.active) {
   opacity: 0.8;
+}
+
+/*
+  INVOICE
+*/
+
+@media (max-width: 544px) {
+  .table.invoice tbody tr td:nth-child(1) {
+    width: 30%;
+  }
+  .table.invoice tbody tr td:nth-child(2) {
+    width: 52%;
+  }
+  .table.invoice tbody tr td:nth-child(3) {
+    width: 18%;
+  }
+}
+
+@media (min-width: 544px) {
+  .table.invoice tbody tr td:nth-child(1) {
+    width: 30%;
+  }
+  .table.invoice tbody tr td:nth-child(2) {
+    width: 30%;
+  }
+  .table.invoice tbody tr td:nth-child(3) {
+    width: 15%;
+  }
+}
+
+@media (min-width: 992px) {
+  .table.invoice tbody tr td:nth-child(1) {
+    width: 50%;
+  }
+  .table.invoice tbody tr td:nth-child(2) {
+    width: 40%;
+  }
+  .table.invoice tbody tr td:nth-child(3) {
+    width: 10%;
+  }
+}
+
+.table.invoice #checkVoucher {
+  margin-left: -3px;
+  padding: 7px 12px;
 }

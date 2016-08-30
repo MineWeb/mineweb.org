@@ -48,6 +48,12 @@ module.exports.routes = {
     '/purchase/hosting': 'StaticController.rentHosting',
 
   /*
+    PURCHASE
+  */
+
+    '/purchase/checkVoucher/:voucherCode/:price': 'PurchaseController.checkVoucher',
+
+  /*
     USER
   */
 
@@ -73,7 +79,7 @@ module.exports.routes = {
     'post /user/two-factor-auth/enable': 'UserController.enableTwoFactorAuthentification',
     'get /user/login/twoFactorAuth': 'UserController.loginTwoFactorAuthVerificationPage',
     'post /user/login/twoFactorAuth': 'UserController.loginTwoFactorAuthVerification',
-    
+
 		 /*
     	MARKETPLACE
   	*/

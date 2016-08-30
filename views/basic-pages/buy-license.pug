@@ -56,6 +56,11 @@ block content
 
           h4 #{__('Choix du moyen de paiement')}
 
+          div.warning-voucher(style='display:none;')
+            div.alert.alert-warning
+              b #{__('Attention !')}
+              | #{__('Vous ne pouvez pas payer avec le moyen de paiement "Dédipass" si vous utilisez un code promotionnel.')}
+
           div.col-md-6
             a.btn-pay.active(data-payment-type="paypal")
               i.pull-left.fa.fa-paypal
@@ -76,7 +81,7 @@ block content
 
           div.table-responsive
 
-            table.table.table-striped.table-bordered
+            table.table.table-striped.table-bordered.invoice
               thead
                 tr
                   th #{__('Description')}
@@ -90,50 +95,28 @@ block content
                 tr
                   td
                   td
-                    input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
-                  td - 0.00 €
+                    div.input-group
+                      input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
+                      span.input-group-btn
+                        button.btn.btn-secondary#checkVoucher(data-price=License.price) #{__('Vérifier')}
+                  td.voucher-reduction - 0.00 €
                 tr#paypalFees
                   td
                   th #{__('Taxes')}
-                  td #{PayPalService.calculateFees(License.price)} €
+                  td#paypalFeesAmount(data-default-fees=PayPalService.calculateFees(License.price)) #{PayPalService.calculateFees(License.price)} €
                 tr
                   td
                   th #{__('Total')}
-                  th#paypalAmount #{PayPalService.calculateFees(License.price) + License.price} €
-                  td#dedipassAmount(style='display:none;')
+                  th.amount#paypalAmount #{PayPalService.calculateFees(License.price) + License.price} €
+                  td.amount#dedipassAmount(style='display:none;', data-default-price=__("Dépend de Dédipass"))
                     em #{__("Dépend de Dédipass")}
 
             hr
 
             div.col-md-4.pull-right
-              a.btn.btn-primary.btn-block(href='#', id="pay") #{__('Passer au paiement')}
+              a.btn.btn-primary.btn-block(href='#', id="pay", data-content-if-free=__('Obtenir la licence'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
 
             div.clear-fix
 
 block custom
-  script(type='text/javascript').
-
-    $('.btn-pay').on('click', function(e) {
-      e.preventDefault()
-
-      var btn = $(this)
-      var paymentType = btn.attr('data-payment-type')
-
-      $('.btn-pay').removeClass('active')
-      btn.addClass('active')
-
-      if (paymentType === 'paypal') {
-        $('th#paypalAmount').fadeIn(100)
-        $('td#dedipassAmount').fadeOut(100)
-        $('tr#paypalFees').fadeIn(100)
-      }
-      else if (paymentType === 'dedipass') {
-        $('th#paypalAmount').fadeOut(100)
-        $('td#dedipassAmount').fadeIn(100)
-        $('tr#paypalFees').fadeOut(100)
-      }
-      else {
-        alert('Unknown payment type !')
-      }
-
-    })
+  script(type='text/javascript', src='/js/buy.js')

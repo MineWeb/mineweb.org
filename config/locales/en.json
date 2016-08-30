@@ -237,6 +237,10 @@
 	"Dépend de Dédipass": "",
 	"Passer au paiement": "",
 	"Acheter une licence": "",
+	"Attention !": "",
+	"Vous ne pouvez pas payer avec le moyen de paiement \"Dédipass\" si vous utilisez un code promotionnel.": "",
+	"Vérifier": "",
+	"Obtenir la licence": "",
 
 	"Louer une": "",
 	"licence": "",
@@ -247,8 +251,9 @@
 	"Votre licence peut aussi être <b>suspendue sans préavis</b> si vous <b>supprimez la ligne mentionnant MineWeb</b> (propulsé par <a href="http://mineweb.org">mineweb.org</a>) dans le footer de votre site.": "",
 	"Accès FTP et MySQL": "",
 	"Nom de domaine (sous-domaine .craftwb.fr)": "",
-	"Licence MineWeb & Hébergement": "",
+	"Licence MineWeb & Hébergement (1 mois)": "",
 	"Louer un hébergement": "",
+	"Obtenir la licence et l'hébergement": "",
 
 
 	"Developpé avec": "",
