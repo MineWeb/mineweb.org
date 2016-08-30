@@ -50,6 +50,13 @@ module.exports.policies = {
     '*': ['isAuthenticated', 'flash', 'notification'],
     buyLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     rentHosting: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+  },
+
+  PurchaseController: {
+    '*': ['isAuthenticated', 'flash', 'notification'],
+    paypal: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   }
 
 	// RabbitController: {

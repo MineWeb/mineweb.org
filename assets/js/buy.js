@@ -139,3 +139,16 @@ $('#checkVoucher').on('click', function(e) {
 /*
   BUY WITH PAYPAL
 */
+
+$('#pay').on('click', function(e) {
+
+  e.preventDefault()
+
+  var paymentType = $('.btn-pay.active').attr('data-payment-type')
+  var url = '/buy/'+paymentType
+  var voucher = $('input[name="voucher"]').val()
+  var offer = $(this).attr('data-offer')
+
+  $('<form method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="offer" value="'+offer+'"></form>').submit()
+
+})

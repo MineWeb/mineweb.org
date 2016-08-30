@@ -53,6 +53,14 @@ module.exports.routes = {
 
     '/purchase/checkVoucher/:voucherCode/:price': 'PurchaseController.checkVoucher',
 
+    'post /buy/dedipass': 'PurchaseController.dedipass',
+    'post /buy/paypal': 'PurchaseController.paypal',
+
+    '/buy/paypal/success': 'PurchaseController.paypalSuccessPage',
+
+    'post /api/dedipass-ipn': 'PurchaseController.dedipassIPN',
+    'post /api/paypal-ipn': 'PurchaseController.paypalIPN',
+
   /*
     USER
   */
