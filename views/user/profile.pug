@@ -206,10 +206,14 @@ block content
                           td
                             if payment.state === 'COMPLETED'
                               span.tag.tag-success #{__('Complété')}
-                            else if payment.state === 'SUSPENDED'
+                            else if payment.state === 'PENDING'
+                              span.tag.tag-warning #{__('En attente')}
+                            else if payment.state === 'REVERSED'
                               span.tag.tag-warning #{__('Suspendu')}
-                            else
+                            else if payment.state === 'REFUNDED'
                               span.tag.tag-danger #{__('Remboursé')}
+                            else if payment.state === 'FAILED'
+                              span.tag.tag-danger #{__('Échoué')}
               else
                 div.alert.alert-warning !{__("Vous n'avez pas encore effectué de transaction PayPal sur votre compte.")}
 

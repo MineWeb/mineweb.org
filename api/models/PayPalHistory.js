@@ -54,13 +54,13 @@ module.exports = {
 
     state: {
       type: 'string',
-      in: ['COMPLETED', 'SUSPENDED', 'REFUNDED', 'REVERSED'],
+      in: ['COMPLETED', 'FAILED', 'PENDING', 'REFUNDED', 'REVERSED'],
       defaultsTo: 'COMPLETED'
     },
 
     reversedReason: {
       type: 'string',
-      in: ['BUYER_COMPLAINT', 'UNAUTHORIZED']
+      in: ['BUYER_COMPLAINT', 'UNAUTHORIZED', 'OTHER']
     },
 
     caseDate: {
