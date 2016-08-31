@@ -5,6 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var request = require('request')
+var paypalIPN = require('paypal-ipn')
 
 module.exports = {
 
@@ -129,7 +130,7 @@ module.exports = {
 					price -= parseFloat(voucher.amount)
 
 				if (price <= 0)
-					return res.serverError("Can't buy free offer")
+					return res.redirect('/purchase/' + offer + '/free/' + voucherCode + '/' + req.body.custom)
 
 				// Calculate fees
 				var fees = PayPalService.calculateFees(price)
@@ -260,7 +261,19 @@ module.exports = {
 		Handle PayPal check after buy with IPN POSTed data
 	*/
 	paypalIPN: function (req, res) {
+		paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
 
+		  if (err) {
+		    sails.log.error(err);
+		  } else {
+
+		    if (req.body.payment_status == 'Completed') {
+						// set voucher at used
+		    }
+
+		  }
+
+		})
 	},
 
 	/*
@@ -359,6 +372,125 @@ module.exports = {
 				// invalid code
 				NotificationService.error(req, req.__('Votre code "%s" est invalide !', code))
 				res.redirect('/purchase/'+offer)
+			}
+
+		})
+
+	},
+
+	/*
+		Handle free buy
+	*/
+
+	getFree: function (req, res) {
+
+		// Handle params
+		if (req.param('offer') === undefined) {
+			return res.notFound('Offer is missing')
+		}
+		var offer = req.param('offer')
+
+		if (req.param('voucherCode') === undefined) {
+			return res.notFound('Voucher code is missing')
+		}
+		var voucherCode = req.param('voucherCode')
+
+		var custom = (req.params[0] !== undefined && req.params[0].length > 0 && req.params[0] != 'undefined') ? req.params[0] : undefined
+
+		// Check if voucher is valid
+		Voucher.findOne({code: voucherCode, usedAt: null, usedLocation: null}).exec(function (err, voucher) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError('An error occured on voucher check')
+			}
+
+			if (voucher === undefined) {
+				NotificationService.error(req, req.__('Votre code promotionnel est incorrect !'))
+				return res.redirect('/purchase/hosting')
+			}
+
+			// Handle host for hosting
+			if (offer == 'hosting') {
+
+				if (custom === undefined || custom == 0) {
+					NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
+					return res.redirect('/purchase/hosting')
+				}
+
+				Hosting.count({host: custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError('An error occured on hosting check')
+					}
+
+					if (count > 0) {
+						NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+						return res.redirect('/purchase/hosting')
+					}
+
+					// save purchase
+					PurchaseService.buy({
+						userId: req.session.userId,
+						offerType: offer.toUpperCase(),
+						host: custom,
+						paymentType: 'FREE'
+					}, function (success, purchaseId, itemId) {
+
+						if (success) {
+
+							// set voucher at used
+							Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offer.toUpperCase(), itemId: itemId}).exec(function (err, voucher) {
+
+								if (err) {
+									sails.log.error(err)
+									return res.serverError('An error occured on voucher update')
+								}
+
+								// Redirect on profile with notification
+								NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
+								res.redirect('/user/profile')
+
+							})
+
+						}
+						else {
+							return res.serverError('An error occured on purchase')
+						}
+
+					})
+				})
+			}
+			else {
+				// save purchase
+				PurchaseService.buy({
+					userId: req.session.userId,
+					offerType: offer.toUpperCase(),
+					host: custom,
+					paymentType: 'FREE'
+				}, function (success, purchaseId, itemId) {
+
+					if (success) {
+						// set voucher at used
+						Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offer.toUpperCase(), itemId: itemId}).exec(function (err, voucher) {
+
+							if (err) {
+								sails.log.error(err)
+								return res.serverError('An error occured on voucher update')
+							}
+
+							// Redirect on profile with notification
+							NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
+							res.redirect('/user/profile')
+
+						})
+					}
+					else {
+						return res.serverError('An error occured on purchase')
+					}
+
+				})
 			}
 
 		})

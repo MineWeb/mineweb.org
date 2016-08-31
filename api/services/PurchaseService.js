@@ -187,7 +187,7 @@ module.exports = {
                       if (!success)
                         return next(false)
 
-                      return next(true, purchaseId)
+                      return next(true, purchaseId, itemId)
 
                     })
                 })
@@ -205,7 +205,7 @@ module.exports = {
                     if (!success)
                       return next(false)
 
-                    return next(true, purchaseId)
+                    return next(true, purchaseId, itemId)
 
                   })
               }

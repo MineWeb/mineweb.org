@@ -39,7 +39,7 @@ module.exports = {
 
     paymentType: {
       type: 'string',
-      in: ['PAYPAL', 'DEDIPASS']
+      in: ['PAYPAL', 'DEDIPASS', 'FREE']
     }
 
   }

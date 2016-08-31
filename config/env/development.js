@@ -34,6 +34,10 @@ module.exports = {
  			license: 'a4e7b35c40c18f69431cd8e29f4d9bba',
  			hosting: '45fd9efcda58b6d009ce44cdc7dc73e8'
  		}
- 	}
+ 	},
+
+  paypal: {
+    sandbox: true
+  }
 
 };

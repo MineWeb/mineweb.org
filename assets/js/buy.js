@@ -63,6 +63,8 @@ $('#checkVoucher').on('click', function(e) {
     url: '/purchase/checkVoucher/'+voucher+'/'+price,
     success: function(data) {
 
+      $('#pay').removeClass('free')
+
       if (data.status) {
 
         // Caculate new price
@@ -81,6 +83,7 @@ $('#checkVoucher').on('click', function(e) {
         }
         else {
           // edit payment btn
+          $('#pay').addClass('free')
           $('#pay').html($('#pay').attr('data-content-if-free'))
         }
 
@@ -105,6 +108,7 @@ $('#checkVoucher').on('click', function(e) {
 
     },
     error: function() {
+      $('#pay').removeClass('free')
       // re-set btn content
       btn.html(btnContent)
       // enable btn
@@ -215,6 +219,13 @@ $('#pay').on('click', function(e) {
   var custom = $('input[name="custom"]').val()
   var offer = $(this).attr('data-offer')
 
-  $('<form method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="custom" value="'+custom+'"><input name="offer" value="'+offer+'"></form>').submit()
+  if ($(this).hasClass('free')) {
+    if (custom === undefined)
+      custom = ''
+    document.location = '/purchase/' + offer + '/free/' + voucher + '/' + custom
+  }
+  else {
+    $('<form method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="custom" value="'+custom+'"><input name="offer" value="'+offer+'"></form>').submit()
+  }
 
 })
