@@ -357,7 +357,7 @@ module.exports = {
 			}
 			else {
 				// invalid code
-				NotificationService.error(req, req.__('Votre code "'+code+'" est invalide !'))
+				NotificationService.error(req, req.__('Votre code "%s" est invalide !', code))
 				res.redirect('/purchase/'+offer)
 			}
 

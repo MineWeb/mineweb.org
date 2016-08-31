@@ -93,8 +93,11 @@ block content
                       each license, index in user.licenses
                         tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
                           td
-                            a(href=license.host, target='_blank')
-                              | #{license.host}
+                            if license.host != null && license.host.length > 0
+                              a(href=license.host, target='_blank')
+                                | #{license.host}
+                            else
+                              em #{__('Licence non installée')}
                           td #{license.key}
                           td
                             if license.state
