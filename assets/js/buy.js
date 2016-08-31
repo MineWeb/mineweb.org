@@ -120,7 +120,7 @@ $('#checkVoucher').on('click', function(e) {
       $('#pay').html($('#pay').attr('data-content-if-not-free'))
 
       // Edit price reduction
-      $('.voucher-reduction').html('- 00.00 €')
+      $('.voucher-reduction').html('- 0.00 €')
 
       // Edit price total
       var totalPrice = parseFloat(price)+parseFloat(defaultPayPalFees)
@@ -137,6 +137,71 @@ $('#checkVoucher').on('click', function(e) {
 })
 
 /*
+  CHECK SUBDOMAIN (FOR HOSTING)
+*/
+
+$('#checkSubdomain').on('click', function(e) {
+
+  // Cancel default behavior
+  e.preventDefault()
+
+  // Init vars
+  var btn = $(this)
+  var btnContent = btn.html() // get current btn content (re-set after)
+
+  btn.html('<i class="fa fa-refresh fa-spin"></i>') // set spinner
+  btn.addClass('disabled').attr('disabled', true) // block multiple clicks
+
+  var input = $('input[name="custom"]') // get input
+  var subdomain = input.val() // get input value for check
+
+  // Check
+  $.ajax({
+    method: 'get',
+    dataType: 'json',
+    url: '/purchase/checkHostingSubdomainAvailability/'+subdomain,
+    success: function(data) {
+
+      if (data.status) {
+
+        $('#subdomainWaitStatus').hide()
+        $('#subdomainAvailable').hide()
+        $('#subdomainNotAvailable').hide()
+
+        if (data.available)
+          $('#subdomainAvailable').fadeIn(100)
+        else
+          $('#subdomainNotAvailable').fadeIn(100)
+
+        // re-set btn content
+        btn.html(btnContent)
+        // enable btn
+        btn.removeClass('disabled').attr('disabled', false)
+
+      }
+      else {
+        this.error()
+      }
+
+    },
+    error: function() {
+      // re-set btn content
+      btn.html(btnContent)
+      // enable btn
+      btn.removeClass('disabled').attr('disabled', false)
+
+      $('#subdomainAvailable').hide()
+      $('#subdomainNotAvailable').hide()
+      $('#subdomainWaitStatus').fadeIn(100)
+    }
+  })
+
+
+
+})
+
+
+/*
   BUY WITH PAYPAL
 */
 
@@ -147,8 +212,9 @@ $('#pay').on('click', function(e) {
   var paymentType = $('.btn-pay.active').attr('data-payment-type')
   var url = '/buy/'+paymentType
   var voucher = $('input[name="voucher"]').val()
+  var custom = $('input[name="custom"]').val()
   var offer = $(this).attr('data-offer')
 
-  $('<form method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="offer" value="'+offer+'"></form>').submit()
+  $('<form method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="custom" value="'+custom+'"><input name="offer" value="'+offer+'"></form>').submit()
 
 })

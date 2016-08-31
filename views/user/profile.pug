@@ -142,7 +142,7 @@ block content
                       each hosting, index in user.hostings
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                           td
-                            if hosting.host_type === 'SUBDOMAIN'
+                            if hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
                                  | http://#{hosting.host}.craftwb.fr
                             else
@@ -220,14 +220,14 @@ block content
                   table.table
                     thead
                       tr
-                        th #{__('Montant de la transaction')}
+                        //th #{__('Montant de la transaction')}
                         th #{__('Code utilisé')}
                         th #{__('Palier utilisé')}
                         th #{__('Date du paiement')}
                     tbody
                       each payment, index in user.dedipassPayments
                         tr
-                          td #{payment.amount} €
+                          //td #{payment.amount} €
                           td #{payment.code}
                           td #{payment.rate}
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{payment.createdAt}

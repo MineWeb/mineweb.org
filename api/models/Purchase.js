@@ -34,7 +34,7 @@ module.exports = {
     },
 
     paymentId: {
-      type: 'string'
+      type: 'integer'
     },
 
     paymentType: {

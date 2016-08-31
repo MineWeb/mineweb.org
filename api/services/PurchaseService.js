@@ -19,22 +19,25 @@ module.exports = {
    *                 Check price
    *                 Call hosting generation OR license generation (optionnal)
    *                 Save into purchase table data
-   * @return Purchase ID or FALSE
+   * @return Purchase ID or false
    * @param {integer} purchase.userId Buyer's id
    * @param {string} purchase.offerType Can be in ['PLUGIN', 'THEME', 'LICENSE', 'HOSTING']
    * @param (optionnal) {string} purchase.offerId Offer's id (Plugin/Theme id)
-   * @param {float} purchase.amount Payment's purchase.amount (with fees for PayPal payment)
+   * @param (optionnal) {float} purchase.amount Payment's amount (with fees for PayPal payment)
    * @param (optionnal) {string} purchase.receiver PayPal buyer's email
    * @param (optionnal) {string} purchase.voucher purchase.voucher code
-   * @param (optionnal) {string} purchase.paypalPaymentId PayPal transaction id
+   * @param (optionnal) {string} purchase.paypalType in ['PAYPAL', 'DEDIPASS']
    * @param (optionnal) {array} purchase.host Contains license/purchase.hosting purchase.host
+   * @param {function} next Callback function
    *
    */
 
-  buy: function (purchase) {
+  buy: function (purchase, next) {
+
+    var self = this
 
     if (purchase === undefined && typeof purchase !== 'object')
-      return false
+      return next(false)
 
     /*
         Primary checks
@@ -60,7 +63,7 @@ module.exports = {
           // if it's a plugin or theme
           if (purchase.offerType === 'PLUGIN' || purchase.offerType === 'THEME') {
 
-            var model = (purchase.offerType === 'PLUGIN') ? Plugin : Theme
+            var model = (purchase.offerType === 'PLUGIN') ? Plugin : Hosting
 
             model.count({id: purchase.offerId}).populate(['author']).exec(function (err, offer) {
 
@@ -72,6 +75,9 @@ module.exports = {
             })
 
           }
+          else {
+            callback(null, null)
+          }
 
         }
 
@@ -80,33 +86,33 @@ module.exports = {
         // If error occured with sql
         if (err) {
           sails.log.error(err)
-          return FALSE
+          return next(false)
         }
 
         // If user doesn't exist
         if (!results[0]) {
-          sails.error("[PURCHASE] User doesn't exist")
-          return FALSE
+          sails.log.error("[PURCHASE] User doesn't exist")
+          return next(false)
         }
 
         // If offer is a plugin or theme and doesn't exist
         if ( (purchase.offerType === 'PLUGIN' || purchase.offerType === 'THEME') && results[1] === undefined) {
-          sails.error("[PURCHASE] Offer doesn't exist")
-          return FALSE
+          sails.log.error("[PURCHASE] Offer doesn't exist")
+          return next(false)
         }
         else if (purchase.offerType === 'LICENSE') {
           offer = {
             price: License.price
           }
         }
-        else if (purchase.offerType === 'THEME') {
+        else if (purchase.offerType === 'HOSTING') {
           offer = {
-            price: purchase.hosting.price
+            price: Hosting.price
           }
         }
         else {
-          sails.error("[PURCHASE] Unknown offer type")
-          return FALSE
+          sails.log.error("[PURCHASE] Unknown offer type")
+          return next(false)
         }
 
         // Set/delete vars
@@ -115,38 +121,45 @@ module.exports = {
 
         // Check purchase.receiver if paypal payment
         if (purchase.receiver !== undefined && purchase.receiver !== offer.user.paypalDeveloperEmail) {
-          sails.error("[PURCHASE] Bad purchase.receiver")
-          return FALSE
+          sails.log.error("[PURCHASE] Bad purchase.receiver")
+          return next(false)
         }
 
         /*
             Handle price
         */
 
+          if (purchase.voucher === undefined)
+            purchase.voucher = 'fake'
+
           // Check if purchase.voucher exist
           Voucher.findOne({code: purchase.voucher}).exec(function (err, voucher) {
 
             if (err) {
               sails.log.error(err)
-              return FALSE
+              return next(false)
             }
 
-            // If purchase.voucher exist with this code
-            if (voucher !== undefined) {
-              // Calculate new price without purchase.voucher purchase.amount
-              offer.price -= voucher.purchase.amount
-            }
+            if (purchase.amount !== undefined) {
 
-            // If it's paypal payment
-            if (purchase.receiver !== undefined) {
-              // Calculate fees if PayPal payment (if purchase.receiver !== undefined)
-              offer.price = offer.price + PayPalService.calculateFees(offer.price)
-            }
+              // If purchase.voucher exist with this code
+              if (voucher !== undefined) {
+                // Calculate new price without purchase.voucher purchase.amount
+                offer.price -= voucher.purchase.amount
+              }
 
-            // Check price with offer price
-            if (purchase.amount !== offer.price) {
-              sails.log.error("[PURCHASE] Price doesn't match !")
-              return FALSE
+              // If it's paypal payment
+              if (purchase.receiver !== undefined) {
+                // Calculate fees if PayPal payment (if purchase.receiver !== undefined)
+                offer.price = offer.price + PayPalService.calculateFees(offer.price)
+              }
+
+              // Check price with offer price
+              if (purchase.amount !== offer.price) {
+                sails.log.error("[PURCHASE] Price doesn't match !")
+                return next(false)
+              }
+
             }
 
             /*
@@ -161,16 +174,22 @@ module.exports = {
 
                   if (err) {
                     sails.log.error(err)
-                    return FALSE
+                    return next(false)
                   }
 
-                    /*
-                      Save
-                    */
+                  /*
+                    Save
+                  */
 
-                    // Save & Return purchase ID
-                      return this.save(purchase.userId, purchase.offerType, itemId, purchase.paypalPaymentId)
+                  // Save & Return purchase ID
+                    var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
 
+                      if (!success)
+                        return next(false)
+
+                      return next(true, purchaseId)
+
+                    })
                 })
 
               } else {
@@ -181,7 +200,14 @@ module.exports = {
                 */
 
                 // Save & Return purchase ID
-                  return this.save(purchase.userId, purchase.offerType, purchase.offerId, purchase.paypalPaymentId)
+                  var save = self.save(purchase.userId, purchase.offerType, purchase.offerId, purchase.paymentType, function(success, purchaseId) {
+
+                    if (!success)
+                      return next(false)
+
+                    return next(true, purchaseId)
+
+                  })
               }
 
           })
@@ -194,19 +220,18 @@ module.exports = {
    * Handle save process (called by buy() method only)
   **/
 
-  save: function (userId, offerType, itemId, paypalPaymentId) {
+  save: function (userId, offerType, itemId, paymentType, next) {
     // Save purchase
     Purchase.create({
       user: userId,
       type: offerType,
       itemId: itemId,
-      paymentId: paypalPaymentId,
-      paymentType: (paypalPaymentId === undefined) ? 'DEDIPASS' : 'PAYPAL'
+      paymentType: paymentType
     }).exec(function (err, purchase) {
 
       if (err) {
         sails.log.error(err)
-        return FALSE
+        next(false)
       }
 
       // If it's License/purchase.hosting
@@ -214,21 +239,21 @@ module.exports = {
 
         // Save purchase id into License/purchase.hosting entry
         var model = (offerType === 'LICENSE') ? License : Hosting
-        model.update({id: itemId}, {purchase: id}).exec(function (err, item) {
+        model.update({id: itemId}, {purchase: purchase.id}).exec(function (err, item) {
 
           if (err) {
             sails.log.error(err)
-            return FALSE
+            next(false)
           }
 
           // Return purchase id
-          return purchase.id
+          next(true, purchase.id)
 
         })
 
       } else {
         // It's Plugin/Theme
-        return purchase.id
+        next(true, purchase.id)
       }
 
     })

@@ -40,7 +40,7 @@ module.exports = {
 			defaultsTo: true
 		},
 
-    host_type: {
+    hostType: {
 			type: 'string',
 			required: true,
       defaultsTo: 'SUBDOMAIN',
@@ -89,7 +89,7 @@ module.exports = {
         sails.log.error(err)
         return false
       }
-
+/* TODO -> save ids into config file
       // Send command to server for generate hosting
       exec('/home/mineweb.sh creation '+hosting.id+' '+hosting.host+' sdomain', {
         user: 'root',
@@ -102,13 +102,13 @@ module.exports = {
           sails.log.error(err)
           return false
         }
-
+*/
         // TODO -> Save ftp ids
 
         // Return hosting id
         return next(err, hosting.id)
 
-      })
+    //  })
 
     })
   }

@@ -4,6 +4,7 @@
  * @description :: Server-side logic for managing Purchasecontrollers
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+var request = require('request')
 
 module.exports = {
 
@@ -63,6 +64,40 @@ module.exports = {
 	},
 
 	/*
+		Called by AJAX with subdomain (arg)
+	*/
+	checkHostingSubdomainAvailability: function (req, res) {
+
+		// Handle args
+		if (req.param('subdomain') === undefined) {
+			return res.notFound('Subdomain is missing')
+		}
+		var subdomain = req.param('subdomain')
+
+		// Check subdomain
+		Hosting.count({host: subdomain, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError('An error occured on dedipass api')
+			}
+
+			if (count > 0) {
+				return res.json({
+					status: true,
+					available: false
+				})
+			}
+
+			return res.json({
+				status: true,
+				available: true
+			})
+
+		})
+	},
+
+	/*
 		Handle redirection to PayPal with form for PayPal process
 	*/
 	paypal: function (req, res) {
@@ -110,7 +145,8 @@ module.exports = {
 					item_name: item_name,
 					custom: JSON.stringify({
 						voucher: voucherCode,
-						userId: req.session.userId
+						userId: req.session.userId,
+						custom: req.body.custom
 					}),
 					invoice: offer,
 					amount: price,
@@ -119,7 +155,35 @@ module.exports = {
 
 				// Render view
 				res.locals.title = req.__("Redirection vers PayPal")
-				res.view('./buy/paypal', data)
+
+				// Check host (for hosting)
+					if (offer == 'hosting') {
+
+						if (req.body.custom === undefined || req.body.custom.length == 0) {
+							NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
+							return res.redirect('/purchase/hosting')
+						}
+
+						Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+
+							if (err) {
+								sails.log.error(err)
+								return res.serverError('An error occured on dedipass api')
+							}
+
+							if (count > 0) {
+								NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+								return res.redirect('/purchase/hosting')
+							}
+
+							res.view('./buy/paypal', data)
+
+						})
+
+					}
+					else { // Not hosting
+						res.view('./buy/paypal', data)
+					}
 
 			})
 
@@ -145,15 +209,51 @@ module.exports = {
 
 			var offer = req.body.offer
 
-		// Handle dedipass pubic key
-			var dedipassPublicKey = (offer == 'license') ? sails.config.dedipass.publicKeys.license : sails.config.dedipass.publicKeys.hosting
+		// Check host (for hosting)
+			if (offer == 'hosting') {
 
-		// Render view
-		res.view('./buy/dedipass', {
-			title: req.__("Payer avec Dédipass"),
-			dedipassPublicKey: dedipassPublicKey,
-			custom: offer
-		})
+				if (req.body.custom === undefined || req.body.custom.length == 0) {
+					NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
+					return res.redirect('/purchase/hosting')
+				}
+
+				Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError('An error occured on dedipass api')
+					}
+
+					if (count > 0) {
+						NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+						return res.redirect('/purchase/hosting')
+					}
+
+					// Handle dedipass pubic key
+						var dedipassPublicKey = (offer == 'license') ? sails.config.dedipass.publicKeys.license : sails.config.dedipass.publicKeys.hosting
+
+					// Render view
+					res.view('./buy/dedipass', {
+						title: req.__("Payer avec Dédipass"),
+						dedipassPublicKey: dedipassPublicKey,
+						custom: req.body.custom
+					})
+
+				})
+			}
+			else { // Not hosting, licence
+
+				// Handle dedipass pubic key
+					var dedipassPublicKey = (offer == 'license') ? sails.config.dedipass.publicKeys.license : sails.config.dedipass.publicKeys.hosting
+
+				// Render view
+				res.view('./buy/dedipass', {
+					title: req.__("Payer avec Dédipass"),
+					dedipassPublicKey: dedipassPublicKey,
+					custom: req.body.custom
+				})
+
+			}
 	},
 
 	/*
@@ -167,6 +267,101 @@ module.exports = {
 		Handle dedipass check after buy
 	*/
 	dedipassIPN: function (req, res) {
+
+		// Check params
+		if (req.body.code === undefined || req.body.code.length === 0 || req.body.rate === undefined || req.body.rate.length === 0) {
+			NotificationService.error(req, req.__('Vous devez entrer un code et/ou choisir une offre !'))
+			res.redirect('/download')
+		}
+
+		// Check offer
+		if (req.body.key === sails.config.dedipass.publicKeys.license)
+			var offer = 'license'
+		else if (req.body.key === sails.config.dedipass.publicKeys.hosting)
+			var offer = 'hosting'
+		else
+			res.serverError()
+
+		// Set vars
+		var code = req.body.code
+		var rate = req.body.rate
+
+		// Create endpoint
+		var endpoint = 'http://api.dedipass.com/v1/pay/?key=' + sails.config.dedipass.publicKeys[offer] + '&rate=' + rate + '&code=' + code
+
+		// Request
+		request.get({
+      url: endpoint,
+			json: true
+    }, function(err, response, body) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError('An error occured on dedipass api')
+			}
+
+			// If success payment
+			if (body.status == 'success') {
+
+				// re-set vars (clean)
+				code = body.code
+				rate = body.rate
+
+				// save purchase
+				PurchaseService.buy({
+					userId: req.session.userId,
+					offerType: offer.toUpperCase(),
+					host: req.body.custom,
+					paymentType: 'DEDIPASS'
+				}, function (success, purchaseId) {
+
+					if (success) {
+
+						// save dedipass payment
+						DedipassHistory.create({
+							user: req.session.userId,
+							code: code,
+							rate: rate,
+							payout: body.payout,
+							purchase: purchaseId
+						}).exec(function (err, history) {
+
+							if (err) {
+								sails.log.error(err)
+								return res.serverError('An error occured on dedipass api')
+							}
+
+							// set payment id of purchase
+							Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
+
+								if (err) {
+									sails.log.error(err)
+									return res.serverError('An error occured on dedipass api')
+								}
+
+								// Redirect on profile with notification
+								NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
+								res.redirect('/user/profile')
+
+							})
+
+						})
+
+					}
+					else {
+						return res.serverError('An error occured on purchase')
+					}
+
+				})
+
+			}
+			else {
+				// invalid code
+				NotificationService.error(req, req.__('Votre code "'+code+'" est invalide !'))
+				res.redirect('/purchase/'+offer)
+			}
+
+		})
 
 	}
 

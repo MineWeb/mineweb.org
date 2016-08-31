@@ -55,6 +55,31 @@ block content
 
           hr
 
+          h4 #{__('Choix du sous-domaine')}
+
+          div.col-md-6
+            div.input-group
+              span.input-group-addon http://
+              input(class="form-control", name="custom", placeholder=__('Sous-domaine personalisé'))
+              span.input-group-addon .craftwb.fr
+          div.col-md-6
+            div.btn-group(style='width:100%;')
+              button.btn.btn-link#subdomainWaitStatus(style='text-decoration: none !important; cursor: default !important;width: 50%')
+              button.btn.btn-link.text-danger#subdomainNotAvailable(style='display:none;text-decoration: none !important; cursor: default !important;width: 50%')
+                i.fa.fa-times
+                | #{__('Non disponible')}
+              button.btn.btn-link.text-success#subdomainAvailable(style='display:none;text-decoration: none !important; cursor: default !important;width: 50%')
+                i.fa.fa-check
+                | #{__('Disponible !')}
+              button.btn.btn-success.btn-block#checkSubdomain(style='width: 50%') #{__('Vérifier la disponibilité')}
+
+          div.clearfix
+
+          p.text-center
+            small.form-text.text-muted #{__('Vous pourrez changer de sous-domaine ou lier votre propre nom de domaine après, si vous le souhaitez.')}
+
+          hr
+
           h4 #{__('Choix du moyen de paiement')}
 
           div.warning-voucher(style='display:none;')
@@ -94,24 +119,28 @@ block content
                   td !{__('Licence MineWeb & Hébergement (1 mois)')}
                   td #{Hosting.price} €
                   td #{Hosting.price} €
-                  tr
-                    td
-                    td
-                      div.input-group
-                        input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
-                        span.input-group-btn
-                          button.btn.btn-secondary#checkVoucher(data-price=Hosting.price) #{__('Utiliser')}
-                    td.voucher-reduction - 0.00 €
-                  tr#paypalFees
-                    td
-                    th #{__('Taxes')}
-                    td#paypalFeesAmount(data-default-fees=PayPalService.calculateFees(Hosting.price)) #{PayPalService.calculateFees(Hosting.price)} €
-                  tr
-                    td
-                    th #{__('Total')}
-                    th.amount#paypalAmount #{PayPalService.calculateFees(Hosting.price) + Hosting.price} €
-                    td.amount#dedipassAmount(style='display:none;', data-default-price=__("Dépend de Dédipass"))
-                      em #{__("Dépend de Dédipass")}
+                tr
+                  td !{__('Sous-domaine')}
+                  td 0.00 €
+                  td 0.00 €
+                tr
+                  td
+                  td
+                    div.input-group
+                      input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
+                      span.input-group-btn
+                        button.btn.btn-secondary#checkVoucher(data-price=Hosting.price) #{__('Utiliser')}
+                  td.voucher-reduction - 0.00 €
+                tr#paypalFees
+                  td
+                  th #{__('Taxes')}
+                  td#paypalFeesAmount(data-default-fees=PayPalService.calculateFees(Hosting.price)) #{PayPalService.calculateFees(Hosting.price)} €
+                tr
+                  td
+                  th #{__('Total')}
+                  th.amount#paypalAmount #{PayPalService.calculateFees(Hosting.price) + Hosting.price} €
+                  td.amount#dedipassAmount(style='display:none;', data-default-price=__("Dépend de Dédipass"))
+                    em #{__("Dépend de Dédipass")}
 
             hr
 

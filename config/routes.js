@@ -52,6 +52,7 @@ module.exports.routes = {
   */
 
     '/purchase/checkVoucher/:voucherCode/:price': 'PurchaseController.checkVoucher',
+    '/purchase/checkHostingSubdomainAvailability/:subdomain': 'PurchaseController.checkHostingSubdomainAvailability',
 
     'post /buy/dedipass': 'PurchaseController.dedipass',
     'post /buy/paypal': 'PurchaseController.paypal',

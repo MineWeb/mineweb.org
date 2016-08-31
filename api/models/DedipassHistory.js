@@ -38,10 +38,10 @@ module.exports = {
       required: true
     },
 
-    amount: {
+    /*amount: {
       type: 'float',
       required: true
-    },
+    },*/
 
     purchase: {
       model: 'Purchase'
