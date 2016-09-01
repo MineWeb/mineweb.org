@@ -23,7 +23,7 @@ block custom
 
     $(window).ready(function() {
       var formContent = '';
-      formContent += '<form action="https://www.paypal.com/cgi-bin/webscr" method="post">';
+      formContent += '<form action="https://#{sails.config.paypal.sandbox ? 'sandbox' : 'www'}.paypal.com/cgi-bin/webscr" method="post">';
         formContent += '<input name="currency_code" type="hidden" value="EUR" />';
         formContent += '<input name="shipping" type="hidden" value="0.00" />';
         formContent += '<input name="tax" type="hidden" value="#{tax}" />';

@@ -315,62 +315,101 @@ module.exports = {
 				var offer = params.invoice
 				var data = JSON.parse(params.custom)
 
-				var receiver_email = (offer == 'license' || offer == 'hosting') ? sails.config.paypal.merchantEmail : ''
+		    if (params.payment_status == 'Completed') { // Good behavior, payment accepted
 
-				// check receiver email
-				if (params.receiver_email == receiver_email) {
+					// Check if not already saved as completed (or already handled) for this txn_id
+					PayPalHistory.count({paymentId: params.txn_id, state: ['COMPLETED', 'FAILED', 'REFUNDED', 'REVERSED']}).exec(function (err, count) {
 
-			    if (params.payment_status == 'Completed') { // Good behavior, payment accepted
-							// set voucher at used
+						if (err) {
+							sails.log.error(err)
+							return res.serverError()
+						}
 
-						// Check if not already saved as completed (or already handled) for this txn_id
-						PayPalHistory.count({paymentId: params.txn_id, state: ['COMPLETED', 'FAILED', 'REFUNDED', 'REVERSED']}).exec(function (err, count) {
+						if (count > 0)
+							return res.serverError('Payment already handled')
 
-							if (err) {
-								sails.log.error(err)
-								return res.serverError()
-							}
+						// save purchase
+						PurchaseService.buy({
+							userId: data.userId,
+							offerType: offer.toUpperCase(),
+							offerId: undefined,
+							host: data.custom,
+							paymentType: 'PAYPAL',
+							voucher: data.voucher,
+							purchaseAmount: params.payment_gross,
+							receiver: params.receiver_email
+						}, function (success, purchaseId) {
 
-							if (count > 0)
-								return res.serverError('Payment already handled')
+							if (success) {
 
-							// save purchase
-							PurchaseService.buy({
-								userId: data.userId,
-								offerType: offer.toUpperCase(),
-								host: data.custom,
-								paymentType: 'PAYPAL'
-							}, function (success, purchaseId) {
+								// Check if the payment isn't save as pending transaction
+								PayPalHistory.findOne({paymentId: params.txn_id, state: 'PENDING'}).exec(function (err, history) {
 
-								if (success) {
+									if (err) {
+										sails.log.error(err)
+										return res.serverError()
+									}
 
-									// Check if the payment isn't save as pending transaction
-									PayPalHistory.findOne({paymentId: params.txn_id, state: 'PENDING'}).exec(function (err, history) {
+									if (history === undefined) { // no payment pending
 
-										if (err) {
-											sails.log.error(err)
-											return res.serverError()
-										}
+										PayPalHistory.create({
+											user: data.userId,
+											paymentId: params.txn_id,
+											paymentAmount: params.payment_gross,
+											taxAmount: params.payment_fee,
+											buyerEmail: params.payer_email,
+											paymentDate: (new Date(params.payment_date)),
+											state: 'COMPLETED'
+										}).exec(function (err, history) {
 
-										if (history === undefined) { // no payment pending
+											if (err) {
+												sails.log.error(err)
+												return res.serverError()
+											}
 
-											PayPalHistory.create({
-												user: data.userId,
-												paymentId: params.txn_id,
-												paymentAmount: params.payment_gross,
-												taxAmount: params.payment_fee,
-												buyerEmail: params.payer_email,
-												paymentDate: (new Date(params.payment_date)),
-												state: 'COMPLETED'
-											}).exec(function (err, history) {
+											// set payment id of purchase
+											Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
 
 												if (err) {
 													sails.log.error(err)
 													return res.serverError()
 												}
 
-												// set payment id of purchase
-												Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
+												if (err) {
+													sails.log.error(err)
+													return res.serverError()
+												}
+
+												// Redirect on profile with notification
+												NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
+												res.redirect('/user/profile')
+
+											})
+
+										})
+
+									}
+									else { // payment was pending
+
+										PayPalHistory.update({id: history.id}, {
+											state: 'COMPLETED'
+										}).exec(function (err, history) {
+
+											if (err) {
+												sails.log.error(err)
+												return res.serverError()
+											}
+
+											// set payment id of purchase
+											Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
+
+												if (err) {
+													sails.log.error(err)
+													return res.serverError()
+												}
+
+												// set voucher at used
+												//Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offer.toUpperCase(), itemId: itemId}).exec(function (err, voucher) {
 
 													if (err) {
 														sails.log.error(err)
@@ -381,199 +420,168 @@ module.exports = {
 													NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
 													res.redirect('/user/profile')
 
-												})
+												//})
 
 											})
 
-										}
-										else { // payment was pending
+										})
 
-											PayPalHistory.update({id: history.id}, {
-												state: 'COMPLETED'
-											}).exec(function (err, history) {
-
-												if (err) {
-													sails.log.error(err)
-													return res.serverError()
-												}
-
-												// set payment id of purchase
-												Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
-
-													if (err) {
-														sails.log.error(err)
-														return res.serverError()
-													}
-
-													// Redirect on profile with notification
-													NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
-													res.redirect('/user/profile')
-
-												})
-
-											})
-
-										}
+									}
 
 
 
-									})
+								})
 
-								}
-								else {
-									return res.serverError('An error occured on purchase')
-								}
-
-							})
-
-						})
-
-			    }
-					else if (params.payment_status == 'Pending') { // Waiting banks
-						// Create PayPalHistory line
-						PayPalHistory.create({
-							user: data.userId,
-							paymentId: params.txn_id,
-							paymentAmount: params.payment_gross,
-							taxAmount: params.payment_fee,
-							buyerEmail: params.payer_email,
-							paymentDate: (new Date(params.payment_date)),
-							state: 'PENDING'
-						}).exec(function (err, history) {
-
-							if (err) {
-						    sails.log.error(err)
-								return res.serverError()
-						  }
-
-							return res.send()
-
-						})
-					}
-					else if (params.payment_status == 'Failed') { // Bank cancel payment
-						// Just update payment status
-						PayPalHistory.update({paymentId: params.txn_id}, {
-							state: 'FAILED'
-						}).exec(function (err, history) {
-
-							if (err) {
-						    sails.log.error(err)
-								return res.serverError()
-						  }
-
-							return res.send()
-
-						})
-					}
-					else if (params.payment_status == 'Refunded') { // Loose case / Refund requested by user
-						// Update payment status & reason
-						PayPalHistory.update({paymentId: params.parent_txn_id}, {
-							state: 'REFUNDED',
-							refundDate: (new Date())
-						}).exec(function (err, history) {
-
-							if (err) {
-						    sails.log.error(err)
-								return res.serverError()
-						  }
-
-							// get purchase data
-							Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
-
-								// Update suspended reason if license/hosting
-								if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
-									var model = (purchase.type == 'LICENSE') ? License : Hosting
-
-									model.update({id: purchase.itemId}, {suspended: req.__('Paiement PayPal remboursé')}).exec(function (err, item) {
-										return res.send()
-									})
-								}
-								else {
-									return res.send()
-								}
-
-							})
-
-						})
-					}
-					else if (params.payment_status == 'Reversed') { // Open case (Loose temporaly funds)
-
-						if (params.reason_code == 'buyer-complaint')
-							var reason = 'BUYER_COMPLAINT'
-						else if (params.reason_code == 'unauthorized_claim' || params.reason_code == 'unauthorized_spoof')
-							var reason = 'UNAUTHORIZED'
-						else
-							var reason = 'OTHER'
-
-						// Update payment status & reason
-						PayPalHistory.update({paymentId: params.parent_txn_id}, {
-							state: 'REVERSED',
-							caseDate: (new Date()),
-							reversedReason: reason
-						}).exec(function (err, history) {
-
-							if (err) {
-								sails.log.error(err)
-								return res.serverError()
+							}
+							else {
+								return res.serverError('An error occured on purchase')
 							}
 
-							// get purchase data
-							Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
-
-								// Update suspended reason if license/hosting
-								if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
-									var model = (purchase.type == 'LICENSE') ? License : Hosting
-
-									model.update({id: purchase.itemId}, {suspended: req.__('Litige PayPal')}).exec(function (err, item) {
-										return res.send()
-									})
-								}
-								else {
-									return res.send()
-								}
-
-							})
-
 						})
-					}
-					else if (params.payment_status == 'Canceled_Reversal') { // Win case, like accepted payment
-						// Update payment status
-						PayPalHistory.update({paymentId: params.parent_txn_id}, {
-							state: 'COMPLETED'
-						}).exec(function (err, history) {
 
-							if (err) {
-								sails.log.error(err)
-								return res.serverError()
-							}
+					})
 
-							// get purchase data
-							Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+		    }
+				else if (params.payment_status == 'Pending') { // Waiting banks
+					// Create PayPalHistory line
+					PayPalHistory.create({
+						user: data.userId,
+						paymentId: params.txn_id,
+						paymentAmount: params.payment_gross,
+						taxAmount: params.payment_fee,
+						buyerEmail: params.payer_email,
+						paymentDate: (new Date(params.payment_date)),
+						state: 'PENDING'
+					}).exec(function (err, history) {
 
-								// Update suspended reason if license/hosting
-								if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
-									var model = (purchase.type == 'LICENSE') ? License : Hosting
+						if (err) {
+					    sails.log.error(err)
+							return res.serverError()
+					  }
 
-									model.update({id: purchase.itemId}, {suspended: null}).exec(function (err, item) {
-										return res.send()
-									})
-								}
-								else {
-									return res.send()
-								}
-
-							})
-
-						})
-					}
-					else {
-						// Not supported
 						return res.send()
-					}
 
+					})
+				}
+				else if (params.payment_status == 'Failed') { // Bank cancel payment
+					// Just update payment status
+					PayPalHistory.update({paymentId: params.txn_id}, {
+						state: 'FAILED'
+					}).exec(function (err, history) {
+
+						if (err) {
+					    sails.log.error(err)
+							return res.serverError()
+					  }
+
+						return res.send()
+
+					})
+				}
+				else if (params.payment_status == 'Refunded') { // Loose case / Refund requested by user
+					// Update payment status & reason
+					PayPalHistory.update({paymentId: params.parent_txn_id}, {
+						state: 'REFUNDED',
+						refundDate: (new Date())
+					}).exec(function (err, history) {
+
+						if (err) {
+					    sails.log.error(err)
+							return res.serverError()
+					  }
+
+						// get purchase data
+						Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+
+							// Update suspended reason if license/hosting
+							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
+								var model = (purchase.type == 'LICENSE') ? License : Hosting
+
+								model.update({id: purchase.itemId}, {suspended: req.__('Paiement PayPal remboursé')}).exec(function (err, item) {
+									return res.send()
+								})
+							}
+							else {
+								return res.send()
+							}
+
+						})
+
+					})
+				}
+				else if (params.payment_status == 'Reversed') { // Open case (Loose temporaly funds)
+
+					if (params.reason_code == 'buyer-complaint')
+						var reason = 'BUYER_COMPLAINT'
+					else if (params.reason_code == 'unauthorized_claim' || params.reason_code == 'unauthorized_spoof')
+						var reason = 'UNAUTHORIZED'
+					else
+						var reason = 'OTHER'
+
+					// Update payment status & reason
+					PayPalHistory.update({paymentId: params.parent_txn_id}, {
+						state: 'REVERSED',
+						caseDate: (new Date()),
+						reversedReason: reason
+					}).exec(function (err, history) {
+
+						if (err) {
+							sails.log.error(err)
+							return res.serverError()
+						}
+
+						// get purchase data
+						Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+
+							// Update suspended reason if license/hosting
+							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
+								var model = (purchase.type == 'LICENSE') ? License : Hosting
+
+								model.update({id: purchase.itemId}, {suspended: req.__('Litige PayPal')}).exec(function (err, item) {
+									return res.send()
+								})
+							}
+							else {
+								return res.send()
+							}
+
+						})
+
+					})
+				}
+				else if (params.payment_status == 'Canceled_Reversal') { // Win case, like accepted payment
+					// Update payment status
+					PayPalHistory.update({paymentId: params.parent_txn_id}, {
+						state: 'COMPLETED'
+					}).exec(function (err, history) {
+
+						if (err) {
+							sails.log.error(err)
+							return res.serverError()
+						}
+
+						// get purchase data
+						Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+
+							// Update suspended reason if license/hosting
+							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
+								var model = (purchase.type == 'LICENSE') ? License : Hosting
+
+								model.update({id: purchase.itemId}, {suspended: null}).exec(function (err, item) {
+									return res.send()
+								})
+							}
+							else {
+								return res.send()
+							}
+
+						})
+
+					})
 				}
 				else {
-					return res.serverError('Invalid receiver')
+					// Not supported
+					return res.send()
 				}
 
 		  }

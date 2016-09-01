@@ -26,7 +26,7 @@ module.exports = {
    * @param (optionnal) {float} purchase.amount Payment's amount (with fees for PayPal payment)
    * @param (optionnal) {string} purchase.receiver PayPal buyer's email
    * @param (optionnal) {string} purchase.voucher purchase.voucher code
-   * @param (optionnal) {string} purchase.paypalType in ['PAYPAL', 'DEDIPASS']
+   * @param (optionnal) {string} purchase.paymentType in ['PAYPAL', 'DEDIPASS']
    * @param (optionnal) {array} purchase.host Contains license/purchase.hosting purchase.host
    * @param {function} next Callback function
    *
@@ -120,8 +120,22 @@ module.exports = {
         delete results
 
         // Check purchase.receiver if paypal payment
-        if (purchase.receiver !== undefined && purchase.receiver !== offer.user.paypalDeveloperEmail) {
-          sails.log.error("[PURCHASE] Bad purchase.receiver")
+        if (purchase.receiver !== undefined && purchase.paymentType == 'PAYPAL' && // If payment is PayPal
+          (
+            ( // If offer is Plugin/Theme and receiver isn't developer
+              (purchase.offerType === 'PLUGIN' || purchase.offerType === 'THEME')
+              &&
+              purchase.receiver !== offer.user.paypalDeveloperEmail
+            )
+            || // Or it's a license/hostign and receiver isn't me
+            (
+              (purchase.offerType === 'LICENSE' || purchase.offerType === 'HOSTING')
+              &&
+              purchase.receiver !== sails.config.paypal.merchantEmail
+            )
+          )
+        ) {
+          sails.log.error("[PURCHASE] Bad receiver")
           return next(false)
         }
 
@@ -181,13 +195,20 @@ module.exports = {
                     Save
                   */
 
-                  // Save & Return purchase ID
-                    var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
+                  self.saveVoucher(voucher, purchase.userId, purchase.offerType, purchase.offerId, function (success) {
 
-                      if (!success)
-                        return next(false)
+                    if (!success)
+                      return next(false)
 
-                      return next(true, purchaseId, itemId)
+                    // Save & Return purchase ID
+                      var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
+
+                        if (!success)
+                          return next(false)
+
+                        return next(true, purchaseId, itemId)
+
+                      })
 
                     })
                 })
@@ -199,15 +220,23 @@ module.exports = {
                   Save
                 */
 
-                // Save & Return purchase ID
-                  var save = self.save(purchase.userId, purchase.offerType, purchase.offerId, purchase.paymentType, function(success, purchaseId) {
+                self.saveVoucher(voucher, purchase.userId, purchase.offerType, purchase.offerId, function (success) {
 
-                    if (!success)
-                      return next(false)
+                  if (!success)
+                    return next(false)
 
-                    return next(true, purchaseId, itemId)
+                  // Save & Return purchase ID
+                    var save = self.save(purchase.userId, purchase.offerType, purchase.offerId, purchase.paymentType, function(success, purchaseId) {
 
-                  })
+                      if (!success)
+                        return next(false)
+
+                      return next(true, purchaseId, itemId)
+
+                    })
+
+                })
+
               }
 
           })
@@ -257,6 +286,29 @@ module.exports = {
       }
 
     })
+  }
+
+
+  /*
+    Handle voucher set to used process (called by buy() method only)
+  */
+
+  saveVoucher: function (voucher, userId, offerType, offerId, next) {
+
+    if (voucher === undefined) // no voucher
+      next(true)
+
+    Voucher.update({id: voucher.id}, {usedBy: userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offerType, itemId: offerId}).exec(function (err, voucher) {
+
+      if (err) {
+        sails.log.error(err)
+        return next(false)
+      }
+
+      return next(true)
+
+    })
+
   }
 
 };
