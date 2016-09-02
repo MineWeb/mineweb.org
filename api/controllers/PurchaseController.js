@@ -6,6 +6,7 @@
  */
 var request = require('request')
 var paypalIPN = require('paypal-ipn')
+var querystring = require('querystring')
 
 module.exports = {
 
@@ -139,17 +140,22 @@ module.exports = {
 				var item_name = (offer == 'license') ? req.__("Achat d'une licence MineWeb") : req.__("Location d'une licence et d'un hébergement MineWeb pour 1 mois")
 				var data = { // Form PayPal values
 					tax: fees,
-					return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
+					/*return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
 					cancel_return: RouteService.getBaseUrl() + '/purchase/' + offer,
-					notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',
-					business: 'paypal@mineweb.org',
+					notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',*/
+
+					return_url: 'http://176.150.149.78:1337' + '/buy/paypal/success',
+					cancel_return: 'http://176.150.149.78:1337' + '/purchase/' + offer,
+					notify_url: 'http://176.150.149.78:1337' + '/api/paypal-ipn',
+
+					business: sails.config.paypal.merchantEmail,
 					item_name: item_name,
-					custom: JSON.stringify({
+					custom: querystring.stringify({
+						offer: offer,
 						voucher: voucherCode,
 						userId: req.session.userId,
 						custom: req.body.custom
 					}),
-					invoice: offer,
 					amount: price,
 					cbt: req.__('Retourner sur mineweb.org')
 				}
@@ -261,6 +267,12 @@ module.exports = {
 		Handle PayPal check after buy with IPN POSTed data
 	*/
 	paypalIPN: function (req, res) {
+
+		if (sails.config.paypal.sandbox)
+			req.body.test_ipn = true
+		else
+			req.body.test_ipn = false
+
 		paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
 
 		  if (err) {
@@ -312,8 +324,13 @@ module.exports = {
 
 				// Set vars
 				var params = req.body
-				var offer = params.invoice
-				var data = JSON.parse(params.custom)
+
+				var data = querystring.parse(params.custom)
+
+				if (data === undefined || data.offer === undefined)
+					res.serverError()
+
+				var offer = data.offer
 
 		    if (params.payment_status == 'Completed') { // Good behavior, payment accepted
 
@@ -333,7 +350,7 @@ module.exports = {
 							userId: data.userId,
 							offerType: offer.toUpperCase(),
 							offerId: undefined,
-							host: data.custom,
+							host: (data.custom === undefined || data.custom == 'undefined') ? null : data.custom,
 							paymentType: 'PAYPAL',
 							voucher: data.voucher,
 							purchaseAmount: params.payment_gross,
@@ -380,9 +397,8 @@ module.exports = {
 													return res.serverError()
 												}
 
-												// Redirect on profile with notification
-												NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
-												res.redirect('/user/profile')
+												// Send 200 response for PayPal
+												return res.send()
 
 											})
 
@@ -408,19 +424,14 @@ module.exports = {
 													return res.serverError()
 												}
 
-												// set voucher at used
-												//Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offer.toUpperCase(), itemId: itemId}).exec(function (err, voucher) {
+												if (err) {
+													sails.log.error(err)
+													return res.serverError()
+												}
 
-													if (err) {
-														sails.log.error(err)
-														return res.serverError()
-													}
+												// Send 200 response for PayPal
+												return res.send()
 
-													// Redirect on profile with notification
-													NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
-													res.redirect('/user/profile')
-
-												//})
 
 											})
 

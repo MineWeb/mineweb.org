@@ -100,6 +100,11 @@ module.exports = {
 			via: 'author'
 		},
 
+    purchases: {
+			collection: 'Purchase',
+			via: 'user'
+		},
+
     paypalPayments: {
 			collection: 'PayPalHistory',
 			via: 'user'

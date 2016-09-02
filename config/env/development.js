@@ -38,7 +38,8 @@ module.exports = {
 
   paypal: {
     sandbox: true,
-    merchantEmail: 'paypal@mineweb.org'
+    //merchantEmail: 'paypal@mineweb.org'
+    merchantEmail: 'paypal-facilitator@mineweb.org'
   }
 
 };
