@@ -137,7 +137,7 @@ module.exports = {
 				var fees = PayPalService.calculateFees(price)
 
 				// Generate post data
-				var item_name = (offer == 'license') ? req.__("Achat d'une licence MineWeb") : req.__("Location d'une licence et d'un hébergement MineWeb pour 1 mois")
+				var item_name = (offer == 'license') ? req.__("Achat d'une licence MineWeb") : req.__("Location d'une licence et d'un hebergement MineWeb pour 1 mois")
 				var data = { // Form PayPal values
 					tax: fees,
 					/*return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
@@ -154,7 +154,7 @@ module.exports = {
 						offer: offer,
 						voucher: voucherCode,
 						userId: req.session.userId,
-						custom: req.body.custom
+						other: req.body.custom
 					}),
 					amount: price,
 					cbt: req.__('Retourner sur mineweb.org')
@@ -273,6 +273,8 @@ module.exports = {
 		else
 			req.body.test_ipn = false
 
+		console.log(req.body)
+
 		paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
 
 		  if (err) {
@@ -328,11 +330,16 @@ module.exports = {
 				var data = querystring.parse(params.custom)
 
 				if (data === undefined || data.offer === undefined)
-					res.serverError()
+					res.serverError('Undefined offer')
 
 				var offer = data.offer
 
 		    if (params.payment_status == 'Completed') { // Good behavior, payment accepted
+
+					// Check currency
+					if (params.mc_currency !== "EUR") {
+						return res.serverError('Bad currency')
+					}
 
 					// Check if not already saved as completed (or already handled) for this txn_id
 					PayPalHistory.count({paymentId: params.txn_id, state: ['COMPLETED', 'FAILED', 'REFUNDED', 'REVERSED']}).exec(function (err, count) {
@@ -350,10 +357,10 @@ module.exports = {
 							userId: data.userId,
 							offerType: offer.toUpperCase(),
 							offerId: undefined,
-							host: (data.custom === undefined || data.custom == 'undefined') ? null : data.custom,
+							host: (data.other === undefined || data.other == 'undefined') ? null : data.other,
 							paymentType: 'PAYPAL',
 							voucher: data.voucher,
-							purchaseAmount: params.payment_gross,
+							purchaseAmount: params.mc_gross,
 							receiver: params.receiver_email
 						}, function (success, purchaseId) {
 
@@ -372,8 +379,8 @@ module.exports = {
 										PayPalHistory.create({
 											user: data.userId,
 											paymentId: params.txn_id,
-											paymentAmount: params.payment_gross,
-											taxAmount: params.payment_fee,
+											paymentAmount: params.mc_gross,
+											taxAmount: params.mc_fee,
 											buyerEmail: params.payer_email,
 											paymentDate: (new Date(params.payment_date)),
 											state: 'COMPLETED'
@@ -392,13 +399,18 @@ module.exports = {
 													return res.serverError()
 												}
 
-												if (err) {
-													sails.log.error(err)
-													return res.serverError()
-												}
+												// update paypal history with purchase id
+												PayPalHistory.update({id: history.id}, {purchase: purchaseId}).exec(function (err, history) {
 
-												// Send 200 response for PayPal
-												return res.send()
+													if (err) {
+														sails.log.error(err)
+														return res.serverError()
+													}
+
+													// Send 200 response for PayPal
+													return res.send()
+
+												})
 
 											})
 
@@ -424,13 +436,18 @@ module.exports = {
 													return res.serverError()
 												}
 
-												if (err) {
-													sails.log.error(err)
-													return res.serverError()
-												}
+												// update paypal history with purchase id
+												PayPalHistory.update({id: history.id}, {purchase: purchase.id}).exec(function (err, history) {
 
-												// Send 200 response for PayPal
-												return res.send()
+													if (err) {
+														sails.log.error(err)
+														return res.serverError()
+													}
+
+													// Send 200 response for PayPal
+													return res.send()
+
+												})
 
 
 											})

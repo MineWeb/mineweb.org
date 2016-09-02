@@ -296,7 +296,7 @@ module.exports = {
   saveVoucher: function (voucher, userId, offerType, offerId, next) {
 
     if (voucher === undefined) // no voucher
-      next(true)
+      return next(true)
 
     Voucher.update({id: voucher.id}, {usedBy: userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offerType, itemId: offerId}).exec(function (err, voucher) {
 
