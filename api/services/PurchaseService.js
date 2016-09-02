@@ -63,7 +63,7 @@ module.exports = {
           // if it's a plugin or theme
           if (purchase.offerType === 'PLUGIN' || purchase.offerType === 'THEME') {
 
-            var model = (purchase.offerType === 'PLUGIN') ? Plugin : Hosting
+            var model = (purchase.offerType === 'PLUGIN') ? Plugin : Theme
 
             model.count({id: purchase.offerId}).populate(['author']).exec(function (err, offer) {
 
@@ -100,13 +100,16 @@ module.exports = {
           sails.log.error("[PURCHASE] Offer doesn't exist")
           return next(false)
         }
+        else if (purchase.offerType === 'PLUGIN' || purchase.offerType === 'THEME') {
+          var offer = results[1]
+        }
         else if (purchase.offerType === 'LICENSE') {
-          offer = {
+          var offer = {
             price: License.price
           }
         }
         else if (purchase.offerType === 'HOSTING') {
-          offer = {
+          var offer = {
             price: Hosting.price
           }
         }
@@ -116,7 +119,6 @@ module.exports = {
         }
 
         // Set/delete vars
-        var offer = results[1]
         delete results
 
         // Check purchase.receiver if paypal payment
@@ -135,6 +137,7 @@ module.exports = {
             )
           )
         ) {
+
           sails.log.error("[PURCHASE] Bad receiver")
           return next(false)
         }
@@ -159,17 +162,17 @@ module.exports = {
               // If purchase.voucher exist with this code
               if (voucher !== undefined) {
                 // Calculate new price without purchase.voucher purchase.amount
-                offer.price -= voucher.purchase.amount
+                offer.price -= voucher.amount
               }
 
               // If it's paypal payment
-              if (purchase.receiver !== undefined) {
+              if (purchase.paymentType == 'PAYPAL') {
                 // Calculate fees if PayPal payment (if purchase.receiver !== undefined)
                 offer.price = offer.price + PayPalService.calculateFees(offer.price)
               }
 
               // Check price with offer price
-              if (purchase.amount !== offer.price) {
+              if (purchase.amount != offer.price) {
                 sails.log.error("[PURCHASE] Price doesn't match !")
                 return next(false)
               }
@@ -298,7 +301,7 @@ module.exports = {
     if (voucher === undefined) // no voucher
       return next(true)
 
-    Voucher.update({id: voucher.id}, {usedBy: userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offerType, itemId: offerId}).exec(function (err, voucher) {
+    Voucher.update({id: voucher.id}, {usedBy: userId, usedAt: (new Date()), usedLocation: this.req.ip, itemType: offerType, itemId: offerId}).exec(function (err, voucher) {
 
       if (err) {
         sails.log.error(err)

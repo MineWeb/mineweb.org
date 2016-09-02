@@ -330,7 +330,7 @@ module.exports = {
 				var data = querystring.parse(params.custom)
 
 				if (data === undefined || data.offer === undefined)
-					res.serverError('Undefined offer')
+					return res.serverError('Undefined offer')
 
 				var offer = data.offer
 
@@ -353,6 +353,7 @@ module.exports = {
 							return res.serverError('Payment already handled')
 
 						// save purchase
+						PurchaseService.req = req
 						PurchaseService.buy({
 							userId: data.userId,
 							offerType: offer.toUpperCase(),
@@ -360,7 +361,7 @@ module.exports = {
 							host: (data.other === undefined || data.other == 'undefined') ? null : data.other,
 							paymentType: 'PAYPAL',
 							voucher: data.voucher,
-							purchaseAmount: params.mc_gross,
+							amount: params.mc_gross,
 							receiver: params.receiver_email
 						}, function (success, purchaseId) {
 
@@ -471,12 +472,16 @@ module.exports = {
 
 		    }
 				else if (params.payment_status == 'Pending') { // Waiting banks
+
+					if (params.receiver_email !== sails.config.paypal.merchantEmail)
+						return res.serverError('[PAYPAL] Bad receiver')
+
 					// Create PayPalHistory line
 					PayPalHistory.create({
 						user: data.userId,
 						paymentId: params.txn_id,
-						paymentAmount: params.payment_gross,
-						taxAmount: params.payment_fee,
+						paymentAmount: params.mc_gross,
+						taxAmount: params.mc_fee,
 						buyerEmail: params.payer_email,
 						paymentDate: (new Date(params.payment_date)),
 						state: 'PENDING'
@@ -519,7 +524,7 @@ module.exports = {
 					  }
 
 						// get purchase data
-						Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+						Purchase.findOne({id: history[0].purchase}).exec(function (err, purchase) {
 
 							// Update suspended reason if license/hosting
 							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
@@ -559,7 +564,12 @@ module.exports = {
 						}
 
 						// get purchase data
-						Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+						Purchase.findOne({id: history[0].purchase}).exec(function (err, purchase) {
+
+							if (err) {
+								sails.log.error(err)
+								return res.serverError()
+							}
 
 							// Update suspended reason if license/hosting
 							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {

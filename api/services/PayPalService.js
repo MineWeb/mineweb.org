@@ -5,6 +5,9 @@ module.exports = {
 		tax += 0.25;
 		tax = Math.round(tax * 100) / 100;
 
+    if (tax < 0)
+      tax = amount
+
     return tax
 
   }
