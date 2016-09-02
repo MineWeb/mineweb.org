@@ -54,10 +54,15 @@ function initForms() {
               msg.html('<div class="alert alert-success"><b>'+locals.SUCCESS_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             }
             if (form.attr('data-custom-callback') !== undefined) {
-              window[form.attr('data-custom-callback')](inputs, json)
+              var func = window[form.attr('data-custom-callback')](inputs, json)
+              if (!func)
+                return
             }
             if (form.attr('data-redirect-url') !== undefined && QueryString.from === undefined) {
-              document.location.href=form.attr('data-redirect-url')+'?no-cache='+ (new Date()).getTime()
+              document.location.href=form.attr('data-redirect-url')+'?'+ (new Date()).getTime()
+            }  else if (QueryString.from !== undefined) {
+              console.log('Je suis pas affiché')
+              return document.location.href=QueryString.from+'?'+ (new Date()).getTime()
             }
 
             if(captcha) {

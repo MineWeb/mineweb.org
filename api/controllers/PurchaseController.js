@@ -140,14 +140,9 @@ module.exports = {
 				var item_name = (offer == 'license') ? req.__("Achat d'une licence MineWeb") : req.__("Location d'une licence et d'un hebergement MineWeb pour 1 mois")
 				var data = { // Form PayPal values
 					tax: fees,
-					/*return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
+					return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
 					cancel_return: RouteService.getBaseUrl() + '/purchase/' + offer,
-					notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',*/
-
-					return_url: 'http://176.150.149.78:1337' + '/buy/paypal/success',
-					cancel_return: 'http://176.150.149.78:1337' + '/purchase/' + offer,
-					notify_url: 'http://176.150.149.78:1337' + '/api/paypal-ipn',
-
+					notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',
 					business: sails.config.paypal.merchantEmail,
 					item_name: item_name,
 					custom: querystring.stringify({

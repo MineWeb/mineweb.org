@@ -61,20 +61,27 @@ block content
 block custom
   script(type='text/javascript').
     function afterLogin(inputs, json) {
-
+      console.log(json.twoFactorAuth)
       // Connexion normale
       if (json.twoFactorAuth === undefined) {
         if (QueryString.from === undefined) {
-          return document.location.href='/?'+ (new Date()).getTime()
+          document.location.href='/?'+ (new Date()).getTime()
+          return false
         } else if (QueryString.from !== undefined) {
-          return document.location.href=QueryString.from+'?'+ (new Date()).getTime()
+          document.location.href=QueryString.from+'?'+ (new Date()).getTime()
+          return false
         }
       }
 
       // Double auth
       if (json.twoFactorAuth) {
 
-        return document.location.href='/user/login/twoFactorAuth'
+        var queryString = (QueryString.from !== undefined) ? '?from=' + QueryString.from : ''
+        var url = '/user/login/twoFactorAuth'
+
+        document.location.href=url + queryString
+
+        return false
 
       }
 
