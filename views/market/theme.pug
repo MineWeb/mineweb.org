@@ -1,0 +1,113 @@
+extends ../layouts/layout
+
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+        .row
+          .col-md-12
+            h3.heading #{theme.name} &nbsp;
+              span.accent(style="text-transform:lowercase") v#{theme.version.version} &nbsp;
+              | #{__('par')} &nbsp;
+              span.accent #{theme.author.username}
+
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
+        .col-md-12
+
+          h4 #{__('Description')}
+
+          article.lead
+            div(style='font-size:60%;font-weight: 300;') !{theme.description}
+
+          hr
+
+          h4 #{__("Liste des mise à jours :")}
+
+          - var i = 0
+          each version in theme.versions
+            - i++
+
+            if version !== undefined
+
+              div.version-listing(class= i === 1 ? "selected" : "")
+
+                div.row
+                  div.col-sm-12.col-md-6
+                    h4.version
+                      a(href='#') #{version.version}
+                      p.version_changelog #{__('Liste des modifications :')}
+                    if version.changelog !== undefined && typeof version.changelog === 'object' && version.changelog !== null
+                      ul.changelog
+                        each changelog in version.changelog['fr_FR']
+                          li #{changelog}
+                    else
+                      p.text-muted
+                        i #{__('Aucun changement lors de cette mise à jour')}
+
+                  div.col-md-3
+                    span.text-success #{__('Disponible')}
+                  div.col-md-3
+                    p #{__('Sortie')}&nbsp;
+                      b.moment-date(fromNow) #{new Date(version.releaseDate)}
+
+          hr
+
+          if theme.price > 0
+
+            h4 #{__('Choix du moyen de paiement')}
+
+            div.col-md-12
+              a.btn-pay.active(data-payment-type="paypal")
+                i.pull-left.fa.fa-paypal
+                h5 PayPal
+                span #{__('Payez avec votre compte PayPal ou votre carte bancaire')}
+
+            div.clearfix
+
+            hr
+
+            h4 #{__('Facture')}
+
+            div.table-responsive
+
+              table.table.table-striped.table-bordered.invoice
+                thead
+                  tr
+                    th #{__('Description')}
+                    th #{__("Prix à l'unité")}
+                    th #{__('Total')}
+                tbody
+                  tr
+                    td !{__('Thème')}&nbsp; "<b>#{theme.name}</b>" #{__('par')} #{theme.author.username}
+                    td #{theme.price} €
+                    td #{theme.price} €
+                  tr
+                    td
+                    td
+                      div.input-group
+                        input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
+                        span.input-group-btn
+                          button.btn.btn-secondary#checkVoucher(data-price=theme.price) #{__('Utiliser')}
+                    td.voucher-reduction - 0.00 €
+                  tr#paypalFees
+                    td
+                    th #{__('Taxes')}
+                    td#paypalFeesAmount(data-default-fees=PayPalService.calculateFees(theme.price)) #{PayPalService.calculateFees(theme.price)} €
+                  tr
+                    td
+                    th #{__('Total')}
+                    th.amount#paypalAmount #{PayPalService.calculateFees(theme.price) + theme.price} €
+
+              hr
+
+              div.col-md-4.pull-right
+                a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="license", data-content-if-free=__('Obtenir le thème'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
+          else
+            div.col-md-6.pull-right
+              a.btn.btn-success.btn-block.disabled(href='#', disabled) #{__('Ce thème est gratuit et déjà disponible sur votre CMS')}
+
+          div.clear-fix
+
+block custom
+  script(type='text/javascript', src='/js/buy.js')

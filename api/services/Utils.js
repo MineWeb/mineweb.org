@@ -20,5 +20,23 @@ module.exports = {
             return diff;
     }
     return segmentsA.length - segmentsB.length;
+  },
+
+  truncate: function (content, length, removeHTML) {
+
+    if (content.length > length) {
+      content = content.substr(0, length)
+      content += '...'
+    }
+
+    if (removeHTML)
+      content = this.removeHTML(content)
+
+    return content
+  },
+
+  removeHTML: function (content) {
+    return content.replace(/(<([^>]+)>)/ig,"")
   }
+
 };

@@ -95,8 +95,8 @@ module.exports.routes = {
     	MARKETPLACE
   	*/
 		'get /market': 'MarketController.index',
-    'get /theme/:slug': 'MarketController.theme',
-    'get /plugin/:slug': 'MarketController.plugin',
+    'get /market/theme/:slug': 'MarketController.theme',
+    'get /market/plugin/:slug': 'MarketController.plugin',
 
   /***************************************************************************
   *                                                                          *

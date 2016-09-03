@@ -17,6 +17,15 @@ module.exports = {
     	primaryKey: true,
 		},
 
+    name: {
+			type: 'string',
+			unique: true,
+			required: true,
+      min: 5,
+      max: 20,
+      size: 20
+		},
+
 		slug: {
 			type: 'string',
 			unique: true,
@@ -41,10 +50,6 @@ module.exports = {
 			url: true,
 			required: true
 		},
-
-    version : {
-      type: 'string'
-    },
 
 		versions: {
 			type: 'json',
@@ -75,7 +80,7 @@ module.exports = {
   retrieveVersion : function (model) {
     if (!model.versions)
       return 'none'
-    
+
     var sorted = Object.keys(model.versions).sort(Utils.compareVersion);
     return sorted[sorted.length - 1];
   },

@@ -16,37 +16,78 @@ block content
         .col-md-12
           ul.nav.nav-tabs(role='tablist')
             li.nav-item(style="width:49%")
-              a.text-center.nav-link(data-toggle="tab" href="#plugins" role="tab") #{__('Plugins')}
+              a.text-center.nav-link.active(data-toggle="tab" href="#plugins" role="tab") #{__('Plugins')}
             li.nav-item(style="width:49%")
               a.text-center.nav-link(data-toggle="tab" href="#themes" role="tab") #{__('Themes')}
       .tab-content
-        #plugins.tab-pane.fade.in.active(role='tabpanel', style="text-align: center; display: inline-flex")
+        #plugins.tab-pane.fade.in.active(role='tabpanel', style="display: inline-flex")
+
+          - var i = 0
           each plugin in plugins
-            .card(style="width: 100%; margin-left:60px")
-              .card-header
-                h4.card-title #{plugin.slug}
-                h6.card-subtitle.text-muted #{plugin.downloads} #{__('Téléchargements')}
-              img(src=plugin.img, style="height: 80px", alt='Plugin background')
-              .card-block
-                p.card-text #{plugin.description}
-                a.btn.btn-primary(href='/plugin/' + plugin.slug)
-                  i.pe-7s-plus
+            - i++
+
+            if i > 1
+              hr
+
+            div.row.market-item
+              div.col-md-6
+                img.img-rounded.img-responsive(src=plugin.img != null && plugin.length > 0 ? plugin.img : '/img/default_plugins.png')
+              div.col-md-6
+                h3 #{plugin.name}
+                p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description, 250, true)}
+                p.text-muted.market-item-infos
+                  | #{__('Prix :')}&nbsp;
+                  if plugin.price > 0
+                    b #{plugin.price}
+                  else
+                    em
+                      span.tag.tag-success #{__('Gratuit')}
+                  br
+                  | #{__('Téléchargements :')}&nbsp;
+                  b #{plugin.downloads}
+                  br
+                  | #{__('Version actuelle :')}&nbsp;
+                  b #{plugin.version}
+                  br
+                  | #{__('Dernière mise à jour :')}&nbsp;
+                  b.moment-date(fromNow) #{plugin.updatedAt}
+
+                a.btn.btn-primary(href='/market/plugin/' + plugin.slug)
+                  i.fa.fa-plus
                   | &nbsp;#{__("Plus d'informations")}
-              .card-footer.text-muted  #{__('Dernière mise à jour')} 
-                span.moment-date(fromNow) #{plugin.updatedAt}
-                span : v#{plugin.version}
+
         #themes.tab-pane.fade(role='tabpanel')
+
+          - var i = 0
           each theme in themes
-            .card
-              .card-header
-                h4.card-title #{theme.slug}
-                h6.card-subtitle.text-muted #{plugin.downloads} #{__('Téléchargements')}
-              img(src=theme.img, style="height: 80px", alt='Theme background')
-              .card-block
-                p.card-text #{theme.description}
-                a.btn.btn-primary(href='#')
-                  i.pe-7s-plus
+            - i++
+
+            if i > 1
+              hr
+
+            div.row.market-item
+              div.col-md-6
+                img.img-rounded.img-responsive(src=theme.img != null && plugin.length > 0 ? plugin.img : '/img/default_plugins.png')
+              div.col-md-6
+                h3 #{theme.name}
+                p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description, 250, true)}
+                p.text-muted.market-item-infos
+                  | #{__('Prix :')}&nbsp;
+                  if theme.price > 0
+                    b #{theme.price}
+                  else
+                    em
+                      span.tag.tag-success #{__('Gratuit')}
+                  br
+                  | #{__('Téléchargements :')}&nbsp;
+                  b #{theme.downloads}
+                  br
+                  | #{__('Version actuelle :')}&nbsp;
+                  b #{theme.version}
+                  br
+                  | #{__('Dernière mise à jour :')}&nbsp;
+                  b.moment-date(fromNow) #{theme.updatedAt}
+
+                a.btn.btn-primary(href='/market/theme/' + theme.slug)
+                  i.fa.fa-plus
                   | &nbsp;#{__("Plus d'informations")}
-              .card-footer.text-muted  #{__('Dernière mise à jour')} 
-                span.moment-date(fromNow) #{plugin.updatedAt}
-                span  : v#{plugin.version}

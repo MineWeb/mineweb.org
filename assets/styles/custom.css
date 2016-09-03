@@ -376,3 +376,35 @@ section.background-gray-lightest .nav.nav-tabs>li>a.active {
   margin-left: -3px;
   padding: 7px 12px;
 }
+
+
+/*
+  MARKET
+*/
+
+.row.market-item {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.row.market-item img {
+  width: 100%
+}
+
+.row.market-item h3 {
+  font-family: 'Open Sans';
+  font-weight: 400;
+  font-size: 32px;
+}
+
+.row.market-item p.market-item-desc {
+  font-size: 18px;
+  margin: 20px 0;
+}
+
+.row.market-item p.market-item-infos {
+  font-family: 'Open Sans';
+  font-weight: 400;
+  font-size: 19px;
+  margin: 20px 0;
+}
