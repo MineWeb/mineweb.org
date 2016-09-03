@@ -312,6 +312,54 @@ module.exports = {
 
     })
 
+  },
+
+  /*
+    Get price of license/hosting/theme/plugin
+  */
+
+  getPriceOfOffer: function (offer, offerId, next) {
+
+    switch (offer) {
+      case 'license':
+        var model = License
+        break;
+      case 'hosting':
+        var model = Hosting
+        break;
+      case 'theme':
+        var model = Theme
+        break;
+      case 'plugin':
+        var model = Plugin
+        break;
+      default:
+        return next(false)
+
+    }
+
+    if (offer == "license" || offer == "hosting")
+      return next(true, model.price)
+
+    if (offer == "plugin" || offer == "theme") {
+
+      model.findOne({id: offerId}).exec(function (err, item) {
+
+        if (err) {
+          sails.log.error(err)
+          return next(false)
+        }
+
+        if (item === undefined)
+          return next(false)
+
+        return next(true, item.price)
+      })
+
+    }
+
+    return next(false)
+
   }
 
 };

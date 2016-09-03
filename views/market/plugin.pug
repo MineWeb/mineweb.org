@@ -22,6 +22,21 @@ block content
 
           hr
 
+          h4 !{__('Pré-requis <em><small>(versions requises)</small></em>')}
+
+          div.table-responsive
+            table.table
+              thead
+              tbody
+                each requirement in plugin.requirements
+                  tr
+                    td #{requirement.name}
+                    td
+                      b #{requirement.operator}
+                      | &nbsp;#{requirement.version}
+
+          hr
+
           h4 #{__("Liste des mise à jours :")}
 
           - var i = 0
@@ -102,7 +117,8 @@ block content
               hr
 
               div.col-md-4.pull-right
-                a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="license", data-content-if-free=__('Obtenir le plugin'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
+                input(name="custom", type="hidden", value=plugin.id)
+                a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="plugin", data-content-if-free=__('Obtenir le plugin'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
           else
             div.col-md-6.pull-right
               a.btn.btn-success.btn-block.disabled(href='#', disabled) #{__('Ce plugin est gratuit et déjà disponible sur votre CMS')}

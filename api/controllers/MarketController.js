@@ -122,7 +122,7 @@ module.exports = {
 			delete versions
 
 			return response.view('market/theme', {
-				title: 'Market',
+				title: results[0].name,
 				theme: results[0],
 			})
 		});
@@ -143,6 +143,7 @@ module.exports = {
       if (results.length == 0)
         return res.notFound();
 
+			// Handle version
 			var versions = results[0]['versions']
 
 			for (var i = 0; i < versions.length; i++) {
@@ -159,8 +160,73 @@ module.exports = {
 
 			delete versions
 
+			// Handle requiremnts
+			var requirements = results[0]['requirements']
+			var requirementsParsed = []
+			for (var name in requirements) {
+
+				if (name != "CMS") {
+
+					var type = name.split('--')[0] // plugin or theme
+					var model = (type == "plugin") ? Plugin : Theme
+					var id = name.split('--')[1] // author.slug.id
+					var data = {
+						slug: id.split('.')[1],
+						id: id.split('.')[2]
+					}
+
+					// find
+					model.findOne({slug: data.slug, id: data.id}).exec(function (err, item) {
+
+						if (err) {
+							sails.log.error(err)
+						}
+						else if (item !== undefined) {
+
+							var operator = (requirements[name].split(' ').lenght > 1) ? requirements[name].split(' ')[0] : '='
+							var version = (requirements[name].split(' ').lenght > 1) ? requirements[name].split(' ')[1] : requirements[name]
+
+							name = '<a href="/market/'+type+'/'+item.slug+'">'+item.name+'</a>'
+console.log({
+	name: name,
+	operator: operator,
+	version: version
+})
+							requirementsParsed.push({
+								name: name,
+								operator: operator,
+								version: version
+							})
+
+							delete id
+							delete data
+							delete type
+						}
+					})
+
+				} else {
+
+					var operator = (requirements[name].split(' ').lenght > 1) ? requirements[name].split(' ')[0] : '='
+					var version = (requirements[name].split(' ').lenght > 1) ? requirements[name].split(' ')[1] : requirements[name]
+
+					requirementsParsed.push({
+						name: 'CMS',
+						operator: operator,
+						version: version
+					})
+
+					delete id
+					delete data
+					delete type
+
+				}
+			}
+			results[0]['requirements'] = requirementsParsed
+			delete requirements
+			delete requirementsParsed
+			console.log('JE RENDER')
 			return response.view('market/plugin', {
-				title: 'Mineweb - ' + slug,
+				title: results[0].name,
 				plugin: results[0],
 			})
 		});

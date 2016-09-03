@@ -102,7 +102,8 @@ block content
               hr
 
               div.col-md-4.pull-right
-                a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="license", data-content-if-free=__('Obtenir le thème'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
+                input(name="custom", type="hidden", value=theme.id)
+                a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="theme", data-content-if-free=__('Obtenir le thème'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
           else
             div.col-md-6.pull-right
               a.btn.btn-success.btn-block.disabled(href='#', disabled) #{__('Ce thème est gratuit et déjà disponible sur votre CMS')}

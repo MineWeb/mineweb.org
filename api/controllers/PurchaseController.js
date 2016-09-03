@@ -103,89 +103,109 @@ module.exports = {
 		Handle redirection to PayPal with form for PayPal process
 	*/
 	paypal: function (req, res) {
-
+console.log('1')
 		// Handle params
 			if (req.body.voucher === undefined || req.body.offer === undefined)
 				return res.notFound('Params are missing')
-			if (req.body.offer != 'license' && req.body.offer != 'hosting')
+			if (req.body.offer != 'license' && req.body.offer != 'hosting' && req.body.offer != 'plugin' && req.body.offer != 'theme')
 				return res.notFound('Unknown offer')
-
+console.log('2')
 		// Get params
 			var voucherCode = req.body.voucher
 			var offer = req.body.offer
 
-		// Setup model & get price
-			var model = (offer == 'license') ? License : Hosting
-			var price = model.price
-
-		// Check voucher
-			Voucher.findOne({code: voucherCode, usedAt: null, usedLocation: null}).exec(function (err, voucher) {
-
-				if (err) {
-					sails.log.error(err)
-	        return res.serverError('An error occured on voucher select')
-				}
-
-				// If voucher exist and not used
-				if (voucher !== undefined)
-					price -= parseFloat(voucher.amount)
-
-				if (price <= 0)
-					return res.redirect('/purchase/' + offer + '/free/' + voucherCode + '/' + req.body.custom)
-
-				// Calculate fees
-				var fees = PayPalService.calculateFees(price)
-
-				// Generate post data
-				var item_name = (offer == 'license') ? req.__("Achat d'une licence MineWeb") : req.__("Location d'une licence et d'un hebergement MineWeb pour 1 mois")
-				var data = { // Form PayPal values
-					tax: fees,
-					return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
-					cancel_return: RouteService.getBaseUrl() + '/purchase/' + offer,
-					notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',
-					business: sails.config.paypal.merchantEmail,
-					item_name: item_name,
-					custom: querystring.stringify({
-						offer: offer,
-						voucher: voucherCode,
-						userId: req.session.userId,
-						other: req.body.custom
-					}),
-					amount: price,
-					cbt: req.__('Retourner sur mineweb.org')
-				}
-
-				// Render view
-				res.locals.title = req.__("Redirection vers PayPal")
-
-				// Check host (for hosting)
-					if (offer == 'hosting') {
-
-						if (req.body.custom === undefined || req.body.custom.length == 0) {
-							NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
-							return res.redirect('/purchase/hosting')
+		// get price
+			PurchaseService.getPriceOfOffer(offer, req.body.custom, function (success, price) {
+console.log('3')
+				if (!success)
+					return res.serverError()
+console.log('4')
+				// Check voucher
+					Voucher.findOne({code: voucherCode, usedAt: null, usedLocation: null}).exec(function (err, voucher) {
+console.log('5')
+						if (err) {
+							sails.log.error(err)
+			        return res.serverError('An error occured on voucher select')
 						}
+console.log('6')
+						// If voucher exist and not used
+						if (voucher !== undefined)
+							price -= parseFloat(voucher.amount)
 
-						Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+						if (price <= 0)
+							return res.redirect('/purchase/' + offer + '/free/' + voucherCode + '/' + req.body.custom)
+console.log('7')
+						// Calculate fees
+						var fees = PayPalService.calculateFees(price)
 
-							if (err) {
-								sails.log.error(err)
-								return res.serverError('An error occured on dedipass api')
+						// Generate post data
+						if (offer == "license") {
+							var item_name = req.__("Achat d'une licence MineWeb")
+						}
+						else if (offer == "hosting") {
+							var item_name = req.__("Location d'une licence et d'un hebergement MineWeb pour 1 mois")
+						}
+						else if (offer == "plugin") {
+							var item_name = req.__("Achat d'un plugin MineWeb")
+						}
+						else if (offer == "theme") {
+							var item_name = req.__("Achat d'un thème MineWeb")
+						}
+						var data = { // Form PayPal values
+							tax: fees,
+							/*return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
+							cancel_return: RouteService.getBaseUrl() + '/purchase/' + offer,
+							notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',*/
+							return_url: 'http://176.150.149.78:1337' + '/buy/paypal/success',
+							cancel_return: 'http://176.150.149.78:1337' + '/purchase/' + offer,
+							notify_url: 'http://176.150.149.78:1337' + '/api/paypal-ipn',
+
+							business: sails.config.paypal.merchantEmail,
+							item_name: item_name,
+							custom: querystring.stringify({
+								offer: offer,
+								voucher: voucherCode,
+								userId: req.session.userId,
+								other: req.body.custom
+							}),
+							amount: price,
+							cbt: req.__('Retourner sur mineweb.org')
+						}
+console.log('8')
+						// Render view
+						res.locals.title = req.__("Redirection vers PayPal")
+
+						// Check host (for hosting)
+							if (offer == 'hosting') {
+console.log('HOST')
+								if (req.body.custom === undefined || req.body.custom.length == 0) {
+									NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
+									return res.redirect('/purchase/hosting')
+								}
+
+								Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+
+									if (err) {
+										sails.log.error(err)
+										return res.serverError('An error occured on dedipass api')
+									}
+
+									if (count > 0) {
+										NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+										return res.redirect('/purchase/hosting')
+									}
+
+									return res.view('./buy/paypal', data)
+
+								})
+
 							}
-
-							if (count > 0) {
-								NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
-								return res.redirect('/purchase/hosting')
+							else { // Not hosting
+console.log('NOT HOST')
+								return res.view('./buy/paypal', data)
 							}
-
-							res.view('./buy/paypal', data)
-
-						})
-
-					}
-					else { // Not hosting
-						res.view('./buy/paypal', data)
-					}
+console.log('9')
+					})
 
 			})
 
@@ -352,8 +372,8 @@ module.exports = {
 						PurchaseService.buy({
 							userId: data.userId,
 							offerType: offer.toUpperCase(),
-							offerId: undefined,
-							host: (data.other === undefined || data.other == 'undefined') ? null : data.other,
+							offerId: (data.other === undefined || data.other == 'undefined' || (offer != "plugin" && offer != "theme")) ? undefined : data.other,
+							host: (data.other === undefined || data.other == 'undefined' || offer != "hosting") ? null : data.other,
 							paymentType: 'PAYPAL',
 							voucher: data.voucher,
 							amount: params.mc_gross,
