@@ -153,13 +153,9 @@ module.exports = {
 						}
 						var data = { // Form PayPal values
 							tax: fees,
-							/*return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
+							return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
 							cancel_return: RouteService.getBaseUrl() + '/purchase/' + offer,
-							notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',*/
-							return_url: 'http://176.150.149.78:1337' + '/buy/paypal/success',
-							cancel_return: 'http://176.150.149.78:1337' + '/purchase/' + offer,
-							notify_url: 'http://176.150.149.78:1337' + '/api/paypal-ipn',
-
+							notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',
 							business: sails.config.paypal.merchantEmail,
 							item_name: item_name,
 							custom: querystring.stringify({
@@ -287,8 +283,6 @@ module.exports = {
 		else
 			req.body.test_ipn = false
 
-		console.log(req.body)
-
 		paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
 
 		  if (err) {
@@ -296,47 +290,6 @@ module.exports = {
 				return res.serverError()
 		  }
 			else {
-
-				// payment_status : ----> parent_txn_id
-				//  - Canceled_Reversal --> reason_code
-				//  - Completed
-				//  - Pending --> pending_reason (delayed_disbursement)
-				//  - Refunded --> reason_code
-				//  - Reversed --> reason_code - http://pic.eywek.fr/292255.png + http://pic.eywek.fr/462255.png
-
-				/* CF. : http://stackoverflow.com/questions/31451449/paypal-ipn-example-completed-reversed-canceled-reversed-and-refunded
-
-				== Completed == Paiement effectué avec succès
-
-					- Paiement complété (si il existe déjà, on modifie le status (il était en pending))
-					- Ajout de la licence/hosting/plugin/thème
-					- ...
-
-				== Pending == Paiement en cours d'attente (banque)
-
-					- On passe le paiement en suspended (si il existe pas, on le créé)
-
-				== Failed == Paiement fail (banque)
-
-					- On le passe en failed (plus de purchase associé ??)
-
-				== Refunded == Remboursement de ma part (demande ?) - Remboursement après un litige gagné par le client
-
-					-	On passe le paiement en remboursé
-					- Suspension de licence/hosting (thème/plugin ???)
-
-				== Reversed == Remboursement temporaire (lors d'un litige)
-
-					- se baser sur parent_txn_id
-					-	On passe le paiement en reversed
-					- Suspension de licence/hosting (thème/plugin ???)
-
-				== Canceled_Reversal == Cancel du remboursement temporaire (gain du litige pour moi)
-
-					- On passe le paiement en complété
-					- On réactive licence/hosting (thème/plugin ???)
-
-				*/
 
 				// Set vars
 				var params = req.body
