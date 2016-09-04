@@ -602,9 +602,37 @@ module.exports = {
 
 				User.findOne({id: request.session.userId}).populate(['hostings', 'licenses', 'paypalPayments', 'dedipassPayments']).exec(function (err, user) {
 					if (err)
-						callback(err, null)
+						return callback(err, null)
 					else
-						callback(null, user);
+						return callback(null, user)
+				})
+
+			},
+
+			// on récupère ses paiements paypals
+			function (callback) {
+
+				PayPalHistory.find({user: request.session.userId}).populate(['purchase']).exec(function (err, history) {
+
+					if (err)
+						return callback(err, null)
+
+					return callback(null, history)
+
+				})
+
+			},
+
+			// on récupère ses paiements dédipass
+			function (callback) {
+
+				DedipassHistory.find({user: request.session.userId}).populate(['purchase']).exec(function (err, history) {
+
+					if (err)
+						return callback(err, null)
+
+					return callback(null, history)
+
 				})
 
 			},
@@ -614,9 +642,21 @@ module.exports = {
 
 				Log.find({data: '{"userId":'+request.session.userId+'}', action: 'LOGIN'}).limit(5).sort('createdAt DESC').exec(function (err, logs) {
 					if (err)
-						callback(err, null)
+						return callback(err, null)
 					else
-						callback(null, logs);
+						return callback(null, logs)
+				})
+
+			},
+
+			// on récupère ses achats
+			function (callback) {
+
+				Purchase.findAllOfUser(request.session.userId, function (err, purchases) {
+					if (err)
+						return callback(err, null)
+					else
+						return callback(null, purchases)
 				})
 
 			}
@@ -629,8 +669,11 @@ module.exports = {
 			}
 
 			response.locals.user = results[0]
+			response.locals.user.paypalPayments = results[1]
+			response.locals.user.dedipassPayments = results[2]
+			response.locals.user.purchases = results[4]
 			response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
-			response.locals.user.connectionLogs = results[1]
+			response.locals.user.connectionLogs = results[3]
 
 			response.render('./user/profile')
 

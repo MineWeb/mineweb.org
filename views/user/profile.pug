@@ -25,6 +25,8 @@ block content
             li.nav-item
               a.nav-link(data-toggle="tab" href="#transactions" role="tab") #{__('Vos transactions')}
             li.nav-item
+              a.nav-link(data-toggle="tab" href="#purchases" role="tab") #{__('Vos achats')}
+            li.nav-item
               a.nav-link(data-toggle="tab" href="#connections" role="tab") #{__('Vos connexions')}
 
 
@@ -84,6 +86,7 @@ block content
                   table.table
                     thead
                       tr
+                        th ID
                         th #{__('Site')}
                         th #{__("Clé d'activation")}
                         th #{__('Statut')}
@@ -92,6 +95,7 @@ block content
                     tbody
                       each license, index in user.licenses
                         tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
+                          td #{license.id}
                           td
                             if license.host != null && license.host.length > 0
                               a(href=license.host, target='_blank')
@@ -135,6 +139,7 @@ block content
                   table.table
                     thead
                       tr
+                        th ID
                         th #{__('Site')}
                         th #{__("Clé d'activation")}
                         th #{__('Statut')}
@@ -144,6 +149,7 @@ block content
                     tbody
                       each hosting, index in user.hostings
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
+                          td #{hosting.id}
                           td
                             if hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
@@ -192,6 +198,7 @@ block content
                       tr
                         th #{__('ID de la transaction')}
                         th #{__('Montant de la transaction')}
+                        th #{__('Article payé')}
                         th #{__('Email PayPal')}
                         th #{__('Date du paiement')}
                         th #{__('Statut')}
@@ -201,6 +208,18 @@ block content
                           td
                             a(href='https://www.paypal.com/fr/cgi-bin/webscr?cmd=_view-a-trans&id='+payment.paymentId, target='_blank') #{payment.paymentId}
                           td #{payment.paymentAmount} €
+                          td
+                            if payment.purchase !== undefined && typeof payment.purchase == 'object'
+                              if payment.purchase.type === 'LICENSE'
+                                | #{__('Licence')}##{payment.purchase.itemId}
+                              else if payment.purchase.type === 'HOSTING'
+                                | #{__('Hébergement')}##{payment.purchase.itemId}
+                              else if payment.purchase.type === 'PLUGIN'
+                                | #{__('Plugin')}
+                              else if payment.purchase.type === 'THEME'
+                                | #{__('Thème')}
+                            else
+                              | N/A
                           td #{payment.buyerEmail}
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{payment.paymentDate}
                           td
@@ -229,6 +248,7 @@ block content
                       tr
                         //th #{__('Montant de la transaction')}
                         th #{__('Code utilisé')}
+                        th #{__('Article payé')}
                         th #{__('Palier utilisé')}
                         th #{__('Date du paiement')}
                     tbody
@@ -236,10 +256,100 @@ block content
                         tr
                           //td #{payment.amount} €
                           td #{payment.code}
+                          td
+                            if payment.purchase !== undefined && typeof payment.purchase == 'object'
+                              if payment.purchase.type === 'LICENSE'
+                                | #{__('Licence')}##{payment.purchase.itemId}
+                              else if payment.purchase.type === 'HOSTING'
+                                | #{__('Hébergement')}##{payment.purchase.itemId}
+                              else if payment.purchase.type === 'PLUGIN'
+                                | #{__('Plugin')}
+                              else if payment.purchase.type === 'THEME'
+                                | #{__('Thème')}
+                            else
+                              | N/A
                           td #{payment.rate}
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{payment.createdAt}
               else
                 div.alert.alert-warning !{__("Vous n'avez pas encore effectué de transaction Dédipass sur votre compte.")}
+
+            div.tab-pane.fade(id="purchases" role="tabpanel")
+
+              // ===================================
+                 ========= Liste des achats ========
+                 ===================================
+
+              h4 #{__('Vos achats de')}
+                span.accent &nbsp;#{__('plugin')}
+
+              if user.purchases.plugin !== undefined && user.purchases.plugin.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('Moyen de paiement')}
+                        th #{__('Nom du plugin')}
+                        th #{__("Date de l'achat")}
+                        th #{__('Statut')}
+                    tbody
+                      each purchase, index in user.purchases.plugin
+                        tr
+                          td
+                            if purchase.paymentType === 'PAYPAL'
+                              | PayPal
+                            else if purchase.paymentType === 'DEDIPASS'
+                              | Dédipass
+                            else if purchase.paymentType === 'FREE'
+                              | #{__('Gratuit')}
+                            else
+                              | N/A
+                          td
+                            a(href='/market/plugin/' + purchase.item.slug) #{purchase.item.name}
+                          td.moment-date(data-format=__('Le {L} à {LT}')) #{purchase.createdAt}
+                          td
+                            if purchase.paymentType !== 'PAYPAL' || (purchase.paymentType === 'PAYPAL' && purchase.payment.state === 'COMPLETED')
+                              span.tag.tag-success #{__('Actif')}
+                            else
+                              span.tag.tag-danger #{__('Désactivé')}
+              else
+                div.alert.alert-warning !{__("Vous n'avez pas encore acheté de plugin sur le market.")}
+
+              hr
+
+              h4 #{__('Vos achats de')}
+                span.accent &nbsp;#{__('thème')}
+
+              if user.purchases.theme !== undefined && user.purchases.theme.length > 0
+                div.table-responsive
+                  table.table
+                    thead
+                      tr
+                        th #{__('Moyen de paiement')}
+                        th #{__('Nom du thème')}
+                        th #{__("Date de l'achat")}
+                        th #{__('Statut')}
+                    tbody
+                      each purchase, index in user.purchases.theme
+                        tr
+                          td
+                            if purchase.paymentType === 'PAYPAL'
+                              | PayPal
+                            else if purchase.paymentType === 'DEDIPASS'
+                              | Dédipass
+                            else if purchase.paymentType === 'FREE'
+                              | #{__('Gratuit')}
+                            else
+                              | N/A
+                          td
+                            a(href='/market/theme/' + purchase.item.slug) #{purchase.item.name}
+                          td.moment-date(data-format=__('Le {L} à {LT}')) #{purchase.createdAt}
+                          td
+                            if purchase.paymentType !== 'PAYPAL' || (purchase.paymentType === 'PAYPAL' && purchase.payment.state === 'COMPLETED')
+                              span.tag.tag-success #{__('Actif')}
+                            else
+                              span.tag.tag-danger #{__('Désactivé')}
+              else
+                div.alert.alert-warning !{__("Vous n'avez pas encore acheté de thème sur le market.")}
 
             div.tab-pane.fade(id="connections" role="tabpanel")
 
