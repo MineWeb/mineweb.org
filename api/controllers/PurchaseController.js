@@ -103,38 +103,38 @@ module.exports = {
 		Handle redirection to PayPal with form for PayPal process
 	*/
 	paypal: function (req, res) {
-console.log('1')
+
 		// Handle params
 			if (req.body.voucher === undefined || req.body.offer === undefined)
 				return res.notFound('Params are missing')
 			if (req.body.offer != 'license' && req.body.offer != 'hosting' && req.body.offer != 'plugin' && req.body.offer != 'theme')
 				return res.notFound('Unknown offer')
-console.log('2')
+
 		// Get params
 			var voucherCode = req.body.voucher
 			var offer = req.body.offer
 
 		// get price
 			PurchaseService.getPriceOfOffer(offer, req.body.custom, function (success, price) {
-console.log('3')
+
 				if (!success)
 					return res.serverError()
-console.log('4')
+
 				// Check voucher
 					Voucher.findOne({code: voucherCode, usedAt: null, usedLocation: null}).exec(function (err, voucher) {
-console.log('5')
+
 						if (err) {
 							sails.log.error(err)
 			        return res.serverError('An error occured on voucher select')
 						}
-console.log('6')
+
 						// If voucher exist and not used
 						if (voucher !== undefined)
 							price -= parseFloat(voucher.amount)
 
 						if (price <= 0)
 							return res.redirect('/purchase/' + offer + '/free/' + voucherCode + '/' + req.body.custom)
-console.log('7')
+
 						// Calculate fees
 						var fees = PayPalService.calculateFees(price)
 
@@ -149,7 +149,7 @@ console.log('7')
 							var item_name = req.__("Achat d'un plugin MineWeb")
 						}
 						else if (offer == "theme") {
-							var item_name = req.__("Achat d'un thème MineWeb")
+							var item_name = req.__("Achat d'un theme MineWeb")
 						}
 						var data = { // Form PayPal values
 							tax: fees,
@@ -171,13 +171,13 @@ console.log('7')
 							amount: price,
 							cbt: req.__('Retourner sur mineweb.org')
 						}
-console.log('8')
+
 						// Render view
 						res.locals.title = req.__("Redirection vers PayPal")
 
 						// Check host (for hosting)
 							if (offer == 'hosting') {
-console.log('HOST')
+
 								if (req.body.custom === undefined || req.body.custom.length == 0) {
 									NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
 									return res.redirect('/purchase/hosting')
@@ -201,10 +201,9 @@ console.log('HOST')
 
 							}
 							else { // Not hosting
-console.log('NOT HOST')
 								return res.view('./buy/paypal', data)
 							}
-console.log('9')
+
 					})
 
 			})
@@ -614,7 +613,10 @@ console.log('9')
 						}
 
 						// get purchase data
-						Purchase.findOne({id: history.purchase}).exec(function (err, purchase) {
+						Purchase.findOne({id: history[0].purchase}).exec(function (err, purchase) {
+
+							if (purchase === undefined)
+								res.send()
 
 							// Update suspended reason if license/hosting
 							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {

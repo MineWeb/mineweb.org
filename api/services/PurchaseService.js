@@ -65,7 +65,7 @@ module.exports = {
 
             var model = (purchase.offerType === 'PLUGIN') ? Plugin : Theme
 
-            model.count({id: purchase.offerId}).populate(['author']).exec(function (err, offer) {
+            model.findOne({id: purchase.offerId}).populate(['author']).exec(function (err, offer) {
 
               if (err)
                 callback(err, null)
@@ -127,7 +127,7 @@ module.exports = {
             ( // If offer is Plugin/Theme and receiver isn't developer
               (purchase.offerType === 'PLUGIN' || purchase.offerType === 'THEME')
               &&
-              purchase.receiver !== offer.user.paypalDeveloperEmail
+              purchase.receiver !== offer.author.paypalDeveloperEmail
             )
             || // Or it's a license/hostign and receiver isn't me
             (
@@ -222,19 +222,14 @@ module.exports = {
                 /*
                   Save
                 */
-
                 self.saveVoucher(voucher, purchase.userId, purchase.offerType, purchase.offerId, function (success) {
-
                   if (!success)
                     return next(false)
-
                   // Save & Return purchase ID
                     var save = self.save(purchase.userId, purchase.offerType, purchase.offerId, purchase.paymentType, function(success, purchaseId) {
-
                       if (!success)
                         return next(false)
-
-                      return next(true, purchaseId, itemId)
+                      return next(true, purchaseId, purchase.offerId)
 
                     })
 
@@ -357,8 +352,6 @@ module.exports = {
       })
 
     }
-
-    return next(false)
 
   }
 
