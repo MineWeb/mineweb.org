@@ -29,11 +29,12 @@ block content
               thead
               tbody
                 each requirement in plugin.requirements
-                  tr
-                    td #{requirement.name}
-                    td
-                      b #{requirement.operator}
-                      | &nbsp;#{requirement.version}
+                  if requirement !== undefined
+                    tr
+                      td !{requirement.name}
+                      td
+                        b #{requirement.operator}
+                        | &nbsp;#{requirement.version}
 
           hr
 
@@ -45,7 +46,7 @@ block content
 
             if version !== undefined
 
-              div.version-listing(class= i === 1 ? "selected" : "")
+              div.version-listing(class= i === 1 ? "selected" : "", style= i > 2 ? 'display:none;' : '')
 
                 div.row
                   div.col-sm-12.col-md-6
@@ -65,6 +66,12 @@ block content
                   div.col-md-3
                     p #{__('Sortie')}&nbsp;
                       b.moment-date(fromNow) #{new Date(version.releaseDate)}
+
+          if i > 2
+            div.text-center(style='margin-top:10px;')
+              button#loadMoreVersions.btn.btn-primary(data-count="2")
+                span.fa.fa-refresh
+                | &nbsp;#{__('Charger + de versions')}
 
           hr
 
@@ -127,3 +134,30 @@ block content
 
 block custom
   script(type='text/javascript', src='/js/buy.js')
+  script(type='text/javascript').
+    $('#loadMoreVersions').on('click', function(e) {
+      e.preventDefault()
+
+      var btn = $(this)
+      var count = parseInt(btn.attr('data-count')) - 1
+
+      // disable and active spinner
+      btn.attr('disabled', true).addClass('disabled')
+      btn.find('span.fa.fa-refresh').addClass('fa-spin')
+
+      // load 2 more
+      $($('div.version-listing')[count+1]).fadeIn(100)
+      $($('div.version-listing')[count+2]).fadeIn(100)
+
+      // update count
+      btn.attr('data-count', count+2)
+
+      // enable and desactive spinner
+      btn.attr('disabled', false).removeClass('disabled')
+      btn.find('span.fa.fa-refresh').removeClass('fa-spin')
+
+      // if already all loaded, hide btn
+      if (count+2 == $('div.version-listing').length)
+        btn.fadeOut(100)
+
+    })
