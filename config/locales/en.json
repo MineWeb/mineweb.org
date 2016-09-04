@@ -311,5 +311,16 @@
 	"Succès": "",
 	"Erreur": "",
 	"Vous n'êtes pas autorisé à procéder à cette action !": "",
-	"Une erreur interne est survenue. Veuillez rééssayez.": ""
+	"Une erreur interne est survenue. Veuillez rééssayez.": "",
+
+
+	"Pré-requis <em><small>(versions requises)</small></em>": "",
+	"Liste des mise à jours :": "",
+	"Ce plugin est gratuit et déjà disponible sur votre CMS": "",
+	"Plugins supportés": "",
+	"Thème": "",
+	"par": "",
+	"Ce thème est gratuit et déjà disponible sur votre CMS": "",
+	"Charger + de versions": "",
+	"Plugin": ""
 }

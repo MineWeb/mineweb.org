@@ -38,7 +38,7 @@ block content
                 p.text-muted.market-item-infos
                   | #{__('Prix :')}&nbsp;
                   if plugin.price > 0
-                    b #{plugin.price}
+                    b #{plugin.price} €
                   else
                     em
                       span.tag.tag-success #{__('Gratuit')}
@@ -74,7 +74,7 @@ block content
                 p.text-muted.market-item-infos
                   | #{__('Prix :')}&nbsp;
                   if theme.price > 0
-                    b #{theme.price}
+                    b #{theme.price} €
                   else
                     em
                       span.tag.tag-success #{__('Gratuit')}

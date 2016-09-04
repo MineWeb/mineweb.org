@@ -120,10 +120,84 @@ module.exports = {
 			results[0]['version'] = versions[0]
 
 			delete versions
+			// Handle requiremnts
+			var result = []
+			var supported = results[0]['supported']
 
-			return response.view('market/theme', {
-				title: results[0].name,
-				theme: results[0],
+			// to array
+			var supportedArray = []
+			for (var name in supported) {
+				var entry = {}
+				entry[name] = supported[name]
+				supportedArray.push(entry)
+			}
+
+			// each
+			async.forEach(supportedArray, function (requirement, callback) {
+
+				var name = Object.keys(requirement)[0]
+
+				if (name != "CMS" && name != undefined && supported[name] != undefined) {
+
+					var model = Plugin
+					var id = name // author.slug.id
+					var data = {
+						slug: id.split('.')[1],
+						id: id.split('.')[2]
+					}
+
+					// find
+					model.findOne({slug: data.slug, id: data.id}).exec(function (err, item) {
+
+						if (err) {
+							sails.log.error(err)
+						}
+						else if (item !== undefined) {
+
+							var operator = (supported[name].split(' ').length > 1) ? supported[name].split(' ')[0] : '='
+							var version = (supported[name].split(' ').length > 1) ? supported[name].split(' ')[1] : supported[name]
+
+							name = '<a href="/market/plugin/'+item.slug+'">'+item.name+'</a>'
+
+							result.push({
+								name: name,
+								operator: operator,
+								version: version
+							})
+							callback()
+
+						}
+						else {
+							return callback()
+						}
+					})
+
+				}
+				else if(name == "CMS") {
+
+					var operator = (supported[name].split(' ').length > 1) ? supported[name].split(' ')[0] : '='
+					var version = (supported[name].split(' ').length > 1) ? supported[name].split(' ')[1] : supported[name]
+
+					result.push({
+						name: 'CMS',
+						operator: operator,
+						version: version
+					})
+					callback()
+
+				}
+				else {
+					callback()
+				}
+
+			}, function() {
+
+				results[0]['supported'] = result
+				return response.view('market/theme', {
+					title: results[0].name,
+					theme: results[0],
+				})
+
 			})
 		});
 	},
