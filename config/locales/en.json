@@ -316,11 +316,11 @@
 
 	"Pré-requis <em><small>(versions requises)</small></em>": "",
 	"Liste des mise à jours :": "",
-	"Ce plugin est gratuit et déjà disponible sur votre CMS": "",
+	"Ce plugin est gratuit et est déjà disponible sur votre CMS": "",
 	"Plugins supportés": "",
 	"Thème": "",
 	"par": "",
-	"Ce thème est gratuit et déjà disponible sur votre CMS": "",
+	"Ce thème est gratuit et est déjà disponible sur votre CMS": "",
 	"Charger + de versions": "",
 	"Plugin": "",
 	"Article payé": "",
@@ -337,5 +337,6 @@
 	"Gratuit": "",
 	"Actif": "",
 	"Désactivé": "",
-	"Vous n'avez pas encore acheté de thème sur le market.": ""
+	"Vous n'avez pas encore acheté de thème sur le market.": "",
+	"Disponible à partir de %s €": ""
 }

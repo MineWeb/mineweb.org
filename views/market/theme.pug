@@ -75,7 +75,7 @@ block content
 
           hr
 
-          if theme.price > 0
+          if theme.price > 0 && user
 
             h4 #{__('Choix du moyen de paiement')}
 
@@ -126,9 +126,12 @@ block content
               div.col-md-4.pull-right
                 input(name="custom", type="hidden", value=theme.id)
                 a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="theme", data-content-if-free=__('Obtenir le thème'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
+          else if theme.price == 0
+            div.col-md-6.pull-right
+              a.btn.btn-success.btn-block.disabled(href='#', disabled) #{__('Ce thème est gratuit et est déjà disponible sur votre CMS')}
           else
             div.col-md-6.pull-right
-              a.btn.btn-success.btn-block.disabled(href='#', disabled) #{__('Ce thème est gratuit et déjà disponible sur votre CMS')}
+              a.btn.btn-primary.btn-block.disabled(href='#', disabled) #{__('Disponible à partir de %s €', theme.price)}
 
           div.clear-fix
 

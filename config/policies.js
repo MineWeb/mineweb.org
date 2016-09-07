@@ -58,6 +58,10 @@ module.exports.policies = {
     dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+  },
+
+  TicketController: {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   }
 
 	// RabbitController: {

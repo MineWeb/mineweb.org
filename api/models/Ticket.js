@@ -42,7 +42,7 @@ module.exports = {
     category: {
       type: 'string',
       required: true,
-      in: ['GENERAL', 'SERVER', 'DEVELOPMENT', 'SUGGESTION', 'QUESTION']
+      in: ['GENERAL', 'SERVER', 'DEVELOPMENT', 'SUGGESTION', 'QUESTION', 'OTHER']
     },
 
     state: {

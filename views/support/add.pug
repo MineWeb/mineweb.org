@@ -1,0 +1,75 @@
+extends ../layouts/layout
+
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+      .row
+        .col-md-12
+          h3.heading #{__("Ajouter un")}
+            span.accent &nbsp;#{__('ticket')}
+
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
+        .col-md-9
+
+          form(method="post", action="/support/new", data-ajax, data-custom-callback="afterAddTicket")
+            .form-group
+              label #{__("Titre")}
+              input.form-control(type='text', name='title', maxlength="20")
+              small.form-text.text-muted #{__("Soyez le plus explicite pour résumé votre problème")}
+            .form-group
+              label #{__("Catégorie")}
+              select.form-control(name='category')
+                option(value='GENERAL') #{__('Général')}
+                option(value='SERVER') #{__('Serveur')}
+                option(value='DEVELOPMENT') #{__('Développement')}
+                option(value='SUGGESTION') #{__('Suggestion')}
+                option(value='QUESTION') #{__('Question')}
+                option(value='OTHER') #{__('Autre')}
+            .form-group
+              label #{__('Licence ou hébergement associé')}
+                small.text-muted &nbsp;#{__("(facultatif)")}
+              select(name='license_hosting').form-control
+                option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
+                optgroup(label=__('Licences'))
+                  each license in licenses
+                    option(value='LICENSE:' + license.id) ID##{license.id}
+                      if license.host !== undefined && license.host != null && license.host.length > 0
+                        | (#{license.host})
+                optgroup(label=__('Hébergements'))
+                  each hosting in hostings
+                    option(value='HOSTING:' + hosting.id) ID##{hosting.id}
+                      if hosting.hostType === 'SUBDOMAIN'
+                        | (http://#{hosting.host}.craftwb.fr)
+                      else
+                        | (http://#{hosting.host})
+
+            .form-group
+              label #{__("Contenu")}
+              textarea.form-control(name='content', rows="10", placeholder=__("Bonjour,"))
+              small.form-text.text-muted !{__("Soyez le plus explicite et fournissez le plus d'informations possibles.<br>N'oubliez pas que la courtoisie et la politesse nous motivent plus pour vous aider.")}
+
+            .form-group.text-center
+              button.btn.btn-outline-success(type='submit') #{__('Ouvrir le ticket')}
+
+        .col-md-3
+          .card.card-block
+            p.card-text
+              | #{__('Avez-vous pensé à lire la documentation ?')}
+            a.card-link(href='http://docs.mineweb.org') #{__('Voir la documentation')}
+          .card.card-block
+            p.card-text
+              | #{__('Le support répond généralement dans les 48h')}
+          .card.card-block
+            p.card-text
+              | #{__("Si votre ticket n'est pas pris en charge rapidement, inutile de nous spam.")}
+
+block custom
+  script(type='text/javascript').
+    function afterAddTicket(inputs, json) {
+
+      document.location = '/support/view/' + json.data.id
+      return false
+
+    }

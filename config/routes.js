@@ -98,6 +98,22 @@ module.exports.routes = {
     'get /market/theme/:slug': 'MarketController.theme',
     'get /market/plugin/:slug': 'MarketController.plugin',
 
+
+    /*
+      SUPPORT
+    */
+    '/support': 'TicketController.index',
+    '/support/open': 'TicketController.newPage',
+    'post /support/new': 'TicketController.new',
+    '/support/view/:id': 'TicketController.view',
+    'post /support/reply': 'TicketController.reply',
+    '/support/close': 'TicketController.close',
+
+    /*
+      DOCS
+    */
+    '/wiki/*': 'http://docs.mineweb.org',
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

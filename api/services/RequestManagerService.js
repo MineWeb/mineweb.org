@@ -93,6 +93,20 @@ module.exports = {
       }
     }
 
+    if (validation.max !== undefined) {
+      if (this.request.body[validation.field].length > validation.max) {
+        this.inputs[validation.field] = this.request.__(validation.error)
+        return false
+      }
+    }
+    
+    if (validation.in !== undefined) {
+      if (validation.in.indexOf(this.request.body[validation.field]) == '-1') {
+        this.inputs[validation.field] = this.request.__(validation.error)
+        return false
+      }
+    }
+
     return true
   },
 
