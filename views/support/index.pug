@@ -79,6 +79,7 @@ block content
                           | #{ticket.updatedAt}
                       td
                         div.btn-group
+                          a.btn.btn-outline-success(href='/support/reopen/' + ticket.id) #{__('Ouvrir')}
                           a.btn.btn-outline-info(href='/support/view/' + ticket.id) #{__('Voir')}
           else
             div.alert.alert-warning !{__('Vous n\'avez pas de ticket de clos.')}

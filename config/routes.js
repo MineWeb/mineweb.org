@@ -108,6 +108,7 @@ module.exports.routes = {
     '/support/view/:id': 'TicketController.view',
     'post /support/reply/:id': 'TicketController.reply',
     '/support/close/:id': 'TicketController.close',
+    '/support/reopen/:id': 'TicketController.reopen',
 
     /*
       DOCS

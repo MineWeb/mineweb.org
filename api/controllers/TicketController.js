@@ -276,6 +276,10 @@ module.exports = {
 			if (ticket === undefined)
 				return res.notFound()
 
+			// auth
+			if (req.session.userId !== ticket.user)
+				return res.forbidden()
+
 			// handle authors
 			var users = {}
 			async.forEach(ticket.replies, function (reply, callback) {
@@ -333,7 +337,7 @@ module.exports = {
 				}
 
 				// check if author
-				if (req.session.userId === ticket.user) {
+				if (req.session.userId === ticket.user && ticket.state !== 'CLOSED') {
 
 					// save
 					async.parallel([
@@ -431,6 +435,48 @@ module.exports = {
 			}
 
 		})
-	}
+	},
 
+	/*
+		REOPEN A TICKET
+	*/
+	reopen: function (req, res) {
+		// handle param
+		if (req.param('id') === undefined)
+			return res.notFound()
+
+		// Find ticket
+		Ticket.findOne({id: req.param('id')}).exec(function (err, ticket) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError()
+			}
+
+			if (ticket === undefined)
+				return res.notFound()
+
+			// check if author
+			if (req.session.userId === ticket.user) {
+				Ticket.update({id: ticket.id}, {state: 'WAITING_USER_RESPONSE', closedDate: null}).exec(function (err, ticket) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError()
+					}
+
+					// send notification toastr
+					NotificationService.success(req, req.__('Vous avez bien ré-ouvert le ticket !'))
+
+					// redirect
+					res.redirect('/support/view/' + ticket[0].id)
+
+				})
+			}
+			else {
+				return res.forbidden()
+			}
+
+		})
+	}
 };
