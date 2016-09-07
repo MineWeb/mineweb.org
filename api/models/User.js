@@ -122,9 +122,16 @@ module.exports = {
 			delete user.ip;
 			//delete user.id;
 			delete user.email;
+      // create md5 email
+      user.md5Email = crypto.createHash('md5').update(user.email).digest('hex')
 			return user;
 		}
 
+  },
+
+  addMd5Email: function(user) {
+    user.md5Email = crypto.createHash('md5').update(user.email).digest('hex')
+    return user
   },
 
   hashPassword: function(password) {

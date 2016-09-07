@@ -251,7 +251,52 @@ module.exports = {
 		DISPLAY TICKET PAGE
 	*/
 	view: function (req, res) {
+		// handle param
+		if (req.param('id') === undefined)
+			return res.notFound()
 
+		// Find ticket
+		Ticket.findOne({id: req.param('id')}).populate(['replies']).exec(function (err, ticket) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError()
+			}
+
+			// not found
+			if (ticket === undefined)
+				return res.notFound()
+
+			// handle authors
+			var users = {}
+			async.forEach(ticket.replies, function (reply, callback) {
+
+				User.findOne({id: reply.user}).exec(function (err, user) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError()
+					}
+
+					if (user !== undefined)
+						users[user.id] = User.addMd5Email(user)
+
+					callback()
+
+				})
+
+			}, function() {
+
+				// render
+				return res.view('support/view', {
+					title: ticket.title,
+					ticket: ticket,
+					users: users
+				})
+
+			})
+
+		})
 	},
 
 	/*

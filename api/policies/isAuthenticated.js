@@ -73,7 +73,7 @@ module.exports = function(req, res, next) {
 
       // On le met en tant que connecté
       req.session.authenticated = true;
-      res.locals.user = user
+      res.locals.user = User.addMd5Email(user)
 
       // On passe aux étapes suivantes
       return next()

@@ -1,0 +1,55 @@
+extends ../layouts/layout
+
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+      .row
+        .col-md-12
+          h3.heading #{ticket.title}
+
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
+        .col-md-12
+
+          ul.timeline
+            each reply in ticket.replies
+              li
+                .timeline-badge
+                  img(src='https://www.gravatar.com/avatar/' + users[reply.user].md5Email, class="img-circle", style="width: 100%;margin-top:-5px;")
+                .timeline-panel
+                  .timeline-heading
+                    h5.timeline-title #{users[reply.user].username}
+                      if users[reply.user].role === 'DEVELOPER'
+                        span.tag.tag-danger.pull-right
+                          span.fa.fa-code
+                          | &nbsp;#{__('Développeur')}
+                      else if users[reply.user].role === 'MOD'
+                        span.tag.tag-warning.pull-right
+                          span.fa.fa-star
+                          | &nbsp;#{__('Staff')}
+                      else if users[reply.user].role === 'ADMIN' || users[reply.user].role === 'FOUNDER'
+                        span.tag.tag-danger.pull-right
+                          span.fa.fa-lock
+                          | &nbsp;#{__('Administrateur')}
+
+                    p.date
+                      small.text-muted
+                        i.glyphicon.glyphicon-time
+                        span.moment-date(fromNow) #{reply.createdAt}
+                  .timeline-body
+                    p !{reply.content}
+            li
+              .timeline-badge
+                img(src='https://www.gravatar.com/avatar/' + user.md5Email, class="img-circle", style="width: 100%;margin-top:-5px;")
+              .timeline-panel
+                .timeline-heading
+                  h5.timeline-title #{__('Votre réponse')}
+                  p.date
+                .timeline-body
+                  textarea.form-control(name='content', rows="5", style='margin-bottom:10px;')
+                  small.form-text.text-muted !{__("Soyez le plus explicite et fournissez le plus d'informations possibles.<br>N'oubliez pas que la courtoisie et la politesse nous motivent plus pour vous aider.")}
+                  button.btn.btn-outline-success.pull-right #{__('Répondre')}
+
+block customCss
+  link(rel='stylesheet', href='/styles/timeline.css')

@@ -113,6 +113,8 @@ module.exports.routes = {
       DOCS
     */
     '/wiki/*': 'http://docs.mineweb.org',
+    '/wiki': 'http://docs.mineweb.org',
+    '/documentation': 'http://docs.mineweb.org',
 
   /***************************************************************************
   *                                                                          *
