@@ -106,8 +106,8 @@ module.exports.routes = {
     '/support/open': 'TicketController.newPage',
     'post /support/new': 'TicketController.new',
     '/support/view/:id': 'TicketController.view',
-    'post /support/reply': 'TicketController.reply',
-    '/support/close': 'TicketController.close',
+    'post /support/reply/:id': 'TicketController.reply',
+    '/support/close/:id': 'TicketController.close',
 
     /*
       DOCS

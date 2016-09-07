@@ -39,7 +39,7 @@ block content
                         span.moment-date(fromNow) #{reply.createdAt}
                   .timeline-body
                     p !{reply.content}
-            li
+            li#reply
               .timeline-badge
                 img(src='https://www.gravatar.com/avatar/' + user.md5Email, class="img-circle", style="width: 100%;margin-top:-5px;")
               .timeline-panel
@@ -47,9 +47,40 @@ block content
                   h5.timeline-title #{__('Votre réponse')}
                   p.date
                 .timeline-body
-                  textarea.form-control(name='content', rows="5", style='margin-bottom:10px;')
-                  small.form-text.text-muted !{__("Soyez le plus explicite et fournissez le plus d'informations possibles.<br>N'oubliez pas que la courtoisie et la politesse nous motivent plus pour vous aider.")}
-                  button.btn.btn-outline-success.pull-right #{__('Répondre')}
+                  form(method="post", action="/support/reply/" + ticket.id, data-ajax, data-custom-callback="afterAddReply")
+                    textarea.form-control(name='content', rows="5")
+                    small.form-text.text-muted !{__("Soyez le plus explicite et fournissez le plus d'informations possibles.<br>N'oubliez pas que la courtoisie et la politesse nous motivent plus pour vous aider.")}
+                    button.btn.btn-outline-success.pull-right #{__('Répondre')}
 
 block customCss
   link(rel='stylesheet', href='/styles/timeline.css')
+
+block custom
+  script(type='text/javascript').
+    function afterAddReply(inputs, json) {
+
+      var date = json.data.createdAt
+      var content = json.data.content
+
+      var el = $('li#reply')
+
+      var reply = ''
+
+
+      el.slideUp(100, function() {
+
+        var moment_instance = moment(date)
+        moment_instance.locale(navigator.language)
+        date = moment_instance.fromNow()
+        $(this).find('h5.timeline-title').html('#{user.username}')
+
+        $(this).find('p.date').html('<small class="text-muted"><i class="glyphicon glyphicon-time"></i><span class="moment-date" fromNow>'+date+'</span></small>')
+        $(this).find('.timeline-body').html('<p>'+content+'</p>')
+
+        $(this).slideDown(100)
+
+      })
+
+      return false
+
+    }

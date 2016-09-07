@@ -231,7 +231,7 @@ module.exports = {
 						// send response
 						res.json({
 							status: true,
-							msg: req.__("'Vous avez bien ouvert un ticket !"),
+							msg: req.__("Vous avez bien ouvert un ticket !"),
 							data: {
 								id: ticket.id
 							}
@@ -304,13 +304,96 @@ module.exports = {
 	*/
 	reply: function (req, res) {
 
+		// Handle form values
+		RequestManagerService.setRequest(req).setResponse(res).valid({
+			"Tous les champs ne sont pas remplis.": [
+				['content', 'Vous devez spécifier un contenu']
+			]
+		}, function () {
+
+			// handle param
+			if (req.param('id') === undefined)
+				return res.notFound()
+
+			// Find ticket
+			Ticket.findOne({id: req.param('id')}).exec(function (err, ticket) {
+
+				if (err) {
+					sails.log.error(err)
+					return res.serverError()
+				}
+
+				// check if author
+				if (req.session.userId === ticket.user) {
+
+					// save
+					TicketReplies.create({user: req.session.userId, content: req.body.content, ticket: ticket.id}).exec(function (err, reply) {
+
+						if (err) {
+							sails.log.error(err)
+							return res.serverError()
+						}
+
+						// send response
+						res.json({
+							status: true,
+							msg: req.__("Vous avez bien répondu au ticket !"),
+							data: {
+								createdAt: reply.createdAt,
+								content: reply.content
+							}
+						})
+
+					})
+
+				}
+				else {
+					return res.forbidden()
+				}
+
+			})
+
+		})
 	},
 
 	/*
 		CLOSE A TICKET
 	*/
 	close: function (req, res) {
+		// handle param
+		if (req.param('id') === undefined)
+			return res.notFound()
 
+		// Find ticket
+		Ticket.findOne({id: req.param('id')}).exec(function (err, ticket) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError()
+			}
+
+			// check if author
+			if (req.session.userId === ticket.user) {
+				Ticket.update({id: ticket.id}, {state: 'CLOSED', closedDate: (new Date())}).exec(function (err, ticket) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError()
+					}
+
+					// send notification toastr
+					NotificationService.success(req, req.__('Vous avez bien fermé le ticket !'))
+
+					// redirect
+					res.redirect('/support')
+
+				})
+			}
+			else {
+				return res.forbidden()
+			}
+
+		})
 	}
 
 };

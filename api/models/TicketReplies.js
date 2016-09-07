@@ -23,7 +23,8 @@ module.exports = {
 
     ticket: {
       model: 'Ticket',
-      defaultsTo: null
+      defaultsTo: null,
+      required: true
     },
 
     content: {
