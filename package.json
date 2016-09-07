@@ -22,6 +22,7 @@
     "node-schedule": "^1.1.1",
     "paypal-ipn": "^3.0.0",
     "pug": "^2.0.0-beta4",
+    "pushbullet": "^1.4.3",
     "rc": "1.0.1",
     "recaptcha2": "^1.0.8",
     "request": "^2.74.0",

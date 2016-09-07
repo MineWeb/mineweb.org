@@ -40,6 +40,10 @@ module.exports = {
     sandbox: true,
     //merchantEmail: 'paypal@mineweb.org'
     merchantEmail: 'paypal-facilitator@mineweb.org'
+  },
+
+  pushbullet: {
+    apiKey: 'o.t2qhJTBxN65oDTc35GN69IeKhYM7OrGv'
   }
 
 };

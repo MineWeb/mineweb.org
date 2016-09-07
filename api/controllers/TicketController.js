@@ -6,6 +6,8 @@
  */
 
 var async = require('async')
+var PushBullet = require('pushbullet')
+var pusher = new PushBullet(sails.config.pushbullet.apiKey)
 
 module.exports = {
 
@@ -237,6 +239,13 @@ module.exports = {
 							}
 						})
 
+						// pushbullet
+						pusher.link({channel_tag: 'minewebsupport'}, 'Nouveau ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, function(err, response) {
+							// TODO Save notification
+							if (err)
+								sails.log.error(err)
+						});
+
 					})
 
 				})
@@ -327,12 +336,33 @@ module.exports = {
 				if (req.session.userId === ticket.user) {
 
 					// save
-					TicketReplies.create({user: req.session.userId, content: req.body.content, ticket: ticket.id}).exec(function (err, reply) {
+					async.parallel([
+						// reply
+						function (callback) {
+							TicketReplies.create({user: req.session.userId, content: req.body.content, ticket: ticket.id}).exec(function (err, reply) {
+								if (err)
+									callback(err, null)
+								else
+									callback(null, reply)
+							})
+						},
+						// ticket status
+						function (callback) {
+							Ticket.update({id: ticket.id}, {state: 'WAITING_STAFF_RESPONSE'}).exec(function (err, ticket) {
+								if (err)
+									callback(err, null)
+								else
+									callback(null, ticket)
+							})
+						}
+					], function (err, results) {
 
 						if (err) {
 							sails.log.error(err)
 							return res.serverError()
 						}
+
+						var reply = results[0]
 
 						// send response
 						res.json({
@@ -343,6 +373,13 @@ module.exports = {
 								content: reply.content
 							}
 						})
+
+						// pushbullet
+						pusher.link({channel_tag: 'minewebsupport'}, 'Réponse à un ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, function(err, response) {
+							// TODO Save notification
+							if (err)
+								sails.log.error(err)
+						});
 
 					})
 
