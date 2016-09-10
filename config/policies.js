@@ -37,31 +37,31 @@ module.exports.policies = {
   ***************************************************************************/
 
   UserController: {
-    '*': ['isAuthenticated', 'flash', 'notification'],
-    profile: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    editEmail: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    disableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    enableTwoFactorAuthentificationPage: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    enableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    '*': ['isAuthenticated', 'flash', 'notification', 'logger'],
+    profile: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    editEmail: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    disableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    enableTwoFactorAuthentificationPage: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    enableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   },
 
   StaticController: {
-    '*': ['isAuthenticated', 'flash', 'notification'],
-    buyLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    rentHosting: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    '*': ['isAuthenticated', 'flash', 'notification', 'logger'],
+    buyLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    rentHosting: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   },
 
   PurchaseController: {
-    '*': ['isAuthenticated', 'flash', 'notification'],
-    paypal: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    '*': ['isAuthenticated', 'flash', 'notification', 'logger'],
+    paypal: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger'],
+    getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   },
 
   TicketController: {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   }
 
 	// RabbitController: {
