@@ -67,6 +67,14 @@ module.exports = {
       }
 		},
 
+    ftpUser: {
+      type: 'string'
+    },
+
+    ftpPassword: {
+      type: 'string'
+    },
+
 		suspended: {
 			type: 'text',
 			defaultsTo: null
@@ -89,26 +97,42 @@ module.exports = {
         sails.log.error(err)
         return false
       }
-/* TODO -> save ids into config file
+
       // Send command to server for generate hosting
-      exec('/home/mineweb.sh creation '+hosting.id+' '+hosting.host+' sdomain', {
-        user: 'root',
-        host: '188.165.141.113',
-        port: '2435',
-        password: 'Ly9bt5Q2'
+      var id = (sails.config.environment === 'production') ? hosting.id : ('dev-' + hosting.id)
+      var host = (sails.config.environment === 'production') ? hosting.host : ('dev-' + hosting.host)
+      exec('/home/mineweb.sh creation ' + id + ' ' + host + ' sdomain', {
+        user: sails.config.servers.hosting.user,
+        host: sails.config.servers.hosting.host,
+        port: sails.config.servers.hosting.port,
+        password: sails.config.servers.hosting.password
       }, function (err, stdout, stderr) {
 
         if (err) {
           sails.log.error(err)
           return false
         }
-*/
-        // TODO -> Save ftp ids
+
+        var out = stdout.split("\n")
+        try {
+          var ids = JSON.parse(out[6])
+        } catch (e) {
+          sails.log.error(e)
+        }
+
+        if (ids && ids.status === 'success') {
+          ids = ids.ftp
+          //Save
+          Hosting.update({id: hosting.id}, {ftpUser: ids.user, ftpPassword: ids.password}).exec(function (err, hosting) {
+            if (err)
+              sails.log.error(err)
+          })
+        }
 
         // Return hosting id
         return next(err, hosting.id)
 
-    //  })
+      })
 
     })
   }

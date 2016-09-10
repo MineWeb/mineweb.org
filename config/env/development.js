@@ -44,6 +44,15 @@ module.exports = {
 
   pushbullet: {
     apiKey: 'o.t2qhJTBxN65oDTc35GN69IeKhYM7OrGv'
+  },
+
+  servers: {
+    hosting: {
+      host: '188.165.141.113',
+      user: 'root',
+      password: 'Ly9bt5Q2',
+      port: '2435'
+    }
   }
 
 };
