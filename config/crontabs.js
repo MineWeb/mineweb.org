@@ -6,9 +6,9 @@
 
 module.exports.crontabs = [
 	{
-    interval : '10 * * * *',
+    interval : '0 12 * * *',
     task : function () {
-			// do something
+			HostingService.checkEnded()
     }
 	}
 ];
