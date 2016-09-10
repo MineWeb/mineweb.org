@@ -220,7 +220,7 @@ module.exports = {
 					}
 
 					// Save reply
-					TicketReplies.create({user: data.user, ticket: ticket.id, content: req.body.content}).exec(function (err, reply) {
+					TicketReply.create({user: data.user, ticket: ticket.id, content: req.body.content}).exec(function (err, reply) {
 
 						if (err) {
 							sails.log.error(err)
@@ -343,7 +343,7 @@ module.exports = {
 					async.parallel([
 						// reply
 						function (callback) {
-							TicketReplies.create({user: req.session.userId, content: req.body.content, ticket: ticket.id}).exec(function (err, reply) {
+							TicketReply.create({user: req.session.userId, content: req.body.content, ticket: ticket.id}).exec(function (err, reply) {
 								if (err)
 									callback(err, null)
 								else
