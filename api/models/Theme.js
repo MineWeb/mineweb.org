@@ -51,6 +51,12 @@ module.exports = {
 			required: true
 		},
 
+    version : {
+      type: 'string',
+      required: true,
+      regex: /^(\d+\.)?(\d+\.)?(\*|\d+)$/
+    },
+
 		versions: {
 			type: 'json',
 			required: true

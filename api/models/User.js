@@ -121,9 +121,9 @@ module.exports = {
 			delete user.tokens;
 			delete user.ip;
 			//delete user.id;
-			delete user.email;
       // create md5 email
       user.md5Email = crypto.createHash('md5').update(user.email).digest('hex')
+      delete user.email;
 			return user;
 		}
 
