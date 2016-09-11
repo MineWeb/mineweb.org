@@ -6,7 +6,6 @@
  */
 
 var uuid = require('node-uuid')
-var exec = require('ssh-exec')
 
 module.exports = {
 

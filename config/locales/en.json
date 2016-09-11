@@ -338,5 +338,14 @@
 	"Actif": "",
 	"Désactivé": "",
 	"Vous n'avez pas encore acheté de thème sur le market.": "",
-	"Disponible à partir de %s €": ""
+	"Disponible à partir de %s €": "",
+
+	"Nous avons le regret de vous annoncer que votre hébergement loué sur <strong>mineweb.org</strong> (%s) expire dans %s jours.": "",
+	"Au bout de ces %s jours, votre hébergement sera <strong>désactivé pendant 1 semaine</strong>. Il vous restera donc <em>1 semaine pour renouveler l'offre</em> avant que toutes les données ne soient supprimées définitivement de nos serveurs.": "",
+	"Pour renouveler votre hébergement dès maintenant, il vous suffit de cliquer sur le lien ci-dessous.": "",
+	"Cliquez ici pour renouveler votre offre": "",
+	"Nous avons le regret de vous annoncer que votre hébergement loué sur <strong>mineweb.org</strong> (%s) il y a 1 mois arrive à sa fin.": "",
+	"Nous avons donc <strong>temporairement désactivé</strong> votre hébergement pendant 1 semaine. Il vous reste <em>1 semaine pour renouveler l'offre</em> avant que toutes les données ne soient supprimées définitivement de nos serveurs.": "",
+	"Désactivation de votre hébergement": "",
+	"Expiration de votre hébergement": ""
 }

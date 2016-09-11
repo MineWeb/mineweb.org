@@ -53,6 +53,10 @@ module.exports = {
       password: 'Ly9bt5Q2',
       port: '2435'
     }
+  },
+
+  stats: {
+    email: 'contact@eywek.fr'
   }
 
 };

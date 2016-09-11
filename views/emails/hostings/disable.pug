@@ -1,0 +1,19 @@
+extends ../../layouts/email
+block message
+  p #{sails.__('Bonjour')} <strong>#{username}</strong>,
+    br
+    br
+    | !{sails.__('Nous avons le regret de vous annoncer que votre hébergement loué sur <strong>mineweb.org</strong> (%s) il y a 1 mois arrive à sa fin.', locals.host)}
+    br
+    | !{sails.__("Nous avons donc <strong>temporairement désactivé</strong> votre hébergement pendant 1 semaine. Il vous reste <em>1 semaine pour renouveler l'offre</em> avant que toutes les données ne soient supprimées définitivement de nos serveurs.")}
+    br
+    | !{sails.__("Pour renouveler votre hébergement dès maintenant, il vous suffit de cliquer sur le lien ci-dessous.")}
+    br
+    a(style='text-align:center;color:#428bca;text-decoration:none;', href=locals.url) #{sails.__('Cliquez ici pour renouveler votre offre')}
+
+  p
+    small(style='color:grey;') #{sails.__('Si vous ne pouvez pas cliquer sur le bouton ci-dessus, mettez cette URL dans votre navigateur :')} #{url}
+
+  p
+    small
+    em #{sails.__('Ceci est un message automatique, veuillez ne pas y répondre.')}

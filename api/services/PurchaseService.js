@@ -198,8 +198,22 @@ module.exports = {
                     Save
                   */
 
-                  save()
+                  self.saveVoucher(voucher, purchase.userId, purchase.offerType, purchase.offerId, function (success) {
 
+                    if (!success)
+                      return next(false)
+
+                    // Save & Return purchase ID
+                      var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
+
+                        if (!success)
+                          return next(false)
+
+                        return next(true, purchaseId, itemId)
+
+                      })
+
+                    })
                 })
 
               } else {
@@ -208,30 +222,23 @@ module.exports = {
                 /*
                   Save
                 */
-                save()
-
-              }
-
-              save: function() {
                 self.saveVoucher(voucher, purchase.userId, purchase.offerType, purchase.offerId, function (success) {
-
                   if (!success)
                     return next(false)
-
                   // Save & Return purchase ID
-                    var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
-
+                    var save = self.save(purchase.userId, purchase.offerType, purchase.offerId, purchase.paymentType, function(success, purchaseId) {
                       if (!success)
                         return next(false)
-
-                      return next(true, purchaseId, itemId)
+                      return next(true, purchaseId, purchase.offerId)
 
                     })
 
                 })
+
               }
 
           })
+
       })
 
   },

@@ -1,0 +1,20 @@
+extends ../../layouts/email
+block message
+  p #{sails.__('Bonjour')},
+    br
+    br
+    | #{sails.__('Voici les statistiques concernant les hébergements qui arrivent à expiration.')}.
+    br
+    b #{sails.__('Hébergement désactivés : ')}
+    | #{stats.hostingsDisabled}
+    br
+    b #{sails.__('Hébergement dans leurs derniers jours : ')}
+    | #{stats.hostingsLastDays}
+    br
+    b #{sails.__('Hébergement supprimés : ')}
+    | #{stats.hostingsDeleted}
+    br
+
+  p
+    small
+    em #{sails.__('Ceci est un message automatique, veuillez ne pas y répondre.')}
