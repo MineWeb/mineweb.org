@@ -108,6 +108,32 @@ module.exports = {
     })
   },
 
+  editHost: function (id, host, hostType, next) {
+    id = (sails.config.environment === 'production') ? id : ('dev-' + id)
+    host = (sails.config.environment === 'production') ? host : ('dev-' + host)
+
+    if (next === undefined)
+      var next = function () {}
+
+    hostType = (hostType == 'domain') ? 'domain' : 'sdomain'
+
+    exec('/home/mineweb.sh modif ' + id + ' ' + host + ' ' + hostType, {
+      user: sails.config.servers.hosting.user,
+      host: sails.config.servers.hosting.host,
+      port: sails.config.servers.hosting.port,
+      password: sails.config.servers.hosting.password
+    }, function (err, stdout, stderr) {
+
+      if (err) {
+        sails.log.error(err)
+        return next(err)
+      }
+
+      next()
+
+    })
+  },
+
   checkEnded: function () { // Called all days at 12h
 
     console.log('Check hostings')

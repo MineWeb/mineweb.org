@@ -62,6 +62,10 @@ module.exports.policies = {
 
   TicketController: {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
+  },
+
+  HostingController: {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   }
 
 	// RabbitController: {

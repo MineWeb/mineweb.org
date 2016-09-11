@@ -675,6 +675,8 @@ module.exports = {
 			response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
 			response.locals.user.connectionLogs = results[3]
 
+			response.locals.moment = moment
+
 			response.render('./user/profile')
 
 		})

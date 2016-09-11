@@ -111,7 +111,7 @@ block content
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{license.createdAt}
                           td
                             div.btn-group-vertical
-                              if license.state
+                              if license.state && license.suspended === null
                                 button.btn.btn-danger.disable-license(data-license-id=license.id) #{__('Désactiver')}
                               else if !license.state && license.suspended === null
                                 button.btn.btn-success.enable-license(data-license-id=license.id) #{__('Activer')}
@@ -150,7 +150,7 @@ block content
                       each hosting, index in user.hostings
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                           td #{hosting.id}
-                          td
+                          td.hostingHost(data-host-id=hosting.id)
                             if hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
                                  | http://#{hosting.host}.craftwb.fr
@@ -165,14 +165,14 @@ block content
                               span.tag.tag-danger #{__('Désactivé')}
                           td
                             // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
-                            if (new Date(hosting.endDate)).getTime() < (new Date(Date.now() - (7 * 24 * 60 * 60 * 1000)))
-                              span.text-danger.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.endDate}
+                            if (moment(hosting.endDate).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
+                              span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
                             else
-                              span.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.endDate}
+                              span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
                           td
                             div.btn-group-vertical
-                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id) #{__("Modifier le nom de domaine")}
+                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
                               a(href='/hosting/renew/'+hosting.id).btn.btn-success #{__('Renouveler')}
                         if hosting.suspended !== null
                           tr(style="position: absolute;margin-top: -112px;")
@@ -394,8 +394,91 @@ block content
                   a(href='/user/two-factor-auth/disable').btn.btn-outline-danger #{__('Désactiver la double authentification sur mon compte')}
 
 
+block modals
+
+  #edithostingurl.modal.fade(tabindex='-1', role='dialog', aria-labelledby='edithostingurlLabel', aria-hidden='true')
+    .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-label=__('Fermer'))
+              span(aria-hidden='true') &times;
+            h4.modal-title #{__('Modifier le nom de domaine')}
+          form(method="post", action="/hosting/edit-host", data-ajax, data-custom-callback="afterEditedHostingHost")
+            .modal-body
+              .ajax-msg
+              input#editHostHostingInputId(type='hidden', name='id')
+              .form-check
+                label.form-check-label
+                  input.domain(type='radio', class="form-check-input", name='hostType', value='domain')
+                  | &nbsp;#{__('Je veux utiliser mon nom de domaine')}
+              .form-check
+                label.form-check-label
+                  input.subdomain(type='radio', class="form-check-input", name='hostType', value='subdomain')
+                  | &nbsp;#{__('Je veux utiliser un sous-domaine gratuit')}
+              #domain(style='display:none;')
+                .form-group
+                  input.form-control.domain_val(type='text', name='domain', placeholder=__('Votre domaine'))
+                small(style="font-weight: 300;")
+                  em #{__('Vous aurez juste à faire pointer votre domaine (entrée DNS de type A) vers cette IP : %s', sails.config.servers.hosting.host)}
+              #subdomain(style='display:none;')
+                .form-group
+                  .input-group
+                    span#basic-addon1.input-group-addon http://
+                    input.form-control.domain_val(type='text', name='subdomain', placeholder=__('Votre sous-domaine'))
+                    span#basic-addon2.input-group-addon .craftwb.fr
+            .modal-footer
+              div.btn-group
+                button.btn.btn-secondary(type='button', data-dismiss='modal') #{__('Fermer')}
+                button.btn.btn-primary(type='submit') #{__('Modifier le nom de domaine')}
+
 block custom
   script(type='text/javascript').
+
+    $('.edit-host-hosting').on('click', function (e) {
+      e.preventDefault()
+
+      var btn = $(this)
+      var id = btn.attr('data-hosting-id')
+      var host = btn.attr('data-hosting-host')
+      var hostType = btn.attr('data-hosting-hostType')
+
+      $('#editHostHostingInputId').val(id)
+      $('input.'+hostType).prop("checked", true)
+      $('#'+hostType).slideDown(150)
+      $('input[name="'+hostType+'"]').val(host)
+
+      $('#edithostingurl').modal('show')
+
+    })
+
+    $(".domain").change(function() {
+      if($(".domain").is(':checked')) {
+        $("#domain").slideDown(250)
+        $("#subdomain").slideUp(250)
+      } else {
+        $("#domain").slideDown(250)
+        $("#subdomain").slideUp(250)
+      }
+    })
+    $(".subdomain").change(function() {
+      if($(".subdomain").is(':checked')) {
+        $("#subdomain").slideDown(250)
+        $("#domain").slideUp(250)
+      } else {
+        $("#subdomain").slideDown(250)
+        $("#domain").slideUp(250)
+      }
+    })
+
     function emailUpdated(data, response) {
       $('#current_email').val($('input[name="email"]').val())
+    }
+
+    function afterEditedHostingHost(data, response) {
+      $('#edithostingurl').modal('hide')
+
+      var btn = $('.edit-host-hosting[data-hosting-id="'+response.data.id+'"]')
+      btn.attr('data-hosting-host', response.data.host)
+      btn.attr('data-hosting-hostType', response.data.hostType)
+      $('.hostingHost[data-host-id="'+response.data.id+'"]').html(response.data.hostFormatted)
     }

@@ -117,6 +117,11 @@ module.exports.routes = {
     '/wiki': 'http://docs.mineweb.org',
     '/documentation': 'http://docs.mineweb.org',
 
+    /*
+      HOSTING
+    */
+    'post /hosting/edit-host': 'HostingController.editHost'
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

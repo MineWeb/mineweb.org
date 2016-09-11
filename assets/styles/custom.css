@@ -408,3 +408,13 @@ section.background-gray-lightest .nav.nav-tabs>li>a.active {
   font-size: 19px;
   margin: 20px 0;
 }
+
+/*
+  MODAL
+*/
+
+h4.modal-title {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+}

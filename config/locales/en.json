@@ -347,5 +347,12 @@
 	"Nous avons le regret de vous annoncer que votre hébergement loué sur <strong>mineweb.org</strong> (%s) il y a 1 mois arrive à sa fin.": "",
 	"Nous avons donc <strong>temporairement désactivé</strong> votre hébergement pendant 1 semaine. Il vous reste <em>1 semaine pour renouveler l'offre</em> avant que toutes les données ne soient supprimées définitivement de nos serveurs.": "",
 	"Désactivation de votre hébergement": "",
-	"Expiration de votre hébergement": ""
+	"Expiration de votre hébergement": "",
+	"L'id doit être spécifié": "",
+	"Vous devez choisir un type de domaine": "",
+	"Le type du domaine n'est pas valide !": "",
+	"Votre sous-domaine est invalide !": "",
+	"Votre domaine est invalide !": "",
+	"Votre domaine/sous-domaine est déjà utilisé !": "",
+	"Le nom de domaine a bien été modifié !": ""
 }
