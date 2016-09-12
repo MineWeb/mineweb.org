@@ -96,14 +96,14 @@ block content
                       each license, index in user.licenses
                         tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
                           td #{license.id}
-                          td
+                          td.licenseHost(data-license-id=license.id)
                             if license.host != null && license.host.length > 0
                               a(href=license.host, target='_blank')
                                 | #{license.host}
                             else
                               em #{__('Licence non installée')}
                           td #{license.key}
-                          td
+                          td.licenseState(data-license-id=license.id)
                             if license.state
                               span.tag.tag-success #{__('Activée')}
                             else
@@ -117,7 +117,7 @@ block content
                                 button.btn.btn-success.enable-license(data-license-id=license.id) #{__('Activer')}
                               else
                                 button.btn.btn-success.disabled(disabled) #{__('Activer')}
-                              button.btn.btn-info.edit-host-license(data-license-id=license.id) #{__("Modifier l'URL")}
+                              button.btn.btn-info.edit-host-license(data-license-id=license.id, data-license-host=license.host,) #{__("Modifier l'URL")}
                               a.btn.btn-success(href='/license/download/'+license.id) #{__('Télécharger')}
                           if license.suspended !== null
                             tr(style="position: absolute;margin-top: -112px;")
@@ -417,7 +417,9 @@ block modals
                   | &nbsp;#{__('Je veux utiliser un sous-domaine gratuit')}
               #domain(style='display:none;')
                 .form-group
-                  input.form-control.domain_val(type='text', name='domain', placeholder=__('Votre domaine'))
+                  .input-group
+                    span#basic-addon1.input-group-addon http(s)://
+                    input.form-control.domain_val(type='text', name='domain', placeholder=__('Votre domaine'))
                 small(style="font-weight: 300;")
                   em #{__('Vous aurez juste à faire pointer votre domaine (entrée DNS de type A) vers cette IP : %s', sails.config.servers.hosting.host)}
               #subdomain(style='display:none;')
@@ -430,6 +432,26 @@ block modals
               div.btn-group
                 button.btn.btn-secondary(type='button', data-dismiss='modal') #{__('Fermer')}
                 button.btn.btn-primary(type='submit') #{__('Modifier le nom de domaine')}
+
+  #editLicenseHost.modal.fade(tabindex='-1', role='dialog')
+    .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal', aria-label=__('Fermer'))
+              span(aria-hidden='true') &times;
+            h4.modal-title #{__("Modifier le site d'installation de la licence")}
+          form(method="post", action="/license/edit-host", data-ajax, data-custom-callback="afterEditedLicenseHost")
+            .modal-body
+              .ajax-msg
+              input#editHostLicenseInputId(type='hidden', name='id')
+              .form-group
+                  input.form-control.domain_val(type='text', name='host', placeholder=__('http://domain.tld'))
+              small(style="font-weight: 300;")
+                em #{__('Vous devez entrer le site ou sera/est installée votre licence')}
+            .modal-footer
+              div.btn-group
+                button.btn.btn-secondary(type='button', data-dismiss='modal') #{__('Fermer')}
+                button.btn.btn-primary(type='submit') #{__("Modifier le site d'installation")}
 
 block custom
   script(type='text/javascript').
@@ -448,6 +470,20 @@ block custom
       $('input[name="'+hostType+'"]').val(host)
 
       $('#edithostingurl').modal('show')
+
+    })
+
+    $('.edit-host-license').on('click', function (e) {
+      e.preventDefault()
+
+      var btn = $(this)
+      var id = btn.attr('data-license-id')
+      var host = btn.attr('data-license-host')
+
+      $('#editHostLicenseInputId').val(id)
+      $('input[name="host"]').val(host)
+
+      $('#editLicenseHost').modal('show')
 
     })
 
@@ -481,4 +517,81 @@ block custom
       btn.attr('data-hosting-host', response.data.host)
       btn.attr('data-hosting-hostType', response.data.hostType)
       $('.hostingHost[data-host-id="'+response.data.id+'"]').html(response.data.hostFormatted)
+      $('.ajax-msg').html('')
     }
+
+    function afterEditedLicenseHost(data, response) {
+      $('#editLicenseHost').modal('hide')
+
+      var btn = $('.edit-host-license[data-license-id="'+response.data.id+'"]')
+      btn.attr('data-license-host', response.data.host)
+      $('.licenseHost[data-license-id="'+response.data.id+'"]').html(response.data.hostFormatted)
+      $('.ajax-msg').html('')
+    }
+
+    function initLicenseStateUpdate() {
+
+      $('.disable-license').unbind('click')
+      $('.disable-license').on('click', function (e) {
+        e.preventDefault()
+
+        var btn = $(this)
+        var id = btn.attr('data-license-id')
+
+        // disable btn
+        btn.addClass('disabled').attr('disabled', true)
+
+        $.ajax({
+          url: '/license/disable/' + id,
+          dataType: 'json',
+          success: function (data) {
+            if (data.status) {
+              $('.licenseState[data-license-id="' + id + '"]').html('<span class="tag tag-danger">#{__('Désactivée')}</span>')
+              btn.removeClass('btn-danger disable-license').addClass('enable-license btn-success').removeClass('disabled').attr('disabled', false).html('#{__('Activer')}')
+              initLicenseStateUpdate()
+            }
+            else {
+              this.error()
+            }
+          },
+          error: function () {
+            console.log('Error on disable license!')
+            btn.removeClass('disabled').attr('disabled', false)
+          }
+        })
+
+      })
+
+      $('.enable-license').unbind('click')
+      $('.enable-license').on('click', function (e) {
+        e.preventDefault()
+
+        var btn = $(this)
+        var id = btn.attr('data-license-id')
+
+        // disable btn
+        btn.addClass('disabled').attr('disabled', true)
+
+        $.ajax({
+          url: '/license/enable/' + id,
+          dataType: 'json',
+          success: function (data) {
+            if (data.status) {
+              $('.licenseState[data-license-id="' + id + '"]').html('<span class="tag tag-success">#{__('Activée')}</span>')
+              btn.addClass('btn-danger disable-license').removeClass('enable-license btn-success').removeClass('disabled').attr('disabled', false).html('#{__('Désactiver')}')
+              initLicenseStateUpdate()
+            }
+            else {
+              this.error()
+            }
+          },
+          error: function () {
+            console.log('Error on enable license!')
+            btn.removeClass('disabled').attr('disabled', false)
+          }
+        })
+
+      })
+
+    }
+    initLicenseStateUpdate()

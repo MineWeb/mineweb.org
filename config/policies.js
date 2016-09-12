@@ -66,6 +66,10 @@ module.exports.policies = {
 
   HostingController: {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
+  },
+
+  LicenseController: {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   }
 
 	// RabbitController: {

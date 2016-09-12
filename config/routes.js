@@ -120,7 +120,14 @@ module.exports.routes = {
     /*
       HOSTING
     */
-    'post /hosting/edit-host': 'HostingController.editHost'
+    'post /hosting/edit-host': 'HostingController.editHost',
+
+    /*
+      LICENSE
+    */
+    'post /license/edit-host': 'LicenseController.editHost',
+    '/license/enable/:id': 'LicenseController.enable',
+    '/license/disable/:id': 'LicenseController.disable'
 
   /***************************************************************************
   *                                                                          *

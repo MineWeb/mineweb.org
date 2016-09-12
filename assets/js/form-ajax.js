@@ -56,12 +56,11 @@ function initForms() {
             if (form.attr('data-custom-callback') !== undefined) {
               var func = window[form.attr('data-custom-callback')](inputs, json)
               if (!func)
-                return
+                return submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false)
             }
             if (form.attr('data-redirect-url') !== undefined && QueryString.from === undefined) {
               document.location.href=form.attr('data-redirect-url')+'?'+ (new Date()).getTime()
             }  else if (QueryString.from !== undefined) {
-              console.log('Je suis pas affiché')
               return document.location.href=QueryString.from+'?'+ (new Date()).getTime()
             }
 
