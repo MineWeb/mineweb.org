@@ -5,6 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var fs = require("fs")
+var JSZip = require("jszip")
+
 module.exports = {
 
 	editHost: function (req, res) {
@@ -144,7 +147,7 @@ module.exports = {
 
 		})
 
-	}
+	},
 
 	download: function (req, res) {
 		// Get id
@@ -176,10 +179,25 @@ module.exports = {
 					return res.notFound()
 
 				// Read zip file
+				fs.readFile("../testZip/1.1.4.zip", function(err, data) { // TODO
+			    if (err) throw err;
+			    JSZip.loadAsync(data).then(function (zip) {
 
-				// Modify LICENSE_ID into /config/secure
+			      // Modify LICENSE_ID into /config/secure
+			      zip.file('config/secure', '{"id":"' + license.id + '","key":"NOT_INSTALL"}')
 
-				// Send to user
+						//
+						res.writeHead(200, {
+		          'Content-Type': 'application/zip',
+		          'Content-Disposition': 'attachment; filename=MineWebCMS-' + version + '.zip'})
+
+						// Send to user
+			      zip.generateNodeStream({streamFiles:true,compression:'DEFLATE'}).pipe(res).on('finish', function () {
+						  res.send()
+						})
+
+			    })
+				})
 
 			})
 

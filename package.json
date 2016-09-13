@@ -17,6 +17,7 @@
     "grunt-sails-linker": "~0.10.1",
     "grunt-sync": "0.2.4",
     "include-all": "~0.1.6",
+    "jszip": "^3.1.2",
     "mailgun-js": "^0.7.11",
     "moment": "^2.14.1",
     "node-schedule": "^1.1.1",
