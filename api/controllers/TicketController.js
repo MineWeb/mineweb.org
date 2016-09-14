@@ -6,8 +6,6 @@
  */
 
 var async = require('async')
-var PushBullet = require('pushbullet')
-var pusher = new PushBullet(sails.config.pushbullet.apiKey)
 
 module.exports = {
 
@@ -240,11 +238,7 @@ module.exports = {
 						})
 
 						// pushbullet
-						pusher.link({channel_tag: 'minewebsupport'}, 'Nouveau ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, function(err, response) {
-							// TODO Save notification
-							if (err)
-								sails.log.error(err)
-						});
+						PushbulletService.push('Nouveau ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, 'Ticket', ticket.id)
 
 					})
 
@@ -379,11 +373,7 @@ module.exports = {
 						})
 
 						// pushbullet
-						pusher.link({channel_tag: 'minewebsupport'}, 'Réponse à un ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, function(err, response) {
-							// TODO Save notification
-							if (err)
-								sails.log.error(err)
-						});
+						PushbulletService.push('Réponse à un ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, 'Ticket', ticket.id)
 
 					})
 
@@ -415,7 +405,7 @@ module.exports = {
 
 			// check if author
 			if (req.session.userId === ticket.user) {
-				Ticket.update({id: ticket.id}, {state: 'CLOSED', closedDate: (new Date())}).exec(function (err, ticket) {
+				Ticket.update({id: ticket.id}, {state: 'CLOSED', closedDate: (new Date())}).exec(function (err, ticketUpdated) {
 
 					if (err) {
 						sails.log.error(err)
@@ -427,6 +417,9 @@ module.exports = {
 
 					// redirect
 					res.redirect('/support')
+
+					// remove pushbullet notifications
+					PushbulletService.delete('Ticket', ticket.id)
 
 				})
 			}
@@ -458,7 +451,7 @@ module.exports = {
 
 			// check if author
 			if (req.session.userId === ticket.user) {
-				Ticket.update({id: ticket.id}, {state: 'WAITING_USER_RESPONSE', closedDate: null}).exec(function (err, ticket) {
+				Ticket.update({id: ticket.id}, {state: 'WAITING_USER_RESPONSE', closedDate: null}).exec(function (err, ticketUpdated) {
 
 					if (err) {
 						sails.log.error(err)
@@ -469,7 +462,10 @@ module.exports = {
 					NotificationService.success(req, req.__('Vous avez bien ré-ouvert le ticket !'))
 
 					// redirect
-					res.redirect('/support/view/' + ticket[0].id)
+					res.redirect('/support/view/' + ticketUpdated[0].id)
+
+					// PushBullet
+					PushbulletService.push('Ré-ouverture de ticket', RouteService.getBaseUrl() + '/admin/support/' + ticket.id, 'Ticket', ticket.id)
 
 				})
 			}

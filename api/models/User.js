@@ -34,7 +34,13 @@ module.exports = {
 			unique: true
 		},
 
-    paypalDeveloperEmail: {
+    paypalDeveloperEmail: { // For paypals payements (developers)
+			type: 'string',
+			required: false,
+			unique: true
+		},
+
+    pushbulletEmail: { // For support notification (admin)
 			type: 'string',
 			required: false,
 			unique: true

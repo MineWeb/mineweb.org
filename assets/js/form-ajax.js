@@ -60,7 +60,7 @@ function initForms() {
             }
             if (form.attr('data-redirect-url') !== undefined && QueryString.from === undefined) {
               document.location.href=form.attr('data-redirect-url')+'?'+ (new Date()).getTime()
-            }  else if (QueryString.from !== undefined) {
+            }  else if (QueryString.from !== undefined && form.attr('data-no-redirect-from') === undefined) {
               return document.location.href=QueryString.from+'?'+ (new Date()).getTime()
             }
 

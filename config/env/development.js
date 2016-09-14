@@ -27,7 +27,7 @@ module.exports = {
      },
    },
 
-   hookTimeout: 40000,
+   hookTimeout: 80000,
 
    dedipass: {
  		publicKeys: {
@@ -43,7 +43,8 @@ module.exports = {
   },
 
   pushbullet: {
-    apiKey: 'o.t2qhJTBxN65oDTc35GN69IeKhYM7OrGv'
+    apiKey: 'o.t2qhJTBxN65oDTc35GN69IeKhYM7OrGv',
+    //channelTag: 'minewebsupport'
   },
 
   servers: {
@@ -57,6 +58,13 @@ module.exports = {
 
   stats: {
     email: 'contact@eywek.fr'
+  },
+
+  api: {
+    endpoint: 'http://api.mineweb.org/v2/',
+    storage: {
+      getCMS: 'storage/get_cms'
+    }
   }
 
 };

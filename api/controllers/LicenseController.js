@@ -5,7 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-var fs = require("fs")
+var http = require("http")
 var JSZip = require("jszip")
 
 module.exports = {
@@ -179,29 +179,39 @@ module.exports = {
 					return res.notFound()
 
 				// Read zip file
-				fs.readFile("../testZip/1.1.4.zip", function(err, data) { // TODO
-			    if (err) throw err;
-			    JSZip.loadAsync(data).then(function (zip) {
+				http.get(sails.config.api.endpoint + sails.config.api.storage.getCMS + '/' + version, (res) => { // Call API
+				  if (res.statusCode === 200) { // If no error
+						res.on("d ata", function(chunk) { // when receive content
+					    JSZip.loadAsync(data).then(function (zip) { // create object from zip content
 
-			      // Modify LICENSE_ID into /config/secure
-			      zip.file('config/secure', '{"id":"' + license.id + '","key":"NOT_INSTALL"}')
+					      // Modify LICENSE_ID into /config/secure
+					      zip.file('config/secure', '{"id":"' + license.id + '","key":"NOT_INSTALL"}')
 
-						//
-						res.writeHead(200, {
-		          'Content-Type': 'application/zip',
-		          'Content-Disposition': 'attachment; filename=MineWebCMS-' + version + '.zip'})
+								// Send headers
+								res.writeHead(200, {
+				          'Content-Type': 'application/zip',
+				          'Content-Disposition': 'attachment; filename=MineWebCMS-' + version + '.zip'})
 
-						// Send to user
-			      zip.generateNodeStream({streamFiles:true,compression:'DEFLATE'}).pipe(res).on('finish', function () {
-						  res.send()
+								// Send to user with stream
+					      zip.generateNodeStream({streamFiles:true,compression:'DEFLATE'}).pipe(res).on('finish', function () {
+								  res.send()
+								})
+
+					    })
 						})
-
-			    })
+					}
+				  else {
+						sails.log.error('Download from api error. HTTP CODE : ' + res.statusCode)
+						return res.serverError()
+				  }
+				}).on('error', (e) => {
+					sails.log.error(e)
+					return res.serverError()
 				})
-
 			})
 
 		})
+
 	}
 
 };

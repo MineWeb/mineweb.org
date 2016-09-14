@@ -33,7 +33,7 @@ block content
           h3.heading #{__('Inscrivez-')}
             span.accent #{__('vous')}
 
-          form(method="post", action="/user/signup", data-ajax)
+          form(method="post", action="/user/signup", data-ajax, data-no-redirect-from)
             .form-group
               label #{__("Nom d'utilisateur")}
               input.form-control(type='text', name='username')
