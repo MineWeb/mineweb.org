@@ -179,21 +179,44 @@ module.exports = {
 									return res.redirect('/purchase/hosting')
 								}
 
-								Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+								// If not a renew
+								if(req.body.custom.split('renew-').length !== 2) {
 
-									if (err) {
-										sails.log.error(err)
-										return res.serverError('An error occured on dedipass api')
-									}
+									Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
 
-									if (count > 0) {
-										NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
-										return res.redirect('/purchase/hosting')
-									}
+										if (err) {
+											sails.log.error(err)
+											return res.serverError('An error occured on dedipass api')
+										}
 
-									return res.view('./buy/paypal', data)
+										if (count > 0) {
+											NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+											return res.redirect('/purchase/hosting')
+										}
 
-								})
+										return res.view('./buy/paypal', data)
+
+									})
+
+								}
+								else { // Renew
+									// Search hosting
+									Hosting.count({id: req.body.custom.split('renew-')[1]}).exec(function (err, count) {
+
+										if (err) {
+											sails.log.error(err)
+											return res.serverError('An error occured on dedipass api')
+										}
+
+										if (count === 0) {
+											NotificationService.error(req, req.__('Vous ne pouvez pas renouveler un hébergement inexistant !'))
+											return res.redirect('/purchase/hosting')
+										}
+
+										return res.view('./buy/paypal', data)
+
+									})
+								}
 
 							}
 							else { // Not hosting
@@ -234,34 +257,63 @@ module.exports = {
 					return res.redirect('/purchase/hosting')
 				}
 
-				Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+				// If not a renew
+				if(req.body.custom.split('renew-').length !== 2) {
+					Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
 
-					if (err) {
-						sails.log.error(err)
-						return res.serverError('An error occured on dedipass api')
-					}
+						if (err) {
+							sails.log.error(err)
+							return res.serverError('An error occured on dedipass api')
+						}
 
-					if (count > 0) {
-						NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
-						return res.redirect('/purchase/hosting')
-					}
+						if (count > 0) {
+							NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+							return res.redirect('/purchase/hosting')
+						}
 
-					// Handle dedipass pubic key
-						var dedipassPublicKey = (offer == 'license') ? sails.config.dedipass.publicKeys.license : sails.config.dedipass.publicKeys.hosting
+						// Handle dedipass pubic key
+							var dedipassPublicKey = sails.config.dedipass.publicKeys.hosting
 
-					// Render view
-					res.view('./buy/dedipass', {
-						title: req.__("Payer avec Dédipass"),
-						dedipassPublicKey: dedipassPublicKey,
-						custom: req.body.custom
+						// Render view
+						res.view('./buy/dedipass', {
+							title: req.__("Payer avec Dédipass"),
+							dedipassPublicKey: dedipassPublicKey,
+							custom: req.body.custom
+						})
+
 					})
+				}
+				else { // Renew
+					// Search hosting
+					Hosting.count({id: req.body.custom.split('renew-')[1]}).exec(function (err, count) {
 
-				})
+						if (err) {
+							sails.log.error(err)
+							return res.serverError('An error occured on dedipass api')
+						}
+
+						if (count === 0) {
+							NotificationService.error(req, req.__('Vous ne pouvez pas renouveler un hébergement inexistant !'))
+							return res.redirect('/purchase/hosting')
+						}
+
+						// Handle dedipass pubic key
+							var dedipassPublicKey = sails.config.dedipass.publicKeys.hosting
+
+						// Render view
+							res.view('./buy/dedipass', {
+								title: req.__("Payer avec Dédipass"),
+								dedipassPublicKey: dedipassPublicKey,
+								custom: req.body.custom
+							})
+
+					})
+				}
 			}
 			else { // Not hosting, licence
 
 				// Handle dedipass pubic key
-					var dedipassPublicKey = (offer == 'license') ? sails.config.dedipass.publicKeys.license : sails.config.dedipass.publicKeys.hosting
+					var dedipassPublicKey = sails.config.dedipass.publicKeys.license
 
 				// Render view
 				res.view('./buy/dedipass', {
@@ -325,7 +377,8 @@ module.exports = {
 							userId: data.userId,
 							offerType: offer.toUpperCase(),
 							offerId: (data.other === undefined || data.other == 'undefined' || (offer != "plugin" && offer != "theme")) ? undefined : data.other,
-							host: (data.other === undefined || data.other == 'undefined' || offer != "hosting") ? null : data.other,
+							host: (data.other === undefined || data.other == 'undefined' || offer != "hosting" || data.other.split('renew-').length === 2) ? null : data.other,
+							hostRenew: (data.other.split('renew-').length === 2 && offer == "hosting") ? data.other.split('renew-')[1] : false,
 							paymentType: 'PAYPAL',
 							voucher: data.voucher,
 							amount: params.mc_gross,
@@ -645,8 +698,9 @@ module.exports = {
 				PurchaseService.buy({
 					userId: req.session.userId,
 					offerType: offer.toUpperCase(),
-					host: req.body.custom,
-					paymentType: 'DEDIPASS'
+					host: (req.body.custom.split('renew-').length !== 2 && offer == "hosting") ? req.body.custom : undefined,
+					paymentType: 'DEDIPASS',
+					hostRenew: (req.body.custom.split('renew-').length === 2 && offer == "hosting") ? req.body.custom.split('renew-')[1] : false
 				}, function (success, purchaseId) {
 
 					if (success) {

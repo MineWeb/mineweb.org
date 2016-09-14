@@ -186,35 +186,95 @@ module.exports = {
               if (purchase.offerType === 'LICENSE' || purchase.offerType === 'HOSTING') {
 
                 // Generate
-                var model = (purchase.offerType === 'LICENSE') ? License : Hosting
-                model.generate(purchase.userId, purchase.host, function (err, itemId) {
+                if (purchase.offerType === 'LICENSE' || purchase.hostRenew === undefined || purchase.hostRenew === false) {
+                  var model = (purchase.offerType === 'LICENSE') ? License : Hosting
+                  model.generate(purchase.userId, purchase.host, function (err, itemId) {
 
-                  if (err) {
-                    sails.log.error(err)
-                    return next(false)
-                  }
+                    if (err) {
+                      sails.log.error(err)
+                      return next(false)
+                    }
 
+                    /*
+                      Save
+                    */
+
+                    self.saveVoucher(voucher, purchase.userId, purchase.offerType, itemId, function (success) {
+
+                      if (!success)
+                        return next(false)
+
+                      // Save & Return purchase ID
+                        var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
+
+                          if (!success)
+                            return next(false)
+
+                          return next(true, purchaseId, itemId)
+
+                        })
+
+                      })
+                  })
+                }
+                else {
                   /*
-                    Save
+                    Renew hosting
                   */
 
-                  self.saveVoucher(voucher, purchase.userId, purchase.offerType, purchase.offerId, function (success) {
-
-                    if (!success)
+                  // find endDate
+                  Hosting.findOne({id: purchase.hostRenew}).exec(function (err, hosting) {
+                    if (err) {
+                      sails.log.error(err)
                       return next(false)
+                    }
+                    if (hosting === undefined) {
+                      return next(false)
+                    }
 
-                    // Save & Return purchase ID
-                      var save = self.save(purchase.userId, purchase.offerType, itemId, purchase.paymentType, function(success, purchaseId) {
+                    // add +1month
+                    var endDate = new Date(hosting.endDate);
+                    endDate.setMonth(endDate.getMonth() + 1)
+                    
+                    // reactive in db + add 1 month to end
+                    Hosting.update({id: hosting.id}, {state: 1, endDate: endDate}).exec(function (err, hostingUpdated) {
+
+                      if (err) {
+                        sails.log.error(err)
+                        return next(false)
+                      }
+
+                      // reactive on server
+                      if (hostingUpdated !== undefined) {
+                        HostingService.enable(hosting)
+                      }
+
+                      /*
+                        Save
+                      */
+
+                      self.saveVoucher(voucher, purchase.userId, purchase.offerType, hosting.id, function (success) {
 
                         if (!success)
                           return next(false)
 
-                        return next(true, purchaseId, itemId)
+                        // Save & Return purchase ID
+                          var save = self.save(purchase.userId, purchase.offerType, hosting.id, purchase.paymentType, function(success, purchaseId) {
+
+                            if (!success)
+                              return next(false)
+
+                            return next(true, purchaseId, hosting.id)
+
+                          })
 
                       })
 
                     })
-                })
+
+                  })
+
+                }
 
               } else {
                 // For Theme/Plugins

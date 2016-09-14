@@ -5,7 +5,7 @@ block content
     .container
       .row
         .col-md-12
-          h3.heading #{__('Louer une')}
+          h3.heading #{ renew ? __('Renouveler une') : __('Louer une')}
             span.accent  #{__('licence')}
             |  et un
             span.accent  #{__('hébergement')}
@@ -53,30 +53,33 @@ block content
               i.fa.fa-check.text-success
               | &nbsp;&nbsp;&nbsp;#{__('Nom de domaine (sous-domaine .craftwb.fr)')}
 
-          hr
+          if renew === undefined
+            hr
 
-          h4 #{__('Choix du sous-domaine')}
+            h4 #{__('Choix du sous-domaine')}
 
-          div.col-md-6
-            div.input-group
-              span.input-group-addon http://
-              input(class="form-control", name="custom", placeholder=__('Sous-domaine personalisé'))
-              span.input-group-addon .craftwb.fr
-          div.col-md-6
-            div.btn-group(style='width:100%;')
-              button.btn.btn-link#subdomainWaitStatus(style='text-decoration: none !important; cursor: default !important;width: 50%')
-              button.btn.btn-link.text-danger#subdomainNotAvailable(style='display:none;text-decoration: none !important; cursor: default !important;width: 50%')
-                i.fa.fa-times
-                | #{__('Non disponible')}
-              button.btn.btn-link.text-success#subdomainAvailable(style='display:none;text-decoration: none !important; cursor: default !important;width: 50%')
-                i.fa.fa-check
-                | #{__('Disponible !')}
-              button.btn.btn-success.btn-block#checkSubdomain(style='width: 50%') #{__('Vérifier la disponibilité')}
+            div.col-md-6
+              div.input-group
+                span.input-group-addon http://
+                input(class="form-control", name="custom", placeholder=__('Sous-domaine personalisé'))
+                span.input-group-addon .craftwb.fr
+            div.col-md-6
+              div.btn-group(style='width:100%;')
+                button.btn.btn-link#subdomainWaitStatus(style='text-decoration: none !important; cursor: default !important;width: 50%')
+                button.btn.btn-link.text-danger#subdomainNotAvailable(style='display:none;text-decoration: none !important; cursor: default !important;width: 50%')
+                  i.fa.fa-times
+                  | #{__('Non disponible')}
+                button.btn.btn-link.text-success#subdomainAvailable(style='display:none;text-decoration: none !important; cursor: default !important;width: 50%')
+                  i.fa.fa-check
+                  | #{__('Disponible !')}
+                button.btn.btn-success.btn-block#checkSubdomain(style='width: 50%') #{__('Vérifier la disponibilité')}
 
-          div.clearfix
+            div.clearfix
 
-          p.text-center
-            small.form-text.text-muted #{__('Vous pourrez changer de sous-domaine ou lier votre propre nom de domaine après, si vous le souhaitez.')}
+            p.text-center
+              small.form-text.text-muted #{__('Vous pourrez changer de sous-domaine ou lier votre propre nom de domaine après, si vous le souhaitez.')}
+          else
+            input(type='hidden', name='custom', value='renew-' + renew)
 
           hr
 

@@ -63,8 +63,10 @@ module.exports = {
 	},
 
 	rentHosting: function (request, response) {
+		var renew = request.param('id')
 		return response.view('basic-pages/rent-hosting', {
-			title: 'Louer un hébergement'
+			title: renew ? 'Renouveler un hébergement' :  'Louer un hébergement',
+			renew: renew
 		});
 	}
 

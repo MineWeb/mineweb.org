@@ -46,6 +46,7 @@ module.exports.routes = {
     '/purchase/license': 'StaticController.buyLicense',
     '/rent-hosting': 'StaticController.rentHosting',
     '/purchase/hosting': 'StaticController.rentHosting',
+    '/hosting/renew/:id': 'StaticController.rentHosting',
 
   /*
     PURCHASE

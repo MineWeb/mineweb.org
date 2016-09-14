@@ -416,4 +416,8 @@
 	"Vous avez bien répondu au ticket !": "",
 	"Vous avez bien fermé le ticket !": "",
 	"Vous avez bien ré-ouvert le ticket !": "",
+
+	"Vous ne pouvez pas renouveler un hébergement inexistant !": "",
+	"Renouveler un hébergement": "",
+	"Renouveler une": ""
 }
