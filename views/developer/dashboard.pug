@@ -1,0 +1,74 @@
+extends ../layouts/layout
+
+block content
+
+  section.section-gray.mini-section
+    .container.clearfix
+      // ===================
+      // ====== STATS ======
+      // ===================
+
+      div.row
+
+        div.col-md-3
+          .card.card-inverse.card-outline-primary.text-xs-center
+            .card-block
+              h2.card-title
+                span.fa.fa-download
+                | &nbsp;#{totalDownloads}
+              p.card-text #{__('Téléchargements')}
+        div.col-md-3
+          .card.card-inverse.card-outline-success.text-xs-center
+            .card-block
+              h2.card-title
+                span.fa.fa-code
+                | &nbsp;#{plugins.length}
+                sup
+                  small &nbsp;#{__('plugins')}
+              p.card-text #{__('développés et utilisés')}
+        div.col-md-3
+          .card.card-inverse.card-outline-info.text-xs-center
+            .card-block
+              h2.card-title
+                span.fa.fa-code
+                | &nbsp;#{themes.length}
+                sup
+                  small &nbsp;#{__('thèmes')}
+              p.card-text #{__('développés et utilisés')}
+        div.col-md-3
+          .card.card-inverse.card-outline-warning.text-xs-center
+            .card-block
+              h2.card-title
+                span.fa.fa-credit-card
+                | &nbsp;#{purchasesTotalGain} €
+              p.card-text #{__('De ventes')}
+
+
+
+
+
+block customCss
+  style.
+    /*
+      DARK MODE
+    */
+
+    body {
+      background-color: #414141;
+    }
+    .navbar {
+      box-shadow: 0 1px 5px #1a1a1a;
+    }
+    .navbar-default {
+      background-color: #181818;
+    }
+
+    .btn-outline-secondary {
+      color: #717171;
+      border-color: #717171;
+    }
+    .btn-outline-secondary:hover {
+      color: #b5b5b5;
+      background-color: #2b2b2b;
+      border-color: #717171;
+    }

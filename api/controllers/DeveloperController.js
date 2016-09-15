@@ -41,18 +41,100 @@ module.exports = {
 					return res.serverError()
 				}
 
-				// Render
-				return res.render('developer/dashboard', {
-					title: req.__('Espace développeur'),
-					plugins: results[1],
-					themes: results[1]
+				// Set vars
+				var plugins = (results[0] === undefined) ? [] : results[0]
+				var themes = (results[1] === undefined) ? [] : results[1]
+				var totalDownloads = 0
+				var purchases = []
+				var purchasesTotalGain = 0
+
+				// Calcul downloads
+				for (var i = 0; i < plugins.length; i++) {
+					totalDownloads += plugins[i].downloads
+				}
+				for (var i = 0; i < themes.length; i++) {
+					totalDownloads += themes[i].downloads
+				}
+
+				async.parallel([
+
+					// Find purchases of his plugins
+					function (callback) {
+						async.forEach(plugins, function (plugin, next) { // for each plugin, find purchases
+							Purchase.find({itemId: plugin.id, type: 'PLUGIN'}).exec(function (err, purchases) {
+
+								if (err)
+									return sails.log.error(err)
+
+								if (purchases !== undefined) {
+									// Add purchases into list
+									purchases.push(purchases)
+									// Increment total gain
+									for (var i = 0; i < purchases.length; i++) {
+										if (purchases[i].paymentType !== 'FREE') // If not free
+											purchasesTotalGain += plugin.price
+									}
+								}
+								next()
+
+							})
+						}, function () {
+							callback()
+						})
+					},
+
+					// Find purchases of his themes
+					function (callback) {
+						async.forEach(themes, function (theme, next) { // for each themes, find purchases
+							Purchase.find({itemId: theme.id, type: 'THEME'}).exec(function (err, purchases) {
+
+								if (err)
+									return sails.log.error(err)
+
+								if (purchases !== undefined) {
+									// Add purchases into list
+									purchases.push(purchases)
+									// Increment total gain
+									for (var i = 0; i < purchases.length; i++) {
+										if (purchases[i].paymentType !== 'FREE') // If not free
+											purchasesTotalGain += theme.price
+									}
+								}
+								next()
+
+							})
+						}, function () {
+							callback()
+						})
+					}
+
+				], function (err, results) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError()
+					}
+
+					// Render
+					return res.render('developer/dashboard', {
+						title: req.__('Espace développeur'),
+						plugins: plugins,
+						themes: themes,
+						totalDownloads: totalDownloads,
+						purchases: purchases,
+						purchasesTotalGain: purchasesTotalGain
+					})
+
 				})
 
 			})
 
 		}
+		else {
 
-		return res.redirect('/user/profile')
+			return res.redirect('/user/profile')
+
+		}
 
 	},
 
