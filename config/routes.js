@@ -128,7 +128,22 @@ module.exports.routes = {
     */
     'post /license/edit-host': 'LicenseController.editHost',
     '/license/enable/:id': 'LicenseController.enable',
-    '/license/disable/:id': 'LicenseController.disable'
+    '/license/disable/:id': 'LicenseController.disable',
+
+    /*
+      DEVELOPER
+    */
+    '/developer': 'DeveloperController.index',
+    'post /developer/candidate': 'DeveloperController.candidate',
+    'post /developer/edit/paypal': 'DeveloperController.editPayPalData',
+    'post /developer/plugin': 'DeveloperController.addPlugin',
+    'post /developer/edit/plugin/:id': 'DeveloperController.editPlugin',
+    'post /developer/plugin/version/:id': 'DeveloperController.updatePlugin',
+    '/developer/plugin/delete/:id': 'DeveloperController.deletePlugin',
+    'post /developer/theme': 'DeveloperController.addTheme',
+    'post /developer/edit/theme/:id': 'DeveloperController.editTheme',
+    'post /developer/theme/version/:id': 'DeveloperController.updateTheme',
+    '/developer/theme/delete/:id': 'DeveloperController.deleteTheme'
 
   /***************************************************************************
   *                                                                          *

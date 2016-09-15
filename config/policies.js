@@ -70,6 +70,10 @@ module.exports.policies = {
 
   LicenseController: {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
+  },
+
+  DeveloperController: {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
   }
 
 	// RabbitController: {

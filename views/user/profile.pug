@@ -71,6 +71,23 @@ block content
                      .form-group.text-center
                        button.btn.btn-outline-success(type='submit') #{__("Changer mon mot de passe")}
 
+              hr
+
+              h4 !{__('Espace <span class="accent">développeur</span>')}
+
+              if user.developer === 'NONE'
+                p.text-danger !{__("Vous n'êtes pas développeur, vous ne pouvez pas développer de plugins ou de thèmes et les partager sur le market. Pour cela, il faut que vous fassiez une candidature en cliquant sur le bouton ci-dessous.")}
+                p.text-center
+                  a.btn.btn-outline-warning(href="/developer") #{__("Je veux postuler pour devenir développeur")}
+              else if user.developer === 'CANDIDATE'
+                p.text-info !{__("Vous n'êtes pas développeur, vous avez posté une candidature pour le devenir. Celle-ci est en cours d'étude et vous recevrez une réponse par email bientôt. Si la réponse est positive, l'accès à l'espace développeur vous sera accordé.")}
+                p.text-center
+                  button.btn.btn-outline-secondary.disabled(disabled, title=__('Attendez que votre candidature soit validée')) #{__("Accèder à l'espace développeur")}
+              else if user.developer === 'CONFIRMED'
+                p.text-muted !{__("Vous êtes développeur ! Vous pouvez dès maintenant développer ou gérer des plugins/thèmes sur le market en cliquant sur le bouton ci-dessous.")}
+                p.text-center
+                  a.btn.btn-outline-success(href="/developer") #{__("Accèder à l'espace développeur")}
+
             div.tab-pane.fade(id="licenses" role="tabpanel")
 
               // ===================================

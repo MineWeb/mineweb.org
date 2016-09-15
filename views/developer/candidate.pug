@@ -1,0 +1,51 @@
+extends ../layouts/layout
+
+block content
+  section#intro.text-intro.no-padding-bottom
+    .container
+      .row
+        .col-md-12
+          h3.heading !{__('Devenir <span class="accent">développeur</span>')}
+
+  section.section-gray.mini-section
+    .container.clearfix
+      .row
+
+        div.alert.alert-info #{__('En devenant développeur, vous obtiendrez la possibilité de faire valider vos plugins ou vos thèmes pour que ceux-ci soient disponible sur le market et directement sur les CMS des utilisateurs. Vous pourrez faire payer vos plugins/thèmes grâce au market en passant par PayPal.')}
+
+        .col-md-9
+
+          form(method="post", action="/developer/candidate", data-ajax, data-custom-callback="afterForm")
+            .form-group
+              label #{__("Pseudo")}
+              input.form-control(type='text', disabled, value=user.username)
+            .form-group
+              label #{__("Votre candidature")}
+              textarea.form-control(name='content', rows="10", placeholder=__("Bonjour,")) #{user.developerCandidacy}
+              small.form-text.text-muted !{__("Expliquez-nous pourquoi vous souhaitez devenir développeur, quelles sont vos motivations... N'oubliez pas de nous préciser votre expérience, vos capacités et vos éventuels projets.<br>Plus vous serez précis, motivé, et courtois/poli, plus votre candidature sera traitée et acceptée rapidement.")}
+
+            .form-group.text-center
+              button.btn.btn-success(type='submit')
+                span.fa.fa-check
+                | &nbsp;#{__('Soumettre ma candidature')}
+
+        .col-md-3
+          .card.card-block
+            p.card-text
+              | #{__('Pour vous aider après, pensez à lire la documentation')}
+            a.card-link(href='http://docs.mineweb.org') #{__('Voir la documentation')}
+          .card.card-block
+            p.card-text
+              | #{__('Les candidatures sont généralements traitées rapidement, dans la semaine.')}
+          .card.card-block
+            p.card-text
+              | #{__("Si votre candidature n'obtient pas de réponse rapidement, inutile de nous spam.")}
+
+block custom
+  script(type="text/javascript").
+    var afterForm = function (form, response) {
+
+      $('textarea[name="content"]').attr('disabled', true)
+      $('button[type="submit"]').attr('disabled', true).addClass('disabled')
+
+    }

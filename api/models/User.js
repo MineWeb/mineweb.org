@@ -65,6 +65,10 @@ module.exports = {
       size: 9
 		},
 
+    developerCandidacy: {
+			type: 'text'
+		},
+
 		ip: {
 			type: 'string',
 			ip: true
