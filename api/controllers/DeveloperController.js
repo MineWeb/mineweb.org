@@ -174,7 +174,58 @@ module.exports = {
 	},
 
 	editPayPalData: function (req, res) {
+		// Handle request
+		RequestManagerService.setRequest(req).setResponse(res).valid({
+			"Tous les champs ne sont pas remplis.": [
+				['paypalDeveloperEmail', "Vous devez spécifier un email"],
+			],
+			"Vous devez choisir un email valide !": [
+				{
+					field: 'paypalDeveloperEmail',
+					regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+					error: "Cet email n'a pas un format valide."
+				}
+			]
+		}, function () {
 
+			// If not already used
+			User.count({paypalDeveloperEmail: req.body.paypalDeveloperEmail}).exec(function (err, count) {
+
+				if (err) {
+					sails.log.error(err)
+					return res.serverError()
+				}
+
+				// Already used
+				if (count > 0) {
+					return res.json({
+						status: false,
+						msg: req.__("Vous devez choisir un email non utilisé !"),
+						inputs: {
+							email: req.__("Cet email est déjà utilisé.")
+						}
+					})
+				}
+
+				// Save
+				User.update({id: req.session.userId}, {paypalDeveloperEmail: req.body.paypalDeveloperEmail}).exec(function (err, userUpdated) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError()
+					}
+
+					return res.json({
+						status: true,
+						msg: req.__("Vous avez bien modifié votre adresse email PayPal !"),
+						inputs: {}
+					})
+
+				})
+
+			})
+
+		})
 	},
 
 	addPlugin: function (req, res) {

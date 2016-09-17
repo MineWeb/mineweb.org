@@ -43,6 +43,92 @@ block content
                 | &nbsp;#{purchasesTotalGain} €
               p.card-text #{__('De ventes')}
 
+      // ===================
+      // ===== PLUGINS =====
+      // ===================
+
+      div.row(style="margin-top:50px;")
+
+        h3.text-center #{__('Vos')}&nbsp;
+          span.accent #{__('plugins')}
+
+        each plugin in plugins
+          div.col-md-4
+            .card.text-xs-center
+              .card-header
+                h4.card-title #{plugin.name} v#{plugin.version}
+              .card-block
+                p.card-text !{Utils.truncate(plugin.description, 100, true)}
+                div.btn-group
+                  a.btn.btn-ghost(href='#') #{__('Modifier')}
+                  a.btn.btn-outline-secondary(href='#') #{__('Ajouter une version')}
+              .card-footer.text-muted #{__('Publié')}&nbsp;
+                span.moment-date(fromNow) #{plugin.createdAt}
+                if plugin.price > 0
+                  | &nbsp;- #{plugin.price} €
+
+
+      hr
+
+      // ===================
+      // ===== THEMES ======
+      // ===================
+
+      div.row(style="margin-top:50px;")
+
+        h3.text-center #{__('Vos')}&nbsp;
+          span.accent #{__('thèmes')}
+
+        each theme in themes
+          div.col-md-4
+            .card.text-xs-center
+              .card-header
+                h4.card-title #{theme.name} v#{theme.version}
+              .card-block
+                p.card-text !{Utils.truncate(theme.description, 100, true)}
+                div.btn-group
+                  a.btn.btn-ghost(href='#') #{__('Modifier')}
+                  a.btn.btn-outline-secondary(href='#') #{__('Ajouter une version')}
+              .card-footer.text-muted #{__('Publié')}&nbsp;
+                span.moment-date(fromNow) #{theme.createdAt}
+                if plugin.price > 0
+                  |  &nbsp;- #{plugin.price} €
+
+
+
+
+        //div.col-md-12
+
+          table.table
+            thead
+              tr
+                th Coucou
+            tbody
+              tr
+                td Salut
+
+      hr
+
+      // ===================
+      // ====== INFOS ======
+      // ===================
+
+      div.row(style="margin-top:50px;")
+
+        h3.text-center #{__('Vos informations')}&nbsp;
+          span.accent #{__('développeur')}
+
+        div.col-md-12
+
+          form(method="post", action="/developer/edit/paypal", data-ajax="true")
+            .form-group
+              label #{__('Adresse email PayPal')}
+              div.input-group
+                input.form-control(type='email', name="paypalDeveloperEmail", value=user.paypalDeveloperEmail)
+                span.input-group-btn
+                  button.btn.btn-outline-secondary(type="submit") #{__('Modifier')}
+              small.form-text.text-muted #{__('Si vous avez des plugins/thèmes payants, les paiements PayPal seront envoyés sur cette adresse email.')}
+
 
 
 
@@ -71,4 +157,59 @@ block customCss
       color: #b5b5b5;
       background-color: #2b2b2b;
       border-color: #717171;
+    }
+
+    table {
+      color: #fff;
+    }
+    .table td, .table th {
+      border-top: 1px solid #656667;
+    }
+    .table thead th {
+      border-bottom: 2px solid #808182;
+    }
+
+    section h3 {
+      color: rgb(231, 231, 231);
+      margin-bottom:40px;
+    }
+
+    .card-header, .card-footer {
+      background-color: #171717;
+      color: #818a91;
+    }
+
+    .card-header h4 {
+      color: rgb(85, 85, 85);
+    }
+
+    .card {
+      background-color: #242424;
+      color: rgb(255, 255, 255);
+    }
+
+    hr {
+      border-top: 1px solid #737373;
+    }
+
+    label {
+      color:#bdbdbd;
+    }
+
+    input.form-control {
+      opacity: 0.2;
+    }
+
+    .alert {
+      border: 1px solid #6f6f6f;
+    }
+
+    .alert.alert-info {
+      background-color: #94a2a9;
+    }
+    .alert.alert-danger {
+      background-color: #baabab;
+    }
+    .alert.alert-success {
+      background-color: #b1beab;
     }
