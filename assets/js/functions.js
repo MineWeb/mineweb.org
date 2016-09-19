@@ -56,7 +56,7 @@ $(document).ready(function() {
 					content = content.replace(matches[i], moment_date)
 				}
 			}
-			
+
       // On set l'HTML
       element.html(content)
 
@@ -67,3 +67,9 @@ $(document).ready(function() {
 
   }();
 })
+
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.split(search).join(replacement);
+}

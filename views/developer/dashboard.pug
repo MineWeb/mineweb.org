@@ -60,7 +60,7 @@ block content
               .card-block
                 p.card-text !{Utils.truncate(plugin.description, 100, true)}
                 div.btn-group
-                  a.btn.btn-ghost(href='#') #{__('Modifier')}
+                  a.btn.btn-ghost(href='/developer/edit/plugin/' + plugin.id) #{__('Modifier')}
                   a.btn.btn-outline-secondary(href='#') #{__('Ajouter une version')}
               .card-footer.text-muted #{__('Publié')}&nbsp;
                 span.moment-date(fromNow) #{plugin.createdAt}

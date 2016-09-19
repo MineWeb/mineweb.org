@@ -82,7 +82,7 @@ module.exports = {
 		}
   },
 
-  retrieveVersion : function (model) {
+  /*retrieveVersion : function (model) {
     if (!model.versions)
       return 'none'
 
@@ -91,7 +91,7 @@ module.exports = {
   },
 
   beforeUpdate: function (plugin, cb) {
-    plugin.version = retrieveVersion(plugin);
+    plugin.version = this.retrieveVersion(plugin);
     cb()
-  }
+  }*/
 };
