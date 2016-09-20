@@ -136,19 +136,27 @@ module.exports.routes = {
     '/developer': 'DeveloperController.index',
     'post /developer/candidate': 'DeveloperController.candidate',
     'post /developer/edit/paypal': 'DeveloperController.editPayPalData',
+
     'get /developer/add/plugin': 'DeveloperController.addPluginPage',
-    'post /developer/plugin': 'DeveloperController.addPlugin',
+    'post /developer/add/plugin': 'DeveloperController.editPlugin',
+
     'get /developer/edit/plugin/:id': 'DeveloperController.editPluginPage',
     'post /developer/edit/plugin/:id': 'DeveloperController.editPlugin',
+
     'get /developer/plugin/version/:id': 'DeveloperController.updatePluginPage',
     'post /developer/plugin/version/:id': 'DeveloperController.updatePlugin',
+
     '/developer/plugin/delete/:id': 'DeveloperController.deletePlugin',
+
     'get /developer/add/theme': 'DeveloperController.addThemePage',
     'post /developer/theme': 'DeveloperController.addTheme',
+
     'get /developer/edit/theme/:id': 'DeveloperController.editThemePage',
     'post /developer/edit/theme/:id': 'DeveloperController.editTheme',
+
     'get /developer/theme/version/:id': 'DeveloperController.updateThemePage',
     'post /developer/theme/version/:id': 'DeveloperController.updateTheme',
+
     '/developer/theme/delete/:id': 'DeveloperController.deleteTheme'
 
   /***************************************************************************

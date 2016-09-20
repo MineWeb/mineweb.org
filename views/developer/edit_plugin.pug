@@ -6,7 +6,7 @@ block content
       div.row
         div.col-md-12
 
-          form(method="post", action="/developer/edit/plugin/" + plugin.id, data-ajax, data-redirect-url="/developer")
+          form(method="post", action=add ? "/developer/add/plugin" : "/developer/edit/plugin/" + plugin.id, data-ajax, data-redirect-url="/developer")
 
             div.row
               div.col-md-6
@@ -40,39 +40,47 @@ block content
                   input.form-control(type='text', name="img", value=plugin.img, placeholder="http://domain.tld/image.png")
                   small.form-text.text-muted #{__("Une image d'illustration est obligatoire, elle sera affiché sur le market.")}
 
-            hr
-            h4.text-center !{__('Historique des <span class="accent">versions</span>')}
+            div.row
+              div.col-md-12
+                .form-group
+                  label #{__("Description du plugin")}
+                  textarea.form-control(name="description", rows="10") #{plugin.description}
+                  small.form-text.text-muted #{__("Soyez le plus précis possible pour donner envie aux utilisateurs de télécharger votre plugin.")}
 
-            div.text-center
-              button.btn.btn-outline-primary(type="button", data-toggle="collapse", data-target="#changelog") #{__('Afficher le changelog et le modifier')}
+            unless add
+              hr
+              h4.text-center !{__('Historique des <span class="accent">versions</span>')}
 
-            div.collapse#changelog(style="margin-top:30px;")
-              div.row
-                - var i = 0
-                each version in plugin.versions
-                  if version.public
-                    div.col-md-6
-                      input(type='hidden', value=version.version, name="versions["+i+"].version")
-                      .card.text-xs-center
-                        .card-header
-                          h4.card-title v#{version.version}
-                        .card-block
-                          div.card-text
+              div.text-center
+                button.btn.btn-outline-primary(type="button", data-toggle="collapse", data-target="#changelog") #{__('Afficher le changelog et le modifier')}
 
-                            - var i2 = 0
-                            each changelog in version.changelog['fr_FR']
-                              div.input-group(data-i=i, data-i2=i2)
-                                span.input-group-addon &nbsp;-&nbsp;
-                                input.form-control(type='text', name="versions["+i+"].changelog[]", value=changelog)
-                                span.input-group-btn
-                                  button.btn.btn-danger.removeChangelog(type="button", data-i=i, data-i2=i2)
-                                    span.fa.fa-times
-                              - i2++
-                            button.btn.btn-success.btn-block.addChangelog(type="button", data-i=i, data-i2=i2) #{__('Ajouter un changement')}
+              div.collapse#changelog(style="margin-top:30px;")
+                div.row
+                  - var i = 0
+                  each version in plugin.versions
+                    if version.public
+                      div.col-md-6
+                        input(type='hidden', value=version.version, name="versions["+i+"].version")
+                        .card.text-xs-center
+                          .card-header
+                            h4.card-title v#{version.version}
+                          .card-block
+                            div.card-text
 
-                        .card-footer.text-muted #{__('Publié')}&nbsp;
-                          span.moment-date(fromNow) #{new Date(version.releaseDate)}
-                    - i++
+                              - var i2 = 0
+                              each changelog in version.changelog['fr_FR']
+                                div.input-group(data-i=i, data-i2=i2)
+                                  span.input-group-addon &nbsp;-&nbsp;
+                                  input.form-control(type='text', name="versions["+i+"].changelog[]", value=changelog)
+                                  span.input-group-btn
+                                    button.btn.btn-danger.removeChangelog(type="button", data-i=i, data-i2=i2)
+                                      span.fa.fa-times
+                                - i2++
+                              button.btn.btn-success.btn-block.addChangelog(type="button", data-i=i, data-i2=i2) #{__('Ajouter un changement')}
+
+                          .card-footer.text-muted #{__('Publié')}&nbsp;
+                            span.moment-date(fromNow) #{new Date(version.releaseDate)}
+                      - i++
 
             hr
             h4.text-center !{__('Gestion des <span class="accent">pré-requis</span>')}
@@ -113,7 +121,7 @@ block content
                           option(value='=', selected=requirement.operator == '=') #{__('=')}
                           option(value='<=', selected=requirement.operator == '<=') #{__('<=')}
                           option(value='>', selected=requirement.operator == '>') #{__('>')}
-                          option(value='<', selected=requirement.operator == '=') #{__('<')}
+                          option(value='<', selected=requirement.operator == '<') #{__('<')}
                       td.requirementVersion(data-requirements-id=i) #{requirement.version}
                       td
                         button.btn.btn-danger.deleteRequirement(data-requirements-id=i, type="button")
@@ -155,11 +163,28 @@ block content
 
             hr
 
+            if add
+
+              div.row
+                div.col-md-12
+                  .form-group
+                    label #{__('Fichiers du plugin')}
+                    input.filestyle(type="file", name="files", data-icon="true", data-buttonText=__("Choisir les fichiers"), data-iconName="fa fa-download", data-buttonName="btn-outline-success", data-placeholder=__('Choississez un fichier...'))
+                    small.form-text.text-muted #{__('Vous devez envoyer une archive zip contenant le dossier du plugin.')}
+
+
+            hr
+
             button.btn.btn-success.btn-lg.pull-right(type="submit")
-              span.fa.fa-pencil-square-o
-              | &nbsp;#{__('Soumettre les modifications du plugin')}
+              if add
+                span.fa.fa-upload
+                | &nbsp;#{__('Soumettre le plugin')}
+              else
+                span.fa.fa-pencil-square-o
+                | &nbsp;#{__('Soumettre les modifications du plugin')}
 
 block custom
+  script(type='text/javascript', src='/js/bootstrap-filestyle.min.js')
   script(type='text/javascript').
     $('.addChangelog').on('click', function (e) {
 

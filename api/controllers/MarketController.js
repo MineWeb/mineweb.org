@@ -16,7 +16,7 @@ module.exports = {
 		async.parallel([
 			// request 10 most populars themes
 			function(callback) {
-					Theme.find({limit: 10, sort: 'downloads DESC'}).exec(function (err, result) {
+					Theme.find({limit: 10, slug: {"!":null}, sort: 'downloads DESC'}).exec(function (err, result) {
 						if (err) {
 							return callback(err, null)
 						}
@@ -46,7 +46,7 @@ module.exports = {
 			},
 			// request 10 most populars plugins
 			function(callback) {
-					Plugin.find({limit: 10, sort: 'downloads DESC'}).exec(function (err, result) {
+					Plugin.find({limit: 10, slug: {"!":null}, sort: 'downloads DESC'}).exec(function (err, result) {
 						if (err) {
 							return callback(err, null)
 						}

@@ -44,6 +44,7 @@ module.exports = {
 
   pushbullet: {
     apiKey: 'o.t2qhJTBxN65oDTc35GN69IeKhYM7OrGv',
+    principalEmail: 'mineconstruct@gmail.com'
     //channelTag: 'minewebsupport'
   },
 
@@ -64,6 +65,15 @@ module.exports = {
     endpoint: 'http://api.mineweb.org/v2/',
     storage: {
       getCMS: 'storage/get_cms'
+    }
+  },
+
+  developer: {
+    upload: {
+      folders: {
+        plugins: 'uploads/plugins',
+        themes: 'uploads/themes',
+      }
     }
   }
 

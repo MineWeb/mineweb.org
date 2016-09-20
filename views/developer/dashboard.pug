@@ -66,7 +66,15 @@ block content
                 span.moment-date(fromNow) #{plugin.createdAt}
                 if plugin.price > 0
                   | &nbsp;- #{plugin.price} €
-
+        div.col-md-4
+          .card.text-xs-center
+            .card-header
+              h4.card-title &nbsp;
+            .card-block
+              a.btn.btn-success(href='/developer/add/plugin')
+                span.fa.fa-plus
+                | &nbsp;#{__('Ajouter un plugin')}
+            .card-footer &nbsp;
 
       hr
 
@@ -93,19 +101,15 @@ block content
                 span.moment-date(fromNow) #{theme.createdAt}
                 if plugin.price > 0
                   |  &nbsp;- #{plugin.price} €
-
-
-
-
-        //div.col-md-12
-
-          table.table
-            thead
-              tr
-                th Coucou
-            tbody
-              tr
-                td Salut
+        div.col-md-4
+          .card.text-xs-center
+            .card-header
+              h4.card-title &nbsp;
+            .card-block
+              a.btn.btn-success(href='/developer/add/theme')
+                span.fa.fa-plus
+                | &nbsp;#{__('Ajouter un thème')}
+            .card-footer &nbsp;
 
       hr
 

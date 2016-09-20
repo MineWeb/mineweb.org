@@ -99,9 +99,16 @@ module.exports = {
         return false
       }
     }
-    
+
     if (validation.in !== undefined) {
       if (validation.in.indexOf(this.request.body[validation.field]) == '-1') {
+        this.inputs[validation.field] = this.request.__(validation.error)
+        return false
+      }
+    }
+
+    if (validation.file) {
+      if (this.request._fileparser.upstreams.length === 0) { // empty
         this.inputs[validation.field] = this.request.__(validation.error)
         return false
       }

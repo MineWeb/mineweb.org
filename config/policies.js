@@ -73,7 +73,7 @@ module.exports.policies = {
   },
 
   DeveloperController: {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'logger']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'developer', 'logger']
   }
 
 	// RabbitController: {

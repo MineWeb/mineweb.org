@@ -28,7 +28,7 @@ module.exports = {
 		slug: {
 			type: 'string',
 			unique: true,
-			required: true,
+			required: false,
       min: 5,
       max: 20,
       size: 20
