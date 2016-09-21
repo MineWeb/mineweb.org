@@ -61,6 +61,12 @@ module.exports = {
 			required: true
 		},
 
+    state: {
+      type: 'string',
+      defaultsTo: 'UNCONFIRMED',
+      in: ['UNCONFIRMED', 'CONFIRMED', 'DELETE']
+    },
+
 		requirements: {
 			type: 'json',
 			defaultsTo: { 'CMS': "1.0.0" }

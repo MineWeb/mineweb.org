@@ -149,7 +149,7 @@ module.exports.routes = {
     '/developer/plugin/delete/:id': 'DeveloperController.deletePlugin',
 
     'get /developer/add/theme': 'DeveloperController.addThemePage',
-    'post /developer/theme': 'DeveloperController.addTheme',
+    'post /developer/add/theme': 'DeveloperController.editTheme',
 
     'get /developer/edit/theme/:id': 'DeveloperController.editThemePage',
     'post /developer/edit/theme/:id': 'DeveloperController.editTheme',

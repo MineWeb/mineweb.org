@@ -11,7 +11,6 @@ module.exports = {
 
 		id: {
 			type: 'number',
-			required: true,
 			unique: true,
     	autoIncrement: true,
     	primaryKey: true,
@@ -29,7 +28,7 @@ module.exports = {
 		slug: {
 			type: 'string',
 			unique: true,
-			required: true,
+			required: false,
       min: 5,
       max: 20,
       size: 20
@@ -62,6 +61,12 @@ module.exports = {
 			required: true
 		},
 
+    state: {
+      type: 'string',
+      defaultsTo: 'UNCONFIRMED',
+      in: ['UNCONFIRMED', 'CONFIRMED', 'DELETE']
+    },
+
 		supported: {
 			type: 'json',
 			defaultsTo: { 'CMS': '1.0.0' }
@@ -83,7 +88,7 @@ module.exports = {
 		}
   },
 
-  retrieveVersion : function (model) {
+  /*retrieveVersion : function (model) {
     if (!model.versions)
       return 'none'
 
@@ -92,7 +97,7 @@ module.exports = {
   },
 
   beforeUpdate: function (theme, cb) {
-    theme.version = retrieveVersion(theme);
+    theme.version = this.retrieveVersion(theme);
     cb()
-  }
+  }*/
 };
