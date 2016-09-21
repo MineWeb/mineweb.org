@@ -143,10 +143,10 @@ module.exports.routes = {
     'get /developer/edit/plugin/:id': 'DeveloperController.editPluginPage',
     'post /developer/edit/plugin/:id': 'DeveloperController.editPlugin',
 
-    'get /developer/plugin/version/:id': 'DeveloperController.updatePluginPage',
-    'post /developer/plugin/version/:id': 'DeveloperController.updatePlugin',
+    'get /developer/version/plugin/:id': 'DeveloperController.updatePluginPage',
+    'post /developer/version/plugin/:id': 'DeveloperController.updatePlugin',
 
-    '/developer/plugin/delete/:id': 'DeveloperController.deletePlugin',
+    '/developer/delete/plugin/:id': 'DeveloperController.deletePlugin',
 
     'get /developer/add/theme': 'DeveloperController.addThemePage',
     'post /developer/add/theme': 'DeveloperController.editTheme',
@@ -154,10 +154,10 @@ module.exports.routes = {
     'get /developer/edit/theme/:id': 'DeveloperController.editThemePage',
     'post /developer/edit/theme/:id': 'DeveloperController.editTheme',
 
-    'get /developer/theme/version/:id': 'DeveloperController.updateThemePage',
-    'post /developer/theme/version/:id': 'DeveloperController.updateTheme',
+    'get /developer/version/theme/:id': 'DeveloperController.updateThemePage',
+    'post /developer/version/theme/:id': 'DeveloperController.updateTheme',
 
-    '/developer/theme/delete/:id': 'DeveloperController.deleteTheme'
+    '/developer/delete/theme/:id': 'DeveloperController.deleteTheme'
 
   /***************************************************************************
   *                                                                          *

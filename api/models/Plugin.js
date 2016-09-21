@@ -18,7 +18,6 @@ module.exports = {
 
     name: {
 			type: 'string',
-			unique: true,
 			required: true,
       min: 5,
       max: 20,
@@ -64,7 +63,7 @@ module.exports = {
     state: {
       type: 'string',
       defaultsTo: 'UNCONFIRMED',
-      in: ['UNCONFIRMED', 'CONFIRMED', 'DELETE']
+      in: ['UNCONFIRMED', 'CONFIRMED', 'DELETED']
     },
 
 		requirements: {

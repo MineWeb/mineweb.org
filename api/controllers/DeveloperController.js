@@ -15,7 +15,7 @@ module.exports = {
 
 			// Find plugins
 			function (callback) {
-				Plugin.find({slug: {'!': null}}).populate(['author']).exec(function (err, plugins) {
+				Plugin.find({state:'CONFIRMED'}).populate(['author']).exec(function (err, plugins) {
 					if (err)
 						return callback(err, undefined)
 
@@ -47,7 +47,7 @@ module.exports = {
 
 			// Find themes
 			function (callback) {
-				Theme.find().populate(['author']).exec(function (err, themes) {
+				Theme.find({state:'CONFIRMED'}).populate(['author']).exec(function (err, themes) {
 					if (err)
 						return callback(err, undefined)
 
@@ -418,6 +418,9 @@ module.exports = {
 			if (results[0] === undefined)
 				return res.notFound()
 
+			if (results[0].author !== req.session.userId)
+				return res.forbidden()
+
 			// render
 			return res.render('developer/edit_plugin', {
 				title: req.__('Edition de votre plugin'),
@@ -694,6 +697,41 @@ module.exports = {
 	},
 
 	deletePlugin: function (req, res) {
+		// get id
+		if (req.param('id') === undefined) {
+			return res.notFound('ID is missing')
+		}
+		var id = req.param('id')
+
+		Plugin.findOne({id: id, state:'CONFIRMED'}).exec(function (err, plugin) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError()
+			}
+
+			if (plugin === undefined)
+				return res.notFound()
+
+			if (plugin.author !== req.session.userId)
+				return res.forbidden()
+
+			Plugin.update({id: id}, {state:'DELETED'}).exec(function (err, pluginUpdated) {
+
+				if (err) {
+					sails.log.error(err)
+					return res.serverError()
+				}
+
+				// Notification
+				NotificationService.success(req, req.__('Vous avez bien supprimé votre plugin !'))
+
+				// redirect
+				res.redirect('/developer')
+
+			})
+
+		})
 
 	},
 
@@ -794,6 +832,9 @@ module.exports = {
 
 			if (results[0] === undefined)
 				return res.notFound()
+
+			if (results[0].author !== req.session.userId)
+				return res.forbidden()
 
 			// render
 			return res.render('developer/edit_theme', {
@@ -1067,7 +1108,41 @@ module.exports = {
 	},
 
 	deleteTheme: function (req, res) {
+		// get id
+		if (req.param('id') === undefined) {
+			return res.notFound('ID is missing')
+		}
+		var id = req.param('id')
 
+		Theme.findOne({id: id, state:'CONFIRMED'}).exec(function (err, theme) {
+
+			if (err) {
+				sails.log.error(err)
+				return res.serverError()
+			}
+
+			if (theme === undefined)
+				return res.notFound()
+
+			if (theme.author !== req.session.userId)
+				return res.forbidden()
+
+			Theme.update({id: id}, {state:'DELETED'}).exec(function (err, themeUpdated) {
+
+				if (err) {
+					sails.log.error(err)
+					return res.serverError()
+				}
+
+				// Notification
+				NotificationService.success(req, req.__('Vous avez bien supprimé votre thème !'))
+
+				// redirect
+				res.redirect('/developer')
+
+			})
+
+		})
 	}
 
 };

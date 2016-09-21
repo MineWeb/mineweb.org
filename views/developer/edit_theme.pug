@@ -1,0 +1,351 @@
+extends ../layouts/layout
+
+block content
+  section.section-gray.mini-section
+    .container.clearfix
+      div.row
+        div.col-md-12
+
+          form(method="post", action=add ? "/developer/add/theme" : "/developer/edit/theme/" + theme.id, data-ajax, data-redirect-url="/developer")
+
+            div.row
+              div.col-md-6
+                .form-group
+                  label #{__('Nom du thème')}
+                  input.form-control(type='text', name="name", value=theme.name, maxlength="20")
+                  small.form-text.text-muted #{__('Ce nom sera affiché sur le market et sur le panel admin des CMS.')}
+              div.col-md-6
+                .form-group
+                  label #{__('Slug du thème')}
+                  input.form-control.disabled(value=theme.slug, disabled)
+                  small.form-text.text-muted #{__('Ce slug est utilisé pour identifié votre thème.')}
+
+            div.row
+              div.col-md-6
+                .form-group
+                  label #{__('Prix du thème')}
+                  div.input-group
+                    input.form-control(type='number', name="price", value=theme.price)
+                    span.input-group-addon €
+                  small.form-text.text-muted #{__("Si votre thème est payant, les utilisateurs pourront payer par PayPal et l'argent sera directement versé sur votre compte PayPal.")}
+              div.col-md-6
+                .form-group
+                  label #{__('Version du thème')}
+                  input.form-control.disabled(value=theme.version, disabled)
+                  small.form-text.text-muted #{__('Pour modifier cette valeur, vous devez ajouter une version depuis le dashboard développeur.')}
+            div.row
+              div.col-md-12
+                .form-group
+                  label #{__("URL de l'image d'illustration du thème")}
+                  input.form-control(type='text', name="img", value=theme.img, placeholder="http://domain.tld/image.png")
+                  small.form-text.text-muted #{__("Une image d'illustration est obligatoire, elle sera affiché sur le market.")}
+
+            div.row
+              div.col-md-12
+                .form-group
+                  label #{__("Description du thème")}
+                  textarea.form-control(name="description", rows="10") #{theme.description}
+                  small.form-text.text-muted #{__("Soyez le plus précis possible pour donner envie aux utilisateurs de télécharger votre theme.")}
+
+            unless add
+              hr
+              h4.text-center !{__('Historique des <span class="accent">versions</span>')}
+
+              div.text-center
+                button.btn.btn-outline-primary(type="button", data-toggle="collapse", data-target="#changelog") #{__('Afficher le changelog et le modifier')}
+
+              div.collapse#changelog(style="margin-top:30px;")
+                div.row
+                  - var i = 0
+                  each version in theme.versions
+                    if version.public
+                      div.col-md-6
+                        input(type='hidden', value=version.version, name="versions["+i+"].version")
+                        .card.text-xs-center
+                          .card-header
+                            h4.card-title v#{version.version}
+                          .card-block
+                            div.card-text
+
+                              - var i2 = 0
+                              each changelog in version.changelog['fr_FR']
+                                div.input-group(data-i=i, data-i2=i2)
+                                  span.input-group-addon &nbsp;-&nbsp;
+                                  input.form-control(type='text', name="versions["+i+"].changelog[]", value=changelog)
+                                  span.input-group-btn
+                                    button.btn.btn-danger.removeChangelog(type="button", data-i=i, data-i2=i2)
+                                      span.fa.fa-times
+                                - i2++
+                              button.btn.btn-success.btn-block.addChangelog(type="button", data-i=i, data-i2=i2) #{__('Ajouter un changement')}
+
+                          .card-footer.text-muted #{__('Publié')}&nbsp;
+                            span.moment-date(fromNow) #{new Date(version.releaseDate)}
+                      - i++
+
+            hr
+            h4.text-center !{__('Gestion des <span class="accent">plugins supportés</span>')}
+
+            div.text-center
+              button.btn.btn-outline-primary(type="button", data-toggle="collapse", data-target="#supported") #{__('Gérer les plugins supportés')}
+
+            div.collapse#supported(style="margin-top:30px;")
+
+              small.form-text.text-muted !{__("Les plugins supportés permettent d'indiquer à l'utilisateur du thème ou au futur acheteur de savoir quels plugins éventuels sont supportés par le thème (re-designé par exemple). Vous pouvez aussi configuré la version du CMS supportée.")}
+              br
+
+              table.table
+                thead
+                  tr
+                    th #{__('Type')}
+                    th #{__('Opérateur')}
+                    th #{__('Version')}
+                    th #{__('Action')}
+                tbody
+                  - var i = 0
+                  each supportedEntry in theme.supported
+                    tr(data-supported-id=i, data-supported-already-saved)
+                      td
+                        select.form-control.supportedType(name='supported['+i+'][type]', data-supported-id=i)
+                          optgroup(label=__('Général'))
+                            option(selected=supportedEntry.type == 'CMS', value='CMS', data-supported-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
+                          optgroup(label=__('Plugins'))
+                            each pluginOption in pluginsList
+                              if pluginOption.dbId !== theme.id
+                                option(selected=supportedEntry.type == 'plugin--' + pluginOption.id, value='thème--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
+                      td
+                        select.form-control(name='supported['+i+'][operator]')
+                          option(value='>=', selected=supportedEntry.operator == '>=') #{__('>=')}
+                          option(value='=', selected=supportedEntry.operator == '=') #{__('=')}
+                          option(value='<=', selected=supportedEntry.operator == '<=') #{__('<=')}
+                          option(value='>', selected=supportedEntry.operator == '>') #{__('>')}
+                          option(value='<', selected=supportedEntry.operator == '<') #{__('<')}
+                      td.supportedVersion(data-supported-id=i) #{supportedEntry.version}
+                      td
+                        button.btn.btn-danger.deleteSupported(data-supported-id=i, type="button")
+                          span.fa.fa-times
+                    - i++
+                  tr(data-supported-id=i, data-supported-empty)
+                    td
+                      select.form-control.supportedType(name='supported['+i+'][type]', data-supported-id=i)
+                        option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
+                        optgroup(label=__('Général'))
+                          option(value='CMS', data-supported-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
+                        optgroup(label=__('Plugins'))
+                          each pluginOption in pluginsList
+                            if pluginOption.dbId !== theme.id
+                              option(value='plugin--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
+                    td
+                      select.form-control(name='supported['+i+'][operator]')
+                        option(value='>=') #{__('>=')}
+                        option(value='=') #{__('=')}
+                        option(value='<=') #{__('<=')}
+                        option(value='>') #{__('>')}
+                        option(value='<') #{__('<')}
+                    td.supportedVersion(data-supported-id=i)
+                      small.text-muted
+                        em #{__('Choississez un pré-requis')}
+                    td
+                      button.btn.btn-danger.deleteSupported(data-supported-id=i, type="button")
+                        span.fa.fa-times
+                  tr
+                    td
+                    td
+                    td
+                    td
+                      button.btn.btn-success.addSupported(data-supported-id=i+1, type="button")
+                        span.fa.fa-plus
+
+            if add
+
+              hr
+
+              div.row
+                div.col-md-12
+                  .form-group
+                    label #{__('Fichiers du thème')}
+                    input.filestyle(type="file", name="files", data-icon="true", data-buttonText=__("Choisir les fichiers"), data-iconName="fa fa-download", data-buttonName="btn-outline-success", data-placeholder=__('Choississez un fichier...'))
+                    small.form-text.text-muted #{__('Vous devez envoyer une archive zip contenant le dossier du thème.')}
+
+
+            hr
+
+            button.btn.btn-success.btn-lg.pull-right(type="submit")
+              if add
+                span.fa.fa-upload
+                | &nbsp;#{__('Soumettre le thème')}
+              else
+                span.fa.fa-pencil-square-o
+                | &nbsp;#{__('Soumettre les modifications du thème')}
+
+            unless add
+
+              div.clearfix
+
+              hr
+
+              div.text-center
+                a.btn.btn-outline-danger.btn-lg(href="/developer/delete/theme/" + theme.id)
+                  span.fa.fa-ban
+                  | &nbsp;#{__('Supprimer définitivement le thème')}
+
+block custom
+  script(type='text/javascript', src='/js/wysihtml5-0.3.0_rc2.min.js')
+  script(type='text/javascript', src='/js/bootstrap-wysihtml5-0.0.2.min.js')
+  script(type='text/javascript', src='/js/bootstrap-wysiwyg.js')
+  script(type='text/javascript').
+
+    $('textarea').wysihtml5()
+
+    $('.addChangelog').on('click', function (e) {
+
+      e.preventDefault()
+
+      var btn = $(this)
+      var i = btn.attr('data-i')
+      var i2 = btn.attr('data-i2')
+
+      $('<div class="input-group" data-i="'+i+'" data-i2="'+i2+'"><span class="input-group-addon">&nbsp;-&nbsp;</span><input class="form-control" type="text" name="versions['+i+'].changelog[]"><span class="input-group-btn"><button class="btn btn-danger removeChangelog" data-i="'+i+'" data-i2="'+i2+'"><span class="fa fa-times"></span></button></span></div>').insertBefore(btn)
+      initChangelogRemoveEntry()
+
+    })
+
+    function initChangelogRemoveEntry () {
+
+      $('.removeChangelog').unbind('click')
+      $('.removeChangelog').on('click', function (e) {
+
+        e.preventDefault()
+
+        var btn = $(this)
+        var i = btn.attr('data-i')
+        var i2 = btn.attr('data-i2')
+
+        $('div.input-group[data-i="'+i+'"][data-i2="'+i2+'"]').slideUp(150, function () {
+          $(this).remove()
+        })
+
+      })
+
+    }
+    initChangelogRemoveEntry()
+
+    // Setup supported already save
+
+    $('tr[data-supported-already-saved]').each(function (e) {
+
+      var tr = $(this)
+      var optionSelected = tr.find('.supportedType').find(':selected')
+      var supportedId = optionSelected.attr('data-supported-id')
+      var supportedVersionTd = $('.supportedVersion[data-supported-id="'+supportedId+'"]')
+      var currentVersion = tr.find('.supportedVersion').html()
+
+      // Get versions array
+      var versionsAvailable = optionSelected.attr('data-version-availables')
+      try {
+        versionsAvailable = JSON.parse(versionsAvailable)
+      } catch (e) {
+        console.log(e)
+        return false
+      }
+
+      // Setup select/option
+      var versionSelect = '<select class="form-control" name="supported[' + supportedId + '][version]">'
+      for (var i = 0; i < versionsAvailable.length; i++) {
+        versionSelect += '<option value="' + versionsAvailable[i] + '"';
+        if (currentVersion == versionsAvailable[i])
+          versionSelect += ' selected'
+        versionSelect += '>' + versionsAvailable[i] + '</option>'
+      }
+      versionSelect += '</select>'
+
+      // Set HTML
+      supportedVersionTd.html(versionSelect)
+
+    })
+
+    // ---
+
+    function initSupported() {
+
+      $('.supportedType').unbind('change')
+      $('.supportedType').on('change', function (e) {
+
+        // Init vars
+        var select = $(this)
+        var optionSelected = select.find(":selected")
+        var supportedId = optionSelected.attr('data-supported-id')
+        var supportedVersionTd = $('.supportedVersion[data-supported-id="'+supportedId+'"]')
+
+        // Get versions array
+        var versionsAvailable = optionSelected.attr('data-version-availables')
+        try {
+          versionsAvailable = JSON.parse(versionsAvailable)
+        } catch (e) {
+          console.log(e)
+          return false
+        }
+
+        // Setup select/option
+        var versionSelect = '<select class="form-control" name="supported[' + supportedId + '][version]">'
+        for (var i = 0; i < versionsAvailable.length; i++) {
+          versionSelect += '<option value="' + versionsAvailable[i] + '">' + versionsAvailable[i] + '</option>'
+        }
+        versionSelect += '</select>'
+
+        // Set HTML
+        supportedVersionTd.html(versionSelect)
+
+      })
+
+      $('.deleteSupported').unbind('click')
+      $('.deleteSupported').on('click', function (e) {
+
+        e.preventDefault()
+
+        var btn = $(this)
+        var supportedId = btn.attr('data-supported-id')
+
+        $('tr[data-supported-id="'+supportedId+'"]').slideUp(150, function () {
+          $(this).remove()
+        })
+
+      })
+
+      // handle supported
+      var supported = $('tr[data-supported-empty]').html()
+      var supportedId = $('tr[data-supported-empty]').attr('data-supported-id')
+      supported = supported.replaceAll('supported['+supportedId+']', 'supported[REQUIREMENTS_ID]')
+      supported = supported.replaceAll('data-supported-id="'+supportedId+'"', 'data-supported-id="REQUIREMENTS_ID"')
+      delete supportedId
+
+      $('.addSupported').unbind('click')
+      $('.addSupported').on('click', function (e) {
+
+        e.preventDefault()
+
+        var btn = $(this)
+        var btnTr = btn.parent().parent()
+        var supportedId = parseInt(btn.attr('data-supported-id'))
+
+        supported = supportedEntry.replaceAll('REQUIREMENTS_ID', supportedId)
+
+        // set HTML
+        $('<tr data-supported-id="'+supportedId+'">'+supported+'</tr>').insertBefore(btnTr)
+
+        // replace last supportedId
+        btn.attr('data-supported-id', supportedId+1)
+
+        // reset events
+        initSupported()
+
+      })
+
+    }
+    initSupported()
+
+block customCss
+  link(rel='stylesheet', href='/styles/bootstrap-wysihtml5-0.0.2.css')
+  style.
+    .input-group-btn .btn {
+      padding: 7px 12px;
+    }
