@@ -143,8 +143,8 @@ module.exports.routes = {
     'get /developer/edit/plugin/:id': 'DeveloperController.editPluginPage',
     'post /developer/edit/plugin/:id': 'DeveloperController.editPlugin',
 
-    'get /developer/version/plugin/:id': 'DeveloperController.updatePluginPage',
-    'post /developer/version/plugin/:id': 'DeveloperController.updatePlugin',
+    'get /developer/update/plugin/:id': 'DeveloperController.updatePluginPage',
+    'post /developer/update/plugin/:id': 'DeveloperController.updatePlugin',
 
     '/developer/delete/plugin/:id': 'DeveloperController.deletePlugin',
 
@@ -154,8 +154,8 @@ module.exports.routes = {
     'get /developer/edit/theme/:id': 'DeveloperController.editThemePage',
     'post /developer/edit/theme/:id': 'DeveloperController.editTheme',
 
-    'get /developer/version/theme/:id': 'DeveloperController.updateThemePage',
-    'post /developer/version/theme/:id': 'DeveloperController.updateTheme',
+    'get /developer/update/theme/:id': 'DeveloperController.updateThemePage',
+    'post /developer/update/theme/:id': 'DeveloperController.updateTheme',
 
     '/developer/delete/theme/:id': 'DeveloperController.deleteTheme'
 

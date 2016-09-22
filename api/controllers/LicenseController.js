@@ -181,7 +181,7 @@ module.exports = {
 				// Read zip file
 				http.get(sails.config.api.endpoint + sails.config.api.storage.getCMS + '/' + version, (res) => { // Call API
 				  if (res.statusCode === 200) { // If no error
-						res.on("d ata", function(chunk) { // when receive content
+						res.on("data", function(chunk) { // when receive content
 					    JSZip.loadAsync(data).then(function (zip) { // create object from zip content
 
 					      // Modify LICENSE_ID into /config/secure

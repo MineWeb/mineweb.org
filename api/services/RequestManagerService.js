@@ -114,6 +114,13 @@ module.exports = {
       }
     }
 
+    if (validation.arrayValueNeedFilled) {
+      if (this.request.body[validation.field] === undefined || this.request.body[validation.field][validation.arrayValueNeedFilled] === undefined || this.request.body[validation.field][validation.arrayValueNeedFilled].length === 0) {
+        this.inputs[validation.field] = this.request.__(validation.error)
+        return false
+      }
+    }
+
     return true
   },
 

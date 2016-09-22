@@ -163,7 +163,7 @@ block content
                 div.col-md-12
                   .form-group
                     label #{__('Fichiers du thème')}
-                    input.filestyle(type="file", name="files", data-icon="true", data-buttonText=__("Choisir les fichiers"), data-iconName="fa fa-download", data-buttonName="btn-outline-success", data-placeholder=__('Choississez un fichier...'))
+                    input.filestyle(type="file", name="files", accept=".zip", data-icon="true", data-buttonText=__("Choisir les fichiers"), data-iconName="fa fa-download", data-buttonName="btn-outline-success", data-placeholder=__('Choississez un fichier...'))
                     small.form-text.text-muted #{__('Vous devez envoyer une archive zip contenant le dossier du thème.')}
 
 
@@ -191,10 +191,10 @@ block content
 block custom
   script(type='text/javascript', src='/js/wysihtml5-0.3.0_rc2.min.js')
   script(type='text/javascript', src='/js/bootstrap-wysihtml5-0.0.2.min.js')
-  script(type='text/javascript', src='/js/bootstrap-wysiwyg.js')
+  script(type='text/javascript', src='/js/bootstrap-filestyle.min.js')
   script(type='text/javascript').
 
-    $('textarea').wysihtml5()
+    //$('textarea').wysihtml5()
 
     $('.addChangelog').on('click', function (e) {
 

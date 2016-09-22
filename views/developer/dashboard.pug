@@ -61,7 +61,7 @@ block content
                 p.card-text !{Utils.truncate(plugin.description, 100, true)}
                 div.btn-group
                   a.btn.btn-ghost(href='/developer/edit/plugin/' + plugin.id) #{__('Modifier')}
-                  a.btn.btn-outline-secondary(href='#') #{__('Ajouter une version')}
+                  a.btn.btn-outline-secondary(href='/developer/update/plugin/' + plugin.id) #{__('Ajouter une version')}
               .card-footer.text-muted #{__('Publié')}&nbsp;
                 span.moment-date(fromNow) #{plugin.createdAt}
                 if plugin.price > 0
@@ -96,7 +96,7 @@ block content
                 p.card-text !{Utils.truncate(theme.description, 100, true)}
                 div.btn-group
                   a.btn.btn-ghost(href='/developer/edit/theme/' + theme.id) #{__('Modifier')}
-                  a.btn.btn-outline-secondary(href='#') #{__('Ajouter une version')}
+                  a.btn.btn-outline-secondary(href='/developer/update/theme/' + theme.id) #{__('Ajouter une version')}
               .card-footer.text-muted #{__('Publié')}&nbsp;
                 span.moment-date(fromNow) #{theme.createdAt}
                 if plugin.price > 0

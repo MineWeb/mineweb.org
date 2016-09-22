@@ -1,0 +1,96 @@
+extends ../layouts/layout
+
+block content
+  section.section-gray.mini-section
+    .container.clearfix
+      div.row
+        div.col-md-12
+
+          form(method="post", action="/developer/update/theme/" + theme.id, data-ajax, data-redirect-url="/developer")
+
+            div.row
+              div.col-md-6
+                .form-group
+                  label #{__('Nom du thème')}
+                  input.form-control.disabled(type='text', value=theme.name, disabled)
+              div.col-md-6
+                .form-group
+                  label #{__('Numéro de version')}
+                  input.form-control.disabled(type='text', name="versionName", onchange="$('.version').html($(this).val())", placeholder="X.X.X")
+
+            hr
+            h4.text-center !{__('Gestion du <span class="accent">changelog</span>')}
+
+            div.row
+              div.col-md-12
+                .card.text-xs-center
+                  .card-header
+                    h4.card-title v
+                      span.version ??
+                  .card-block
+                    div.card-text
+
+                      div.input-group.changelog(data-count='0')
+                        span.input-group-addon &nbsp;-&nbsp;
+                        input.form-control(type='text', name="versionChangelog[]", data-form-no-display-error)
+                        span.input-group-btn
+                          button.btn.btn-danger.removeChangelog(type="button", data-count='0')
+                            span.fa.fa-times
+                      button.btn.btn-success.btn-block.addChangelog(type="button", data-count='0') #{__('Ajouter un changement')}
+
+            hr
+
+            div.row
+              div.col-md-12
+                .form-group
+                  label #{__('Fichiers du thème')}
+                  input.filestyle(type="file", name="files", data-icon="true", accept=".zip", data-buttonText=__("Choisir les fichiers"), data-iconName="fa fa-download", data-buttonName="btn-outline-success", data-placeholder=__('Choississez un fichier...'))
+                  small.form-text.text-muted #{__('Vous devez envoyer une archive zip contenant le dossier du thème.')}
+
+            hr
+
+            button.btn.btn-success.btn-lg.pull-right(type="submit")
+              span.fa.fa-upload
+              | &nbsp;#{__('Soumettre la version du thème')}
+
+
+block custom
+  script(type='text/javascript', src='/js/bootstrap-filestyle.min.js')
+  script(type='text/javascript').
+    $('.addChangelog').on('click', function (e) {
+
+      e.preventDefault()
+
+      var btn = $(this)
+      var count = parseInt(btn.attr('data-count')) + 1
+
+      $('<div class="input-group changelog" data-count="'+count+'"><span class="input-group-addon">&nbsp;-&nbsp;</span><input class="form-control" type="text" name="versionChangelog[]" data-form-no-display-error><span class="input-group-btn"><button class="btn btn-danger removeChangelog" data-count="'+count+'"><span class="fa fa-times"></span></button></span></div>').insertBefore(btn)
+      initChangelogRemoveEntry()
+
+    })
+
+    function initChangelogRemoveEntry () {
+
+      $('.removeChangelog').unbind('click')
+      $('.removeChangelog').on('click', function (e) {
+
+        e.preventDefault()
+
+        var btn = $(this)
+        var count = btn.attr('data-count')
+
+        $('div.input-group.changelog[data-count="'+count+'"]').slideUp(150, function () {
+          $(this).remove()
+        })
+
+      })
+
+    }
+    initChangelogRemoveEntry()
+
+
+block customCss
+  style.
+    .input-group-btn .btn {
+      padding: 7px 12px;
+    }

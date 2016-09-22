@@ -34,7 +34,11 @@ function initForms() {
       form.find('.form-control-feedback').remove()
 
     // On récupère les données
-      var inputs = (window.FormData) ? new FormData(form[0]) : null
+      if (form.attr('data-custom-data-formatter') === undefined)
+        var inputs = (window.FormData) ? new FormData(form[0]) : null
+      else
+        var inputs = window[form.attr('data-custom-data-formatter')](form)
+
       var captcha = (typeof grecaptcha !== 'undefined')
 
 
@@ -44,8 +48,8 @@ function initForms() {
         data: inputs,
         method: form.attr('method'),
         dataType: 'json',
-        contentType: false,
-        processData: false,
+        contentType: (!form.attr('data-contentType')) ? false : form.attr('data-contentType'),
+        processData: (!form.attr('data-processData')) ? false : form.attr('data-processData'),
         success: function (json) {
 
           if (json.status === true) {
@@ -78,14 +82,22 @@ function initForms() {
                 for (var input_name in json.inputs) {
 
                   // On set les variables
-                  var input = form.find('[name='+input_name+']');
-                  var form_group = input.parent();
+                  if (input_name.indexOf('[') === -1)
+                    var input = form.find('[name='+input_name+']');
+                  else
+                    var input = form.find('[name="'+input_name+'"]');
 
-                  // On met l'HTML
-                  form_group.addClass('has-danger');
-                  input.addClass('form-control-danger');
-                  $('<div class="form-control-feedback">'+json.inputs[input_name]+'</div>').insertAfter(input);
+                  if (typeof input === 'object')
+                    input = input[0]
 
+                  if ($(input).attr('data-form-no-display-error') === undefined) {
+                    var form_group = $(input).parent();
+
+                    // On met l'HTML
+                    form_group.addClass('has-danger');
+                    $(input).addClass('form-control-danger');
+                    $('<div class="form-control-feedback">'+json.inputs[input_name]+'</div>').insertAfter(input);
+                  }
                 }
               }
 
