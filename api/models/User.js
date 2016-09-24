@@ -133,10 +133,31 @@ module.exports = {
 			//delete user.id;
       // create md5 email
       user.md5Email = crypto.createHash('md5').update(user.email).digest('hex')
+      user.roleName = this.getRoleName(user)
       delete user.email;
 			return user;
 		}
 
+  },
+
+  getRoleName: function (user) {
+    switch (user.role) {
+      case 'FOUNDER':
+        return 'Fondateur'
+        break;
+      case 'ADMIN':
+        return 'Administrateur'
+        break;
+      case 'DEVELOPER':
+        return 'Développeur'
+        break;
+      case 'MOD':
+        return 'Modérateur'
+        break;
+      default:
+        return 'Utilisateur'
+        break;
+    }
   },
 
   addMd5Email: function(user) {

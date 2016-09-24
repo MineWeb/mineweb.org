@@ -1,0 +1,48 @@
+extends layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-sm-4
+      h2 MineWeb.org
+      ol.breadcrumb
+        li
+          a(href="/admin/dashboard") #{__('Accueil')}
+        li.active
+          strong #{__('Dashboard')}
+    .col-sm-8
+      .title-action
+        a.btn.btn-primary(href="/") #{__('Retourner sur mineweb.org')}
+  .wrapper.wrapper-content
+    .row
+      .col-lg-3
+        .ibox.float-e-margins
+          .ibox-title
+            span.label.label-success.pull-right #{__('Total')}
+            h5 #{__('Utilisateurs')}
+          .ibox-content
+            h1.no-margins #{usersCount}
+            small #{__('Depuis l\'ouverture')}
+      .col-lg-3
+        .ibox.float-e-margins
+          .ibox-title
+            span.label.label-info.pull-right #{__('Mensuel')}
+            h5 #{__('Hébergements')}
+          .ibox-content
+            h1.no-margins #{hostingsCount}
+            small #{__('En ligne')}
+      .col-lg-3
+        .ibox.float-e-margins
+          .ibox-title
+            span.label.label-primary.pull-right #{__('Total')}
+            h5 #{__('Licence')}
+          .ibox-content
+            h1.no-margins #{licensesCount}
+            small #{__('Depuis l\'ouverture')}
+      .col-lg-3
+        .ibox.float-e-margins
+          .ibox-title
+            span.label.label-danger.pull-right #{__('Total')}
+            h5 #{__('Bénéfices')}
+          .ibox-content
+            h1.no-margins #{profit} €
+            small #{__('Générés')}

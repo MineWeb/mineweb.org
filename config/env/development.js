@@ -75,6 +75,22 @@ module.exports = {
         themes: 'uploads/themes',
       }
     }
+  },
+
+  permissionsList: {
+    'ADMIN-ACCESS_DASHBOARD': {
+      controller: 'admin/dashboard',
+      action: 'index'
+    }
+  },
+
+  permissionsAccess: {
+    'USER': [],
+    'MOD': [],
+    'DEVELOPER': [],
+    'MOD': [],
+    'ADMIN': ['ADMIN-ACCESS_DASHBOARD'],
+    'FOUNDER': ['*']
   }
 
 };

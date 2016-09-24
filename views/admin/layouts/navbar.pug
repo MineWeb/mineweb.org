@@ -1,0 +1,60 @@
+nav.navbar-default.navbar-static-side(role='navigation')
+  .sidebar-collapse
+    ul#side-menu.nav.metismenu
+      li.nav-header
+        .dropdown.profile-element
+          span
+            img.img-circle(alt='image', src="http://www.gravatar.com/avatar/" + user.md5Email)
+          a.dropdown-toggle(data-toggle='dropdown', href='#')
+            span.clear
+              span.block.m-t-xs
+                strong.font-bold #{user.username}
+              span.text-muted.text-xs.block #{__(user.roleName)}
+      li
+        a(href="/admin/dashboard")
+          i.fa.fa-th-large
+          span.nav-label #{__('Dashboard')}
+      li
+        a(href='#')
+          i.fa.fa-question
+          span.nav-label #{__('Support')}
+          span.fa.arrow
+        ul.nav.nav-second-level.collapse
+          li
+            a(href="/admin/support")
+              | #{__('Voir les tickets')}
+              span.label.label-warning.pull-right
+          li
+            a(href="/admin/license/find") #{__('Chercher une licence/hébergement')}
+          li
+            a(href="/admin/hosting/find") #{__('Chercher un utilisateur')}
+      li
+        a(href="/admin/update")
+          i.fa.fa-wrench
+          span.nav-label #{__('Mise à jours')}
+      li
+        a(href='#')
+          i.fa.fa-book
+          span.nav-label #{__('Documentation')}
+          span.fa.arrow
+        ul.nav.nav-second-level.collapse
+          li
+            a(href="#") #{__('Éditer la documentation')}
+          li
+            a(href="/admin/api/faq") #{__('Éditer la FAQ (CMS)')}
+      li
+        a(href="/admin/stats")
+          i.fa.fa-line-chart
+          span.nav-label #{__('Statistiques')}
+      li
+        a(href='/admin/developers')
+          i.fa.fa-plus
+          span.nav-label #{__('Développeurs')}
+          span.fa.arrow
+        ul.nav.nav-second-level.collapse
+          li
+            a(href="/admin/developers/candidate") #{__('Accèder aux candidatures')}
+          li
+            a(href="/admin/developers/plugins") #{__('Gérer les plugins')}
+          li
+            a(href="/admin/developers/themes") #{__('Gérer les thèmes')}
