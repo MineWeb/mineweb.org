@@ -195,8 +195,13 @@ block content
                   | &nbsp;#{__('Supprimer définitivement le plugin')}
 
 block custom
+  script(type='text/javascript', src='/js/summernote/summernote.min.js')
+  script(type='text/javascript', src='/js/bootstrap-filestyle.min.js')
   script(type='text/javascript', src='/js/bootstrap-filestyle.min.js')
   script(type='text/javascript').
+
+    $('textarea').summernote({height: 200})
+
     $('.addChangelog').on('click', function (e) {
 
       e.preventDefault()
@@ -345,6 +350,7 @@ block custom
     initRequirements()
 
 block customCss
+  link(rel='stylesheet', href='/styles/summernote.css')
   style.
     .input-group-btn .btn {
       padding: 7px 12px;

@@ -67,7 +67,7 @@ block content
 
             div.row.market-item
               div.col-md-6
-                img.img-rounded.img-responsive(src=theme.img != null && plugin.length > 0 ? plugin.img : '/img/default_plugins.png')
+                img.img-rounded.img-responsive(src=theme.img != null && theme.length > 0 ? theme.img : '/img/default_plugins.png')
               div.col-md-6
                 h3 #{theme.name}
                 p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description, 250, true)}

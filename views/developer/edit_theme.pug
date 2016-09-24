@@ -143,7 +143,7 @@ block content
                         option(value='<') #{__('<')}
                     td.supportedVersion(data-supported-id=i)
                       small.text-muted
-                        em #{__('Choississez un pré-requis')}
+                        em #{__('Choississez un plugin')}
                     td
                       button.btn.btn-danger.deleteSupported(data-supported-id=i, type="button")
                         span.fa.fa-times
@@ -189,12 +189,11 @@ block content
                   | &nbsp;#{__('Supprimer définitivement le thème')}
 
 block custom
-  script(type='text/javascript', src='/js/wysihtml5-0.3.0_rc2.min.js')
-  script(type='text/javascript', src='/js/bootstrap-wysihtml5-0.0.2.min.js')
+  script(type='text/javascript', src='/js/summernote/summernote.min.js')
   script(type='text/javascript', src='/js/bootstrap-filestyle.min.js')
   script(type='text/javascript').
 
-    //$('textarea').wysihtml5()
+    $('textarea').summernote({height: 200})
 
     $('.addChangelog').on('click', function (e) {
 
@@ -344,7 +343,7 @@ block custom
     initSupported()
 
 block customCss
-  link(rel='stylesheet', href='/styles/bootstrap-wysihtml5-0.0.2.css')
+  link(rel='stylesheet', href='/styles/summernote.css')
   style.
     .input-group-btn .btn {
       padding: 7px 12px;

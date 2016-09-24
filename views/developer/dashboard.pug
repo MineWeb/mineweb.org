@@ -99,8 +99,8 @@ block content
                   a.btn.btn-outline-secondary(href='/developer/update/theme/' + theme.id) #{__('Ajouter une version')}
               .card-footer.text-muted #{__('Publié')}&nbsp;
                 span.moment-date(fromNow) #{theme.createdAt}
-                if plugin.price > 0
-                  |  &nbsp;- #{plugin.price} €
+                if theme.price > 0
+                  |  &nbsp;- #{theme.price} €
         div.col-md-4
           .card.text-xs-center
             .card-header
