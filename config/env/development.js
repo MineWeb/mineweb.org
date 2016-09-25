@@ -105,16 +105,29 @@ module.exports = {
     'ADMIN-TAKE_TICKET': {
       controller: 'admin/ticket',
       action: 'take'
+    },
+    'ADMIN-REPLY_TICKET': {
+      controller: 'admin/ticket',
+      action: 'reply'
     }
   },
 
   permissionsAccess: {
     'USER': [],
-    'MOD': [],
     'DEVELOPER': [],
-    'MOD': [],
-    'ADMIN': ['ADMIN-ACCESS_DASHBOARD', 'ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET'],
+    'MOD': ['ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET'],
+    'ADMIN': ['ADMIN-ACCESS_DASHBOARD', 'ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET'],
     'FOUNDER': ['*']
+  },
+
+  ticket: {
+    'fr-fr': {
+      hello: {
+        day: 'Bonjour,',
+        night: 'Bonsoir,'
+      },
+      signature: "Cordialement,\n{USERNAME}.\n{ROLENAME}"
+    }
   }
 
 };

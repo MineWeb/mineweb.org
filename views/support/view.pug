@@ -57,6 +57,11 @@ block customCss
   link(rel='stylesheet', href='/styles/timeline.css')
 
 block custom
+  script(src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js")
+  script(type='text/javascript').
+    $(document).ready(function() {
+      PR.prettyPrint()
+    })
   script(type='text/javascript').
     function afterAddReply(inputs, json) {
 

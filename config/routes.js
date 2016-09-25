@@ -168,6 +168,8 @@ module.exports.routes = {
     '/admin/support/close/:id': 'Admin/TicketController.close',
     '/admin/support/take/:id': 'Admin/TicketController.take',
     '/admin/support/edit-category/:id': 'Admin/TicketController.editCategory',
-    '/admin/support/edit-state/:id': 'Admin/TicketController.editState'
+    '/admin/support/edit-state/:id': 'Admin/TicketController.editState',
+
+    'post /admin/support/reply/:id': 'Admin/TicketController.reply'
 
 };

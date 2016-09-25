@@ -41,7 +41,7 @@ block content
                           if ticket.supported
                             img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
                           else
-                            a.btn.btn-outline.btn-success.btn-sm(href="#")
+                            a.btn.btn-outline.btn-success.btn-sm(href="/admin/support/take/" + ticket.id)
                               i.fa.fa-hand-rock-o
                               | &nbsp;#{__('Prendre en charge')}
                         td.project-actions

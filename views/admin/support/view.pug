@@ -26,3 +26,53 @@ block content
                 a.message-author(href='#') #{reply.user.username}
                 span.message-date.moment-date(fromNow) #{reply.createdAt}
                 span.message-content !{reply.content}
+
+  if ticket.state !== 'CLOSED'
+    .row(style="margin-bottom:100px;")
+      .col-lg-12
+        .chat-message-form
+
+          form(action="/admin/support/reply/" + ticket.id, method="post", data-ajax, data-redirect-url='?')
+
+            .form-group
+              textarea#editor(name='reply', data-form-no-display-error)
+
+            .form-group
+              button.btn.btn-primary.pull-right(type="submit") #{__('Répondre au ticket')}
+
+  div.clearfix
+
+block custom
+  script(type='text/javascript', src='/js/admin/summernote/summernote.min.js')
+  script(src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js")
+  script(type='text/javascript').
+    $(document).ready(function() {
+      PR.prettyPrint()
+    })
+  script(type='text/javascript', src='/js/admin/summernote/summernote-ext-highlight.js')
+  script(type='text/javascript').
+    $(document).ready(function() {
+      $('#editor').summernote({
+        height: 200,
+        minHeight: null,
+        minWidth: null,
+        focus: true,
+        prettifyHtml:false,
+        toolbar:[
+          ['style', ['bold', 'italic', 'underline', 'clear']],
+          ['font', ['strikethrough', 'superscript', 'subscript']],
+          ['fontsize', ['fontsize']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['height', ['height']],
+          ['highlight', ['highlight']],
+        ],
+        lang:'fr-FR'
+      })
+      $('.ext-highlight-btn').on('click', function() {
+        setTimeout(function(){ PR.prettyPrint(); }, 1000);
+      })
+    })
+
+block cssCustom
+  link(rel='stylesheet', href='/styles/admin/summernote/summernote.css')

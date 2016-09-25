@@ -6,8 +6,6 @@
  */
 
 var autolinks = require('autolinks')
-var Entities = require('html-entities').AllHtmlEntities
-var htmlentities = new Entities()
 
 module.exports = {
 
@@ -40,9 +38,26 @@ module.exports = {
 
   // Lifecycle Callbacks
   beforeCreate: function(values, next) {
-    values.content = htmlentities.encode(values.content) // prevent xss
     values.content = autolinks(values.content.replace("\n", '<br>')) // autolinks + br
     next();
+  },
+
+  addSignature: function (content, user, lang) {
+    var newContent = ''
+
+    // hello
+    var d = new Date()
+    var moment = (d.getHours() > 3 && d.getHours() < 18) ? 'day' : 'night'
+    newContent += sails.config.ticket[lang].hello[moment] + "<br><br>" + content
+    // signature
+    var signature = sails.config.ticket[lang].signature
+    if (user.rolename === undefined)
+      user.rolename = ''
+    signature = signature.replace('{USERNAME}', user.username).replace('{ROLENAME}', user.rolename)
+
+    newContent += "<br>" + signature
+
+    return newContent
   }
 
 };

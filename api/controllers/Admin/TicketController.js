@@ -172,12 +172,84 @@ module.exports = {
     })
   },
 
+  reply: function(req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
+
+    // Handle form values
+		RequestManagerService.setRequest(req).setResponse(res).valid({
+			"Tous les champs ne sont pas remplis.": [
+				['reply', "Vous devez spécifier une réponse"],
+			]
+		}, function () {
+
+      // find ticket with this id
+      Ticket.findOne({id: id}).populate(['user']).exec(function (err, ticket) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+
+        if (ticket === undefined)
+          return res.notFound()
+
+        // add signature + hello
+        var content = TicketReply.addSignature(req.body.reply, {username: ticket.user.username, rolename:undefined}, ticket.user.lang)
+
+        // Save
+        TicketReply.create({user: req.session.userId, ticket:id, content: content}).exec(function (err, reply) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+
+          res.json({
+            status: true,
+            msg: req.__('Votre réponse a bien été ajoutée !'),
+            inputs: {}
+          })
+
+          // remove pusbullet notification
+          PushbulletService.delete('Ticket', ticket.id)
+
+        })
+
+      })
+
+    })
+  },
+
   close: function (req, res) {
 
   },
 
   take: function (req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
 
+    Ticket.update({id: id}, {supported: req.session.userId}).exec(function (err, ticketUpdated) {
+
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      // send notification toastr
+      NotificationService.success(req, req.__('Vous avez bien pris en charge le ticket !'))
+
+      // redirect
+      res.redirect('/admin/support/' + ticketUpdated[0].id)
+
+      // remove pusbullet notification
+      PushbulletService.delete('Ticket', ticketUpdated[0].id)
+
+    })
   },
 
   editCategory: function (req, res) {

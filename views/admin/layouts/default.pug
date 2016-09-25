@@ -13,6 +13,9 @@ head
 
     script(src='/js/admin/jquery.js')
 
+    // Notifications
+    link(href="/styles/admin/plugins/toastr/toastr.min.css" rel="stylesheet")
+
   block cssCustom
 
 body
@@ -56,7 +59,7 @@ body
 
       // Notifications
       if notifications
-        script(src="/js/toastr.min.js")
+        script(src="/js/admin/plugins/toastr/toastr.min.js")
 
         if notifications.error.length > 0
           each notification, index in notifications.error
