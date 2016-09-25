@@ -48,7 +48,8 @@ module.exports = {
     state: {
       type: 'string',
       in: ['WAITING_STAFF_RESPONSE', 'WAITING_USER_RESPONSE', 'CLOSED'],
-      defaultsTo: 'WAITING_STAFF_RESPONSE'
+      defaultsTo: 'WAITING_STAFF_RESPONSE',
+      required: true
     },
 
     supported: {

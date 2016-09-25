@@ -2,12 +2,14 @@ extends ../layouts/default
 
 block content
   .row.wrapper.border-bottom.white-bg.page-heading
-    .col-sm-12
+    .col-md-12
         h2
           if ticket.state === 'WAITING_STAFF_RESPONSE'
-            span.label.label-warning(data-toggle="tooltip", data-placement="top") #{__('En attente de la réponse du staff')}
+            span.label.label-warning(style='border-radius: 10', data-toggle="tooltip", data-placement="top", data-original-title=__('En attente de la réponse du staff')) S
+          else if ticket.state === 'WAITING_USER_RESPONSE'
+            span.label.label-info(style='border-radius: 10', data-toggle="tooltip", data-placement="top", data-original-title=__("En attente de la réponse de l'utilisateur")) U
           else
-            span.label.label-info(data-toggle="tooltip", data-placement="top") #{__("En attente de la réponse de l'utilisateur")}
+            span.label.label-danger(style='border-radius: 10', data-toggle="tooltip", data-placement="top", data-original-title=__("Fermé")) F
           | &nbsp;#{ticket.title}
         ol.breadcrumb
           li
@@ -17,6 +19,48 @@ block content
   .row
     .col-lg-12
       .wrapper.wrapper-content.animated.fadeInUp
+
+        .ibox.float-e-margins
+          .ibox-content.text-center.p-md
+            div.row
+              div.col-md-4
+                h3
+                  b #{__('Statut')}
+                  br
+                  br
+                  if ticket.state === 'CLOSED'
+                    span.label.label-danger #{__("Fermé")}
+                  else
+                    select.form-control(name='state')
+                      option(value="WAITING_STAFF_RESPONSE", selected=ticket.state === 'WAITING_STAFF_RESPONSE') #{__('En attente de la réponse du staff')}
+                      option(value="WAITING_USER_RESPONSE", selected=ticket.state === 'WAITING_USER_RESPONSE') #{__("En attente de la réponse de l'utilisateur")}
+              div.col-md-4
+                h3
+                  b #{__('Catégorie')}
+                  br
+                  br
+                  select.form-control(name='category')
+                    option(value="GENERAL", selected=ticket.category === 'GENERAL') #{__('Général')}
+                    option(value="SERVER", selected=ticket.category === 'SERVER') #{__('Serveur')}
+                    option(value="DEVELOPMENT", selected=ticket.category === 'DEVELOPMENT') #{__('Développement')}
+                    option(value="SUGGESTION", selected=ticket.category === 'SUGGESTION') #{__('Suggestion')}
+                    option(value="QUESTION", selected=ticket.category === 'QUESTION') #{__('Question')}
+                    option(value="OTHER", selected=ticket.category === 'OTHER') #{__('Autre')}
+              div.col-md-4
+                h3
+                  if ticket.license
+                    p
+                      b #{__('Licence associée')}
+                    a.btn.btn-outline.btn-info.text-muted(href='/admin/license/view/' + ticket.license) #{__("Voir la licence associée")} ID##{ticket.license}
+                  else if ticket.hosting
+                    p
+                      b #{__('Hébergement associé')}
+                    a.btn.btn-outline.btn-info.text-muted(href='/admin/hosting/view/' + ticket.hosting) #{__("Voir l'hébergement associé")} ID##{ticket.hosting}
+                  else
+                    .text-muted
+                      em #{__('Aucun(e) licence/hébergement associé(e)')}
+
+
         .chat-discussion
           each reply in ticket.replies
             // left if author/user, right if staff member
@@ -72,6 +116,13 @@ block custom
       $('.ext-highlight-btn').on('click', function() {
         setTimeout(function(){ PR.prettyPrint(); }, 1000);
       })
+    })
+  script(type='text/javascript').
+    $('select[name="state"]').on('change', function (e) {
+      $.post('/admin/support/edit-state/#{ticket.id}', {state:$(this).val()}, function(){})
+    })
+    $('select[name="category"]').on('change', function (e) {
+      $.post('/admin/support/edit-category/#{ticket.id}', {category:$(this).val()}, function(){})
     })
 
 block cssCustom

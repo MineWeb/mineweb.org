@@ -110,28 +110,6 @@ module.exports = {
           // md5 email for author
           ticket.user = User.addMd5Email(ticket.user)
 
-          // category
-          switch (ticket.category) {
-            case 'GENERAL':
-              ticket.category = req.__('Général')
-              break;
-            case 'SERVER':
-              ticket.category = req.__('Serveur')
-              break;
-            case 'DEVELOPMENT':
-              ticket.category = req.__('Développement')
-              break;
-            case 'SUGGESTION':
-              ticket.category = req.__('Suggestion')
-              break;
-            case 'QUESTION':
-              ticket.category = req.__('Question')
-              break;
-            default:
-              ticket.category = req.__('Autre')
-
-          }
-
           callback(undefined, ticket)
         })
       },
@@ -223,7 +201,29 @@ module.exports = {
   },
 
   close: function (req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
 
+    Ticket.update({id: id}, {state: 'CLOSED'}).exec(function (err, ticketUpdated) {
+
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      // send notification toastr
+      NotificationService.success(req, req.__('Vous avez bien fermé le ticket !'))
+
+      // redirect
+      res.redirect('/admin/support/')
+
+      // remove pusbullet notification
+      PushbulletService.delete('Ticket', ticketUpdated[0].id)
+
+    })
   },
 
   take: function (req, res) {
@@ -253,11 +253,41 @@ module.exports = {
   },
 
   editCategory: function (req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
 
+    Ticket.update({id: id}, {category: req.body.category}).exec(function (err, ticketUpdated) {
+
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      res.send(200)
+
+    })
   },
 
   editState: function (req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
 
+    Ticket.update({id: id}, {state: req.body.state}).exec(function (err, ticketUpdated) {
+
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      res.send(200)
+
+    })
   }
 
 }
