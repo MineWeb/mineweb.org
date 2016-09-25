@@ -21,6 +21,12 @@ var QueryString = function () {
   return query_string;
 }();
 
+function ucfirst (str) {
+  str += ''
+  var f = str.charAt(0)
+    .toUpperCase()
+  return f + str.substr(1)
+}
 
 $(document).ready(function() {
   var momentParser = function () {

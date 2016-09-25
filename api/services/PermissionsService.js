@@ -18,6 +18,10 @@ module.exports = {
     var permissionsList = sails.config.permissionsList
     var permissionsAccess = sails.config.permissionsAccess
 
+    // authorize to all
+    if (permissionsAccess[user.role][0] === '*')
+      return true
+
     // Find permission from path
     if (typeof permission === 'object') {
 
@@ -38,7 +42,7 @@ module.exports = {
     }
 
     // Check if user is allowed
-    if (permissionsAccess[user.role] !== undefined && (permissionsAccess[user.role].indexOf(permission) !== -1 || permissionsAccess[user.role][0] === '*'))
+    if (permissionsAccess[user.role] !== undefined && permissionsAccess[user.role].indexOf(permission) !== -1)
       return true // Permission finded
 
     // always return false

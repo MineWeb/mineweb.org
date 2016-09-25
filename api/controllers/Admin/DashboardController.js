@@ -60,6 +60,194 @@ module.exports = {
           callback(null, results[0]+results[1])
         })
 
+      },
+
+      // Find profit this month
+      function (callback) {
+
+        var date = new Date()
+        month = date.getMonth() + 1
+        if (month.toString().length === 1)
+          month = '0' + month
+        date = date.getFullYear() + '-' + month + '-'
+
+        async.parallel([
+          // Find with PayPal
+          function (next) {
+            PayPalHistory.query("SELECT SUM(paymentAmount - taxAmount) AS amount FROM paypalhistory WHERE paymentDate LIKE '" + date + "%'", function (err, profit) {
+              if (err)
+                return next(err)
+              next(null, profit[0].amount)
+            })
+          },
+          // Find with Dedipass
+          function (next) {
+            DedipassHistory.find({createdAt: {'like': date + '%'}}).limit(1).sum('payout').exec(function (err, profit) {
+              if (err)
+                return next(err)
+              next(null, profit[0].payout)
+            })
+          }
+        ], function (err, results) {
+          if (err)
+            return callback(err)
+          callback(null, results[0]+results[1])
+        })
+
+      },
+
+      // Licenses sales
+      function (callback) {
+
+        // vars
+        var sales = []
+
+        var d = new Date()
+        var year = d.getFullYear()
+
+        var months = [
+          (d.getMonth() - 4), // 6 months ago
+          (d.getMonth() - 3), // 5 months ago
+          (d.getMonth() - 2), // ...
+          (d.getMonth() - 1),
+          (d.getMonth()),
+          (d.getMonth() + 1) // actual month
+        ]
+
+        // sql
+        async.forEach(months, function (month, next) { // for each months
+
+          if (month.toString().length === 1)
+            month = '0' + month
+          date = year + '-' + month + '-' // setup date LIKE
+
+          License.count({createdAt: {'like': date + '%'}}).exec(function (err, count) {
+            if (err)
+              sales.push(0)
+            else
+              sales.push(count)
+            next()
+          })
+
+        }, function () {
+          callback(undefined, sales)
+        })
+      },
+
+      // Hostings sales
+      function (callback) {
+
+        // vars
+        var sales = []
+
+        var d = new Date()
+        var year = d.getFullYear()
+
+        var months = [
+          (d.getMonth() - 4), // 6 months ago
+          (d.getMonth() - 3), // 5 months ago
+          (d.getMonth() - 2), // ...
+          (d.getMonth() - 1),
+          (d.getMonth()),
+          (d.getMonth() + 1) // actual month
+        ]
+
+        // sql
+        async.forEach(months, function (month, next) { // for each months
+
+          if (month.toString().length === 1)
+            month = '0' + month
+          date = year + '-' + month + '-' // setup date LIKE
+
+          Hosting.count({createdAt: {'like': date + '%'}}).exec(function (err, count) {
+            if (err)
+              sales.push(0)
+            else
+              sales.push(count)
+            next()
+          })
+
+        }, function () {
+          callback(undefined, sales)
+        })
+      },
+
+      // Tickets
+      function (callback) {
+        async.parallel([
+
+          // openedTickets
+          function (next) {
+            Ticket.count({state: {'!': 'CLOSED'}}).exec(function (err, count) {
+              next(err, count)
+            })
+          },
+
+          // nonSupportedTickets
+          function (next) {
+            Ticket.count({state: {'!': 'CLOSED'}, supported: null}).exec(function (err, count) {
+              next(err, count)
+            })
+          },
+
+          // tickets
+          function (next) {
+            Ticket.find({state: {'!': 'CLOSED'}}).populate(['supported', 'replies']).exec(function (err, tickets) {
+              next(err, tickets)
+            })
+          }
+
+        ], function (err, results) {
+          callback(err, results)
+        })
+      },
+
+      // paymentsList
+      function (callback) {
+        async.parallel([
+          // paypal
+          function (next) {
+            PayPalHistory.find().populate('user').sort('id desc').limit(10).exec(function (err, payments) {
+              if (err)
+                return next(err)
+
+              var data = []
+              for (var i = 0; i < payments.length; i++) {
+                data.push({
+                  type: 'PayPal',
+                  amount: (payments[i].paymentAmount - payments[i].taxAmount),
+                  date: payments[i].paymentDate,
+                  user: payments[i].user.username
+                })
+              }
+
+              next(undefined, data)
+
+            })
+          },
+          // dedipass
+          function (next) {
+            DedipassHistory.find().populate('user').sort('id desc').limit(10).exec(function (err, payments) {
+              if (err)
+                return next(err)
+
+              var data = []
+              for (var i = 0; i < payments.length; i++) {
+                data.push({
+                  type: 'Dédipass',
+                  amount: payments[i].payout,
+                  date: payments[i].createdAt,
+                  user: payments[i].user.username
+                })
+              }
+
+              next(undefined, data)
+
+            })
+          }
+        ], function (err, results) {
+          callback(err, results)
+        })
       }
 
     ], function (err, results) {
@@ -74,6 +262,19 @@ module.exports = {
         hostingsCount: results[1],
         licensesCount: results[2],
         profit: Math.round(results[3]),
+        profitThisMonth: Math.round(results[4]),
+        sales: {
+          'licenses': results[5],
+          'hostings': results[6]
+        },
+        openedTickets: results[7][0],
+        nonSupportedTickets: results[7][1],
+        ticketsList: results[7][2],
+        paymentsList: results[8][0].concat(results[8][1]).sort(function (payment1, payment2) { // group dedipass + paypal payments -> sort by date
+          if (payment1.date > payment2.date) return -1;
+          if (payment1.date < payment2.date) return 1;
+          return 0
+        }).slice(0, 10), // keep only 10 first
         title: req.__('Dashboard')
       })
 

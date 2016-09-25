@@ -4946,6 +4946,9 @@ dd.project-people {
   margin-left: 10px;
   line-height: 22px;
 }
+.project-completion {
+  font-size:13px;
+}
 /* FAQ */
 .faq-item {
   padding: 20px;

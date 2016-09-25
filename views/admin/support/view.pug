@@ -1,0 +1,28 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-sm-12
+        h2
+          if ticket.state === 'WAITING_STAFF_RESPONSE'
+            span.label.label-warning(data-toggle="tooltip", data-placement="top") #{__('En attente de la réponse du staff')}
+          else
+            span.label.label-info(data-toggle="tooltip", data-placement="top") #{__("En attente de la réponse de l'utilisateur")}
+          | &nbsp;#{ticket.title}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") Dashboard
+          li.active
+            strong Support
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .chat-discussion
+          each reply in ticket.replies
+            // left if author/user, right if staff member
+            .chat-message(class=reply.user.id === ticket.user.id ? 'left' : 'right')
+              img.message-avatar(src="http://www.gravatar.com/avatar/" + reply.user.md5Email, alt='')
+              .message
+                a.message-author(href='#') #{reply.user.username}
+                span.message-date.moment-date(fromNow) #{reply.createdAt}
+                span.message-content !{reply.content}

@@ -161,6 +161,13 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-    '/admin/dashboard': 'Admin/DashboardController.index'
+    '/admin/dashboard': 'Admin/DashboardController.index',
+
+    '/admin/support': 'Admin/TicketController.index',
+    '/admin/support/:id': 'Admin/TicketController.view',
+    '/admin/support/close/:id': 'Admin/TicketController.close',
+    '/admin/support/take/:id': 'Admin/TicketController.take',
+    '/admin/support/edit-category/:id': 'Admin/TicketController.editCategory',
+    '/admin/support/edit-state/:id': 'Admin/TicketController.editState'
 
 };

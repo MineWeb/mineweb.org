@@ -78,6 +78,10 @@ module.exports.policies = {
 
   'Admin/DashboardController': {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
+  },
+  
+  'Admin/TicketController': {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
   }
 
 	// RabbitController: {

@@ -12,7 +12,6 @@ head
     link(rel='stylesheet', href='/styles/admin/animate.css')
 
     script(src='/js/admin/jquery.js')
-    script(src='/js/admin/plugins/ladda/ladda-themeless.min.js')
 
   block cssCustom
 
@@ -28,7 +27,7 @@ body
           .pull-right
             | !{__('Développé et maintenu par <strong>Eywek</strong> & <strong>ThisIsMac</strong>.')}
           div
-            | !{__('<strong>Tous droits réservés</strong> MineWeb 2014-2016')}
+            | !{__('<strong>Tous droits réservés</strong> MineWeb 2014-%s', (new Date).getFullYear())}
 
     block scripts
       script(src='/js/admin/bootstrap.min.js')
@@ -39,5 +38,41 @@ body
       script(src='/js/admin/plugins/ladda/spin.min.js')
       script(src='/js/admin/plugins/ladda/ladda.min.js')
       script(src='/js/admin/plugins/ladda/ladda.jquery.min.js')
+      script(src='/js/moment-with-locales.js')
+      script(src="/js/functions.js")
+
+      script(type='text/javascript').
+        moment.locale(navigator.language)
+
+        var locals = {
+          'LOADING_MSG': "#{__('Chargement en cours...')}",
+          'SUCCESS_MSG': "#{__('Succès')}",
+          'ERROR_MSG': "#{__('Erreur')}",
+          'FORBIDDEN_ERROR_MSG': "#{__('Vous n\'êtes pas autorisé à procéder à cette action !')}",
+          'INTERNAL_ERROR_MSG': "#{__('Une erreur interne est survenue. Veuillez rééssayez.')}"
+        }
+
+      script(src='/js/form-ajax.js')
+
+      // Notifications
+      if notifications
+        script(src="/js/toastr.min.js")
+
+        if notifications.error.length > 0
+          each notification, index in notifications.error
+            script(type='text/javascript').
+              toastr.error("#{notification}")
+        if notifications.warning.length > 0
+          each notification, index in notifications.warning
+            script(type='text/javascript').
+              toastr.warning("#{notification}")
+        if notifications.success.length > 0
+          each notification, index in notifications.success
+            script(type='text/javascript').
+              toastr.success("#{notification}")
+        if notifications.info.length > 0
+          each notification, index in notifications.info
+            script(type='text/javascript').
+              toastr.info("#{notification}")
 
     block custom

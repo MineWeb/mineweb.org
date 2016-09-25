@@ -1,0 +1,91 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-sm-4
+      h2 #{__('Support')}
+      ol.breadcrumb
+        li
+          a(href="/admin/dashboard") #{__('Dashboard')}
+        li.active
+          strong #{__('Support')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des tickets ouverts')}
+          .ibox-content
+            .project-list
+              .table-responsive
+                table.table.table-hover
+                  tbody
+                    each ticket in pendingTickets
+                      tr
+                        td.project-status
+                          if ticket.state === 'WAITING_STAFF_RESPONSE'
+                            span.label.label-warning(style='border-radius: 10', data-toggle="tooltip", data-placement="top", data-original-title=__('En attente de la réponse du staff')) S
+                          else
+                            span.label.label-info(style='border-radius: 10', data-toggle="tooltip", data-placement="top", data-original-title=__("En attente de la réponse de l'utilisateur")) U
+                        td.project-status
+                          span.label.label-primary #{ticket.category}
+                        td.project-title
+                          a(href='/admin/support/' + ticket.id) #{ticket.title}
+                          br
+                          small.moment-date(fromNow) #{ticket.createdAt}
+                        td.project-completion
+                          b #{__('Dernière activité')}&nbsp;
+                          span.moment-date(fromNow) #{ticket.lastReply.createdAt}
+                        td.project-people
+                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
+                          if ticket.supported
+                            img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
+                          else
+                            a.btn.btn-outline.btn-success.btn-sm(href="#")
+                              i.fa.fa-hand-rock-o
+                              | &nbsp;#{__('Prendre en charge')}
+                        td.project-actions
+                          a.btn.btn-outline.btn-primary.btn-sm(href="/admin/support/" + ticket.id)
+                            i.fa.fa-reply
+                            | &nbsp;#{__('Répondre')}
+                          | &nbsp;
+                          a.btn.btn-outline.btn-danger.btn-sm(href="/admin/support/close/" + ticket.id)
+                            i.fa.fa-times
+                            | &nbsp;#{__('Fermer')}
+
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des tickets fermés')}
+          .ibox-content
+            .project-list
+              table.table.table-hover
+                tbody
+                  each ticket in closedTickets
+                    tr
+                      td.project-status
+                        span.label.label-danger #{__('Fermé')}
+                      td.project-title
+                        a(href='/admin/support/' + ticket.id) #{ticket.title}
+                        br
+                        small.moment-date(fromNow) #{ticket.createdAt}
+                      td.project-completion
+                        b #{__('Date de fermeture')}&nbsp;
+                        span.moment-date(fromNow) #{ticket.closedDate}
+                      td.project-people
+                        img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
+                      td.project-actions
+                        a.btn.btn-outline.btn-info.btn-sm(href="/admin/support/" + ticket.id)
+                          i.fa.fa-eye
+                          | &nbsp;Voir
+
+
+block custom
+  script(type='text/javascript').
+    $(document).ready(function() {
+      $("[data-toggle=tooltip]").each(function(e) {
+        $(this).tooltip();
+      });
+    });

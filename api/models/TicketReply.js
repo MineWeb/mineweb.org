@@ -5,6 +5,10 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
+var autolinks = require('autolinks')
+var Entities = require('html-entities').AllHtmlEntities
+var htmlentities = new Entities()
+
 module.exports = {
 
   attributes: {
@@ -32,5 +36,13 @@ module.exports = {
       required: true
     }
 
+  },
+
+  // Lifecycle Callbacks
+  beforeCreate: function(values, next) {
+    values.content = htmlentities.encode(values.content) // prevent xss
+    values.content = autolinks(values.content.replace("\n", '<br>')) // autolinks + br
+    next();
   }
+
 };

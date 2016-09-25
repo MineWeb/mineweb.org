@@ -81,6 +81,30 @@ module.exports = {
     'ADMIN-ACCESS_DASHBOARD': {
       controller: 'admin/dashboard',
       action: 'index'
+    },
+    'ADMIN-VIEW_TICKETS': {
+      controller: 'admin/ticket',
+      action: 'index'
+    },
+    'ADMIN-CLOSE_TICKET': {
+      controller: 'admin/ticket',
+      action: 'close'
+    },
+    'ADMIN-VIEW_TICKET': {
+      controller: 'admin/ticket',
+      action: 'view'
+    },
+    'ADMIN-EDIT_CATEGORY_TICKET': {
+      controller: 'admin/ticket',
+      action: 'editCategory'
+    },
+    'ADMIN-EDIT_STATE_TICKET': {
+      controller: 'admin/ticket',
+      action: 'editState'
+    },
+    'ADMIN-TAKE_TICKET': {
+      controller: 'admin/ticket',
+      action: 'take'
     }
   },
 
@@ -89,7 +113,7 @@ module.exports = {
     'MOD': [],
     'DEVELOPER': [],
     'MOD': [],
-    'ADMIN': ['ADMIN-ACCESS_DASHBOARD'],
+    'ADMIN': ['ADMIN-ACCESS_DASHBOARD', 'ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET'],
     'FOUNDER': ['*']
   }
 
