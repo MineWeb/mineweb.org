@@ -21,15 +21,15 @@ block content
                   .timeline-heading
                     h5.timeline-title #{users[reply.user].username}
                       if users[reply.user].role === 'DEVELOPER'
-                        span.tag.tag-danger.pull-right
+                        span.tag.tag-danger.pull-right(style="color:white;")
                           span.fa.fa-code
                           | &nbsp;#{__('Développeur')}
                       else if users[reply.user].role === 'MOD'
-                        span.tag.tag-warning.pull-right
+                        span.tag.tag-warning.pull-right(style="color:white;")
                           span.fa.fa-star
                           | &nbsp;#{__('Staff')}
                       else if users[reply.user].role === 'ADMIN' || users[reply.user].role === 'FOUNDER'
-                        span.tag.tag-danger.pull-right
+                        span.tag.tag-danger.pull-right(style="color:white;")
                           span.fa.fa-lock
                           | &nbsp;#{__('Administrateur')}
 

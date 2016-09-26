@@ -193,6 +193,13 @@ module.exports = {
           // remove pusbullet notification
           PushbulletService.delete('Ticket', ticket.id)
 
+          // send notification to user
+          MailService.send('support_new_staff_response', {
+            url: RouteService.getBaseUrl() + '/support/view/' + ticket.id,
+            username: ticket.user.username,
+            ticketTitle: ticket.title,
+          }, req.__('Réponse à votre ticket support'), ticket.user.email);
+
         })
 
       })
@@ -207,21 +214,40 @@ module.exports = {
 		}
 		var id = req.param('id')
 
-    Ticket.update({id: id}, {state: 'CLOSED'}).exec(function (err, ticketUpdated) {
+    Ticket.findOne({id: id}).exec(function (err, ticket) {
 
       if (err) {
         sails.log.error(err)
         return res.serverError()
       }
 
-      // send notification toastr
-      NotificationService.success(req, req.__('Vous avez bien fermé le ticket !'))
+      if (ticket === undefined)
+        return res.notFound()
 
-      // redirect
-      res.redirect('/admin/support/')
+      Ticket.update({id: id}, {state: 'CLOSED', closedDate: (new Date())}).exec(function (err, ticketUpdated) {
 
-      // remove pusbullet notification
-      PushbulletService.delete('Ticket', ticketUpdated[0].id)
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+
+        // send notification toastr
+        NotificationService.success(req, req.__('Vous avez bien fermé le ticket !'))
+
+        // redirect
+        res.redirect('/admin/support/')
+
+        // remove pusbullet notification
+        PushbulletService.delete('Ticket', ticketUpdated[0].id)
+
+        // send notification to user
+        MailService.send('support_staff_close', {
+          url: RouteService.getBaseUrl() + '/support/view/' + ticket.id,
+          username: ticket.user.username,
+          ticketTitle: ticket.title,
+        }, req.__('Fermeture de votre ticket support'), ticket.user.email);
+
+      })
 
     })
   },
