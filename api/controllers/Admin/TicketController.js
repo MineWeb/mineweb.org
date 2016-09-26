@@ -184,21 +184,26 @@ module.exports = {
             return res.serverError()
           }
 
-          res.json({
-            status: true,
-            msg: req.__('Votre réponse a bien été ajoutée !'),
-            inputs: {}
+          // Update state
+          Ticket.update({id: ticket.id}, {state: 'WAITING_USER_RESPONSE'}).exec(function (err, ticketUpdated) {
+
+            res.json({
+              status: true,
+              msg: req.__('Votre réponse a bien été ajoutée !'),
+              inputs: {}
+            })
+
+            // remove pusbullet notification
+            PushbulletService.delete('Ticket', ticket.id)
+
+            // send notification to user
+            MailService.send('support_new_staff_response', {
+              url: RouteService.getBaseUrl() + '/support/view/' + ticket.id,
+              username: ticket.user.username,
+              ticketTitle: ticket.title,
+            }, req.__('Réponse à votre ticket support'), ticket.user.email);
+
           })
-
-          // remove pusbullet notification
-          PushbulletService.delete('Ticket', ticket.id)
-
-          // send notification to user
-          MailService.send('support_new_staff_response', {
-            url: RouteService.getBaseUrl() + '/support/view/' + ticket.id,
-            username: ticket.user.username,
-            ticketTitle: ticket.title,
-          }, req.__('Réponse à votre ticket support'), ticket.user.email);
 
         })
 
