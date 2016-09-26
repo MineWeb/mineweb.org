@@ -61,25 +61,26 @@ block content
             h5 #{__('Liste des tickets fermés')}
           .ibox-content
             .project-list
-              table.table.table-hover
-                tbody
-                  each ticket in closedTickets
-                    tr
-                      td.project-status
-                        span.label.label-danger #{__('Fermé')}
-                      td.project-title
-                        a(href='/admin/support/' + ticket.id) #{ticket.title}
-                        br
-                        small.moment-date(fromNow) #{ticket.createdAt}
-                      td.project-completion
-                        b #{__('Date de fermeture')}&nbsp;
-                        span.moment-date(fromNow) #{ticket.closedDate}
-                      td.project-people
-                        img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
-                      td.project-actions
-                        a.btn.btn-outline.btn-info.btn-sm(href="/admin/support/" + ticket.id)
-                          i.fa.fa-eye
-                          | &nbsp;Voir
+              .table-responsive
+                table.table.table-hover
+                  tbody
+                    each ticket in closedTickets
+                      tr
+                        td.project-status
+                          span.label.label-danger #{__('Fermé')}
+                        td.project-title
+                          a(href='/admin/support/' + ticket.id) #{ticket.title}
+                          br
+                          small.moment-date(fromNow) #{ticket.createdAt}
+                        td.project-completion
+                          b #{__('Date de fermeture')}&nbsp;
+                          span.moment-date(fromNow) #{ticket.closedDate}
+                        td.project-people
+                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
+                        td.project-actions
+                          a.btn.btn-outline.btn-info.btn-sm(href="/admin/support/" + ticket.id)
+                            i.fa.fa-eye
+                            | &nbsp;Voir
 
 
 block custom

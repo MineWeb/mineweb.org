@@ -2,16 +2,13 @@ extends layouts/default
 
 block content
   .row.wrapper.border-bottom.white-bg.page-heading
-    .col-sm-4
+    .col-md-12
       h2 MineWeb.org
       ol.breadcrumb
         li
           a(href="/admin/dashboard") #{__('Accueil')}
         li.active
           strong #{__('Dashboard')}
-    .col-sm-8
-      .title-action
-        a.btn.btn-primary(href="/") #{__('Retourner sur mineweb.org')}
   .wrapper.wrapper-content
     .row
       .col-lg-3

@@ -98,13 +98,13 @@ module.exports = {
 
     var slug = request.params.slug;
     if (slug === undefined)
-      return res.notFound();
+      return response.notFound();
 
 	  Theme.find({ 'slug': slug }).populate('author').exec(function (err, results) {
-		  if (err) return res.serverError(err);
+		  if (err) return response.serverError(err);
 
       if (results.length == 0)
-        return res.notFound();
+        return response.notFound();
 
 			var versions = results[0]['versions']
 
@@ -209,13 +209,13 @@ module.exports = {
 
     var slug = request.params.slug;
     if (slug === undefined)
-      return res.notFound();
+      return response.notFound();
 
 	  Plugin.find({ 'slug': slug }).populate('author').exec(function (err, results) {
-		  if (err) return res.serverError(err);
+		  if (err) return response.serverError(err);
 
       if (results.length == 0)
-        return res.notFound();
+        return response.notFound();
 
 			// Handle version
 			var versions = results[0]['versions']
