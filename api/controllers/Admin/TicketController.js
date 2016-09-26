@@ -62,7 +62,7 @@ module.exports = {
 
       // find closedTickets
       function (callback) {
-        Ticket.find({state: 'CLOSED'}).populate(['user']).sort('id desc').limit(5).exec(function (err, tickets) {
+        Ticket.find({state: 'CLOSED'}).populate(['user']).sort('closedDate desc').limit(5).exec(function (err, tickets) {
           if (tickets !== undefined) {
             for (var i = 0; i < tickets.length; i++) {
               // md5 email for author
@@ -214,7 +214,7 @@ module.exports = {
 		}
 		var id = req.param('id')
 
-    Ticket.findOne({id: id}).exec(function (err, ticket) {
+    Ticket.findOne({id: id}).populate(['user']).exec(function (err, ticket) {
 
       if (err) {
         sails.log.error(err)
