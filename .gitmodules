@@ -1,4 +1,3 @@
 [submodule "api/models"]
 	path = api/models
 	url = git@github.com:vmarchaud/models.mineweb.org.git
-	branch = master
