@@ -1,0 +1,4 @@
+[submodule "src/db/models"]
+	path = src/db/models
+	url = git@github.com:vmarchaud/models.mineweb.org.git
+	branch = master
