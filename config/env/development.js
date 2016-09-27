@@ -109,14 +109,22 @@ module.exports = {
     'ADMIN-REPLY_TICKET': {
       controller: 'admin/ticket',
       action: 'reply'
+    },
+    'ADMIN-VIEW_SETTINGS': {
+      controller: 'admin/dashboard',
+      action: 'settings'
+    },
+    'ADMIN-UPDATE_SETTINGS': {
+      controller: 'admin/dashboard',
+      action: 'updateSettings'
     }
   },
 
   permissionsAccess: {
     'USER': [],
     'DEVELOPER': [],
-    'MOD': ['ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET'],
-    'ADMIN': ['ADMIN-ACCESS_DASHBOARD', 'ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET'],
+    'MOD': ['ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET', 'ADMIN-VIEW_SETTINGS', 'ADMIN-UPDATE_SETTINGS'],
+    'ADMIN': ['ADMIN-ACCESS_DASHBOARD', 'ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET', 'ADMIN-VIEW_SETTINGS', 'ADMIN-UPDATE_SETTINGS'],
     'FOUNDER': ['*']
   },
 
@@ -126,7 +134,7 @@ module.exports = {
         day: 'Bonjour,',
         night: 'Bonsoir,'
       },
-      signature: "Cordialement,\n{USERNAME}.\n{ROLENAME}"
+      signature: "Cordialement,<br>{USERNAME}.<br>{ROLENAME}"
     }
   }
 

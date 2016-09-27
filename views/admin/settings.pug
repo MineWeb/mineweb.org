@@ -1,0 +1,38 @@
+extends ./layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__('Vos paramètres staff')}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Paramètres')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+
+        .ibox.float-e-margins
+          .ibox-title
+              h5 #{__('Vos paramètres')}
+                small #{__("Ne sont valide que pour l'espace admin du site")}
+          .ibox-content
+            form.form-horizontal(method='post', action="/admin/settings", data-ajax)
+              .form-group
+                label.col-sm-2.control-label #{__('Votre email Pushbullet')}
+                .col-sm-10
+                  input.form-control(type='email', name="pushbulletEmail", value=user.pushbulletEmail, data-form-no-display-error)
+                  span.help-block.m-b-none #{__("Cela vous permet de recevoir des notifications lors de la création de nouveaux tickets sur le support, d'ajout de réponse à un ticket...")}
+              .hr-line-dashed
+              .form-group
+                label.col-sm-2.control-label #{__('Nom de rôle customisé')}
+                .col-sm-10
+                  input.form-control(type='text', name="customRoleName", value=user.customRoleName, placeholder="Ex: Support chez MineWeb.org", data-form-no-display-error)
+                  span.help-block.m-b-none #{__('Vous pouvez entrer ici le nom de votre rôle si vous souhaitez le changer (il est affiché automatiquement en signature quand vous répondez à un ticket sur le support), par défaut, il sera affiché : %s', defaultRoleName)}
+              .hr-line-dashed
+              .form-group
+                .col-sm-4.col-sm-offset-2
+                  button.btn.btn-primary(type='submit')
+                    i.fa.fa-save
+                    | &nbsp;#{__('Sauvegarder les changements')}

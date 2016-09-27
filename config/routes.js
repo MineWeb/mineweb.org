@@ -162,6 +162,8 @@ module.exports.routes = {
   ***************************************************************************/
 
     '/admin/dashboard': 'Admin/DashboardController.index',
+    'get /admin/settings': 'Admin/DashboardController.settings',
+    'post /admin/settings': 'Admin/DashboardController.updateSettings',
 
     '/admin/support': 'Admin/TicketController.index',
     '/admin/support/:id': 'Admin/TicketController.view',

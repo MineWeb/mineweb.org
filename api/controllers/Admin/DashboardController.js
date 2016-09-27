@@ -280,6 +280,54 @@ module.exports = {
 
     })
 
+  },
+
+  settings: function (req, res) {
+
+    // get user role name by default
+    if (res.locals.user.role === 'DEVELOPER')
+      var defaultRoleName = req.__('Développeur')
+    else if (res.locals.user.role === 'MOD')
+      var defaultRoleName = req.__('Staff')
+    else if (res.locals.user.role === 'ADMIN' || res.locals.user.role === 'FOUNDER')
+      var defaultRoleName = req.__('Administrateur')
+
+    res.view('admin/settings', {
+      defaultRoleName: defaultRoleName,
+      title: req.__('Paramètres')
+    })
+  },
+
+  updateSettings: function (req, res) {
+    // Handle form values
+    RequestManagerService.setRequest(req).setResponse(res).valid({
+      "Vous devez choisir un email Pushbullet valide !": [
+				{
+					field: 'pushbulletEmail',
+					regex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+					error: "Cet email n'a pas un format valide."
+				}
+			],
+    }, function () {
+
+      // save
+      User.update({id: req.session.userId}, {pushbulletEmail: req.body.pushbulletEmail, customRoleName: req.body.customRoleName}).exec(function (err, userUpdated) {
+
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+
+        // send success response
+        res.json({
+          status: true,
+          msg: req.__('Vous avez bien modifié vos paramètres !'),
+          inputs: {}
+        })
+
+      })
+
+    })
   }
 
 }
