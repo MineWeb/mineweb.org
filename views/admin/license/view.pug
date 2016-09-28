@@ -1,0 +1,235 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__("Détails d'une licence")}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Recherche')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Informations principales')}
+            .ibox-content
+              form.form-horizontal
+
+                .row
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__('ID de la licence')}
+                      .col-sm-10
+                        input.form-control(type='text', value=license.id, disabled)
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__("Clé d'activation")}
+                      .col-sm-10
+                        input.form-control(type='text', value=license.key, disabled)
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__('Propriétaire')}
+                      .col-sm-10
+                        .input-group
+                          span.input-group-addon ID: #{license.user.id}
+                          input.form-control(type='text', value=license.user.username, disabled)
+                          .input-group-btn
+                            a.btn.btn-info(href='/admin/user/view/' + license.user.id) #{__("Voir l'utilisateur")}
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__('URL de la licence')}
+                      .col-sm-10
+                        input.form-control(type='text', value=license.host, disabled)
+                  .col-md-6
+                    div.row
+                      div.col-md-6.text-center
+                        .form-group
+                          label.control-label #{__('SecretKey')}
+                          p.form-control-static
+                            if (license.secretKey)
+                              span.label.label-primary(style='font-size: 12px;cursor:pointer;', data-toggle="popover", data-placement="top", data-content=license.secretKey) #{__('Générée')}
+                            else
+                              span.label.label-danger(style='font-size: 12px;') #{__('Non générée')}
+                      div.col-md-6.text-center
+                        .form-group
+                          label.control-label #{__('Statut')}
+                          p.form-control-static
+                            if (license.state)
+                              span.label.label-primary(style='font-size: 12px;') #{__('Activée')}
+                            else
+                              span.label.label-danger(style='font-size: 12px;') #{__('Désactivée')}
+                  unless license.suspended
+                    .col-md-6.text-center
+                      a.btn.btn-outline.btn-warning#suspend(href='/admin/license/suspend/' + license.id) #{__('Je veux suspendre cette licence')}
+
+        if license.suspended
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-content
+                div.row
+                  div.col-md-10
+                    .alert.alert-warning
+                      strong #{__('Cette licence est désactivée !')}
+                      | &nbsp;"<em>#{license.suspended}</em>"
+                  div.col-md-2.text-center
+                    a.btn.btn-outline.btn-primary(href='/admin/license/unsuspend/' + license.id) #{__('Je veux réactiver cette licence')}
+
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Paiement')}
+            .ibox-content
+              if (license.purchase.paymentType === 'FREE' || !payment)
+                .alert.alert-warning #{__('Cette licence a été obtenue gratuitement (ajout manuel ou code promotionnel du prix total de la licence).')}
+              else
+                .table-responsive
+                  table.table.table-hover.no-margins(style="font-size: 13px;")
+                    thead
+                      tr
+                        th #{__('Type de paiement')}
+                        th #{__("ID de l'achat")}
+                        th #{__("ID du paiement")}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          th #{__('ID de la transaction PayPal')}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          th #{__("Montant payé par l'utilisateur")}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          th #{__("Taxes payée par l'utilisateur")}
+                        th #{__('Montant reçu')}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          th #{__("Email PayPal de l'utilisateur")}
+                        if license.purchase.paymentType === 'DEDIPASS'
+                          th #{__("Code utilisé par l'utilisateur")}
+                        if license.purchase.paymentType === 'DEDIPASS'
+                          th #{__("Palier utilisé par l'utilisateur")}
+                        th #{__("Date du paiement")}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          th #{__('Statut du paiement')}
+                        if license.purchase.paymentType === 'PAYPAL' && payment.reversedReason
+                          th #{__('Raison du litige')}
+                        if license.purchase.paymentType === 'PAYPAL' && payment.caseDate
+                          th #{__('Date du litige')}
+                        if license.purchase.paymentType === 'PAYPAL' && payment.refundDate
+                          th #{__('Date du remboursement')}
+                        th #{__('Dernière mise à jour du paiement')}
+                    tbody
+                      tr
+                        td #{license.purchase.paymentType === 'PAYPAL' ? 'PayPal' : 'Dédipass'}
+                        td #{license.purchase.id}
+                        td #{payment.id}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          td #{payment.paymentId}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          td.text-info #{payment.paymentAmount} €
+                        if license.purchase.paymentType === 'PAYPAL'
+                          td.text-danger #{payment.taxAmount} €
+                        td.text-success
+                          if license.purchase.paymentType === 'PAYPAL'
+                            | #{payment.paymentAmount - payment.taxAmount} €
+                          else
+                            | #{payment.payout} €
+                        if license.purchase.paymentType === 'PAYPAL'
+                          td #{payment.buyerEmail}
+                        if license.purchase.paymentType === 'DEDIPASS'
+                          td #{payment.code}
+                        if license.purchase.paymentType === 'DEDIPASS'
+                          td #{payment.rate}
+                        td
+                          span.fa.fa-calendar
+                          | &nbsp;
+                          if license.purchase.paymentType === 'PAYPAL'
+                            span.moment-date(data-format="Le {L} à {LT}") #{payment.paymentDate}
+                          else
+                            span.moment-date(data-format="Le {L} à {LT}") #{payment.createdAt}
+                        if license.purchase.paymentType === 'PAYPAL'
+                          td
+                            if payment.state === 'COMPLETED'
+                              span.label.label-success #{__('Complété')}
+                            else if payment.state === 'PENDING'
+                              span.label.label-warning #{__('En attente')}
+                            else if payment.state === 'REVERSED'
+                              span.label.label-warning #{__('Suspendu')}
+                            else if payment.state === 'REFUNDED'
+                              span.label.label-danger #{__('Remboursé')}
+                            else if payment.state === 'FAILED'
+                              span.label.label-danger #{__('Échoué')}
+                        if license.purchase.paymentType === 'PAYPAL' && payment.reversedReason
+                          td #{payment.reversedReason}
+                        if license.purchase.paymentType === 'PAYPAL' && payment.caseDate
+                          td
+                            span.fa.fa-calendar
+                            | &nbsp;
+                            span.moment-date(data-format="Le {L} à {LT}") #{payment.caseDate}
+                        if license.purchase.paymentType === 'PAYPAL' && payment.refundDate
+                          td
+                            span.fa.fa-calendar
+                            | &nbsp;
+                            span.moment-date(data-format="Le {L} à {LT}") #{payment.refundDate}
+                        td
+                          span.fa.fa-calendar
+                          | &nbsp;
+                          span.moment-date(data-format="Le {L} à {LT}") #{payment.updatedAt}
+
+        h3 Doit être affiché :
+        ul
+          li.bg-success ID de la licence ✓
+          li.bg-success Acheteur de la licence (pseudo et id) avec lien vers /admin/user/view/:id ✓
+          li.bg-success Clé d'activation ✓
+          li.bg-success Statut (si suspendu, raison de la suspension) ✓
+          li.bg-success bouton de suspension ✓
+          li bouton pour récupérer le débug
+          li.bg-success Host ✓
+          li.bg-success secretkey générée ou non (tag-success/tag-danger) + tooltip pour la voir ✓
+          li.bg-success affichage du paiement dans une table avec toutes les infos le concernant ✓
+            ul
+              li.bg-success type (paypal/dedipass/free) ✓
+              li.bg-success [PAYPAL] paymentId ✓
+              li.bg-success [PAYPAL] amount ✓
+              li.bg-success [PAYPAL] tax ✓
+              li.bg-success payout ✓
+              li.bg-success [PAYPAL] buyer email ✓
+              li.bg-success [DEDIPASS] code ✓
+              li.bg-success [DEDIPASS] rate ✓
+              li.bg-success paymentDate ✓
+              li.bg-success [PAYPAL] state ✓
+              li.bg-success (optionnel) [PAYPAL] raison du litige (reversedReason) ✓
+              li.bg-success (optionnel) [PAYPAL] date du litige ✓
+              li.bg-success (optionnel) [PAYPAL] date de remboursement ✓
+              li.bg-success dernière update du paiment ✓
+          li logs de l'api (action, statut, données envoyées)
+            ul
+              li Check
+              li get secret key
+              li get plugin
+              li get theme
+              li get update
+
+block cssCustom
+  style.
+    .popover {
+      max-width: 300px;
+    }
+block custom
+  script(type='text/javascript').
+    $(document).ready(function() {
+      $("[data-toggle=popover]").each(function(e) {
+        $(this).popover()
+      })
+    })
+
+    $('#suspend').click(function(e) {
+      e.preventDefault()
+
+      var reason = prompt("#{__('Entrez une raison de suspension')}", "Non respect du copyright")
+
+      if (reason != null) {
+        var href = $(this).attr('href')
+        window.location = href+'/'+encodeURIComponent(reason)
+      }
+
+    })

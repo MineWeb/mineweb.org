@@ -172,6 +172,16 @@ module.exports.routes = {
     '/admin/support/edit-category/:id': 'Admin/TicketController.editCategory',
     '/admin/support/edit-state/:id': 'Admin/TicketController.editState',
 
-    'post /admin/support/reply/:id': 'Admin/TicketController.reply'
+    'post /admin/support/reply/:id': 'Admin/TicketController.reply',
+
+    '/admin/license/view/:id': 'Admin/LicenseController.view',
+    '/admin/license/suspend/:id/:reason': 'Admin/LicenseController.suspend',
+    '/admin/license/unsuspend/:id': 'Admin/LicenseController.unsuspend',
+    '/admin/license/get-debug/:id': 'Admin/LicenseController.getDebug',
+
+    'get /admin/license/find': 'Admin/LicenseController.findPage',
+    'get /admin/hosting/find': 'Admin/LicenseController.findPage',
+    'post /admin/license/find': 'Admin/LicenseController.find',
+    'post /admin/hosting/find': 'Admin/HostingController.find',
 
 };

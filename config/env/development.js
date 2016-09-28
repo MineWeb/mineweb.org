@@ -117,14 +117,66 @@ module.exports = {
     'ADMIN-UPDATE_SETTINGS': {
       controller: 'admin/dashboard',
       action: 'updateSettings'
+    },
+    'ADMIN-FIND_LICENSE_OR_HOSTING': {
+      controller: 'admin/license',
+      action: 'findPage'
+    },
+    'ADMIN-FIND_LICENSE': {
+      controller: 'admin/license',
+      action: 'find'
+    },
+    'ADMIN-FIND_HOSTING': {
+      controller: 'admin/hosting',
+      action: 'find'
+    },
+    'ADMIN-SUSPEND_LICENSE': {
+      controller: 'admin/license',
+      action: 'suspend'
+    },
+    'ADMIN-UNSUSPEND_LICENSE': {
+      controller: 'admin/license',
+      action: 'unsuspend'
     }
   },
 
   permissionsAccess: {
     'USER': [],
     'DEVELOPER': [],
-    'MOD': ['ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET', 'ADMIN-VIEW_SETTINGS', 'ADMIN-UPDATE_SETTINGS'],
-    'ADMIN': ['ADMIN-ACCESS_DASHBOARD', 'ADMIN-VIEW_TICKETS', 'ADMIN-CLOSE_TICKET', 'ADMIN-VIEW', 'ADMIN-EDIT_CATEGORY_TICKET', 'ADMIN-EDIT_STATE_TICKET', 'ADMIN-TAKE_TICKET', 'ADMIN-REPLY_TICKET', 'ADMIN-VIEW_SETTINGS', 'ADMIN-UPDATE_SETTINGS'],
+    'MOD': [
+      // 'ADMIN-ACCESS_DASHBOARD',
+      'ADMIN-VIEW_TICKETS',
+      'ADMIN-CLOSE_TICKET',
+      'ADMIN-VIEW',
+      'ADMIN-EDIT_CATEGORY_TICKET',
+      'ADMIN-EDIT_STATE_TICKET',
+      'ADMIN-TAKE_TICKET',
+      'ADMIN-REPLY_TICKET',
+      'ADMIN-VIEW_SETTINGS',
+      'ADMIN-UPDATE_SETTINGS',
+      'ADMIN-FIND_LICENSE_OR_HOSTING',
+      'ADMIN-FIND_LICENSE',
+      'ADMIN-FIND_HOSTING',
+      //'ADMIN-SUSPEND_LICENSE',
+      //'ADMIN-UNSUSPEND_LICENSE'
+    ],
+    'ADMIN': [
+      'ADMIN-ACCESS_DASHBOARD',
+      'ADMIN-VIEW_TICKETS',
+      'ADMIN-CLOSE_TICKET',
+      'ADMIN-VIEW',
+      'ADMIN-EDIT_CATEGORY_TICKET',
+      'ADMIN-EDIT_STATE_TICKET',
+      'ADMIN-TAKE_TICKET',
+      'ADMIN-REPLY_TICKET',
+      'ADMIN-VIEW_SETTINGS',
+      'ADMIN-UPDATE_SETTINGS',
+      'ADMIN-FIND_LICENSE_OR_HOSTING',
+      'ADMIN-FIND_LICENSE',
+      'ADMIN-FIND_HOSTING',
+      'ADMIN-SUSPEND_LICENSE',
+      'ADMIN-UNSUSPEND_LICENSE'
+    ],
     'FOUNDER': ['*']
   },
 
