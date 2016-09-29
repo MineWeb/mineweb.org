@@ -29,7 +29,7 @@ module.exports = {
 		var data = {
 			from: 'MineWeb <no-reply@mineweb.org>',
 			to: target,
-			subject: title,
+			subject: title + ' | MineWeb',
 			html: html
 		}
 

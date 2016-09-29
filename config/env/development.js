@@ -137,6 +137,10 @@ module.exports = {
     'ADMIN-UNSUSPEND_LICENSE': {
       controller: 'admin/license',
       action: 'unsuspend'
+    },
+    'ADMIN-GET_DEBUG_LICENSE': {
+      controller: 'admin/license',
+      action: 'getDebug'
     }
   },
 
@@ -158,7 +162,8 @@ module.exports = {
       'ADMIN-FIND_LICENSE',
       'ADMIN-FIND_HOSTING',
       //'ADMIN-SUSPEND_LICENSE',
-      //'ADMIN-UNSUSPEND_LICENSE'
+      //'ADMIN-UNSUSPEND_LICENSE',
+      'ADMIN-GET_DEBUG_LICENSE'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -175,7 +180,8 @@ module.exports = {
       'ADMIN-FIND_LICENSE',
       'ADMIN-FIND_HOSTING',
       'ADMIN-SUSPEND_LICENSE',
-      'ADMIN-UNSUSPEND_LICENSE'
+      'ADMIN-UNSUSPEND_LICENSE',
+      'ADMIN-GET_DEBUG_LICENSE'
     ],
     'FOUNDER': ['*']
   },

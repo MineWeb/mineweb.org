@@ -6,6 +6,7 @@
  */
 
 var async = require('async')
+var request = require('request')
 
 module.exports = {
 
@@ -134,7 +135,25 @@ module.exports = {
         res.view('admin/license/view', {
           title: req.__("Détails d'une licence"),
           payment: payment,
-          license: license
+          license: license,
+          lastCheckDate: (Date.now() - 60 * 60 * 60), // TODO
+          apiLogs: [ // TODO
+            {
+              apiVersion: 2,
+              action: 'CHECK',
+              date: new Date(Date.now()),
+              status: true,
+              data: '{"id":1,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://update.craftwb.fr"}'
+            },
+            {
+              apiVersion: 1,
+              action: 'GET_SECRET_KEY',
+              date: new Date(Date.now()),
+              status: false,
+              errorMessage: 'Unknown license',
+              data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
+            }
+          ]
         })
 
       }
@@ -236,6 +255,88 @@ module.exports = {
           licenseId: license.id,
           licenseHost: license.host
         }, req.__('Réactivation de votre licence'), license.user.email)
+
+      })
+
+    })
+  },
+
+  getDebug: function (req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
+
+    // find
+    License.findOne({id: id}).exec(function (err, license) {
+
+      // error
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      // not found
+      if (license === undefined)
+        return res.notFound()
+
+      if (!license.host) {
+        return res.json({
+          status: false,
+          msg: req.__("La licence n'est pas installée")
+        })
+      }
+
+      // request
+      request.post(
+      {
+        url: license.host,
+        form: {
+          call: 'api',
+          key: license.key,
+          isForDebug: true,
+          usersWanted: false
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        followAllRedirects: true
+      },
+      function (err, httpResponse, body){
+
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+
+        // error
+        if (httpResponse.statusCode !== 200) {
+          return res.json({
+            status: false,
+            msg: req.__("La licence a retournée un code HTTP non valide ("+httpResponse.statusCode+")")
+          })
+        }
+
+        // decode
+        try {
+          var debug = JSON.parse(body)
+        } catch (e) {
+          sails.log.error(e)
+          return res.json({
+            status: false,
+            msg: req.__("La licence n'a pas retournée de ressource au format JSON.")
+          })
+        }
+
+        // send
+        return res.json({
+          status: true,
+          msg: req.__("La licence a bien transféré les informations de débug !"),
+          data: {
+            debug: debug
+          }
+        })
 
       })
 
