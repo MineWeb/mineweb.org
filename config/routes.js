@@ -184,4 +184,9 @@ module.exports.routes = {
     'post /admin/license/find': 'Admin/LicenseController.find',
     'post /admin/hosting/find': 'Admin/HostingController.find',
 
+
+    'get /admin/user/find': 'Admin/UserController.findPage',
+    'post /admin/user/find': 'Admin/UserController.find',
+    '/admin/user/view/:id': 'Admin/UserController.view'
+
 };

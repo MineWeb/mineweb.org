@@ -1,0 +1,62 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__('Chercher un utilisateur')}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Recherche')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+
+        .ibox.float-e-margins
+          .ibox-title
+              h5 #{__('Entrez les informations recherchées')}
+          .ibox-content
+            form.form-horizontal(method='post', action="/admin/user/find", data-ajax, data-custom-callback="afterFinded")
+
+              .form-group
+                label.col-sm-2.control-label #{__("ID de l'utilisateur")}
+                .col-sm-10
+                  input.form-control(type='text', name="id", data-form-no-display-error)
+
+              .hr-line-dashed
+
+              .form-group
+                label.col-sm-2.control-label #{__('Pseudo')}
+                .col-sm-10
+                  input.form-control(type='text', name="username", data-form-no-display-error)
+
+              .hr-line-dashed
+
+              .form-group
+                label.col-sm-2.control-label #{__("Email")}
+                .col-sm-10
+                  input.form-control(type='email', name="email", data-form-no-display-error)
+
+              .hr-line-dashed
+
+              .form-group
+                label.col-sm-2.control-label #{__("IP")}
+                .col-sm-10
+                  input.form-control(type='text', name="ip", data-form-no-display-error)
+
+              .hr-line-dashed
+
+              .form-group
+                .col-sm-4.col-sm-offset-2
+                  button.btn.btn-primary(type='submit')
+                    i.fa.fa-search
+                    | &nbsp;#{__('Rechercher')}
+
+block custom
+  script(type="text/javascript").
+
+    function afterFinded (form, json) {
+      document.location = '/admin/user/view/' + json.data.user.id
+      return false
+    }
