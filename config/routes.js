@@ -44,6 +44,10 @@ module.exports.routes = {
     '/purchase/hosting': 'StaticController.rentHosting',
     '/hosting/renew/:id': 'StaticController.rentHosting',
 
+
+    '/legal/conditions' : { view: 'legal/conditions', locals: {title: 'CGV'} },
+    '/legal/cgu' : { view: 'legal/cgu', locals: {title: 'CGU'} },
+
   /*
     PURCHASE
   */
@@ -187,6 +191,13 @@ module.exports.routes = {
 
     'get /admin/user/find': 'Admin/UserController.findPage',
     'post /admin/user/find': 'Admin/UserController.find',
-    '/admin/user/view/:id': 'Admin/UserController.view'
+    '/admin/user/view/:id': 'Admin/UserController.view',
+
+    '/admin/hosting/view/:id': 'Admin/HostingController.view',
+    '/admin/hosting/suspend/:id/:reason': 'Admin/HostingController.suspend',
+    '/admin/hosting/unsuspend/:id': 'Admin/HostingController.unsuspend',
+    '/admin/hosting/get-debug/:id': 'Admin/HostingController.getDebug'
+    //'/admin/hosting/get-sql-dump/:id': 'Admin/HostingController.getSQLDump',
+    //'/admin/hosting/get-logs/:id': 'Admin/HostingController.getLogs'
 
 };

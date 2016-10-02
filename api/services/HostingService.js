@@ -1,6 +1,7 @@
 var async  = require('async')
 var moment = require('moment')
 var exec = require('ssh-exec')
+var uuid = require('node-uuid')
 
 module.exports = {
 
@@ -133,6 +134,80 @@ module.exports = {
 
     })
   },
+
+  /*getLogs: function (hosting, next) {
+    var id = (sails.config.environment === 'production') ? hosting.id : ('dev-' + hosting.id)
+
+    if (next === undefined)
+      var next = function () {}
+
+    async.parallel([
+
+      function (callback) {
+        exec('cat /home/mineweb/user_dev-' + id + '/app/tmp/logs/error.log', {
+          user: sails.config.servers.hosting.user,
+          host: sails.config.servers.hosting.host,
+          port: sails.config.servers.hosting.port,
+          password: sails.config.servers.hosting.password
+        }, function (err, stdout, stderr) {
+          callback(err, stdout)
+        }}
+      },
+
+      function (callback) {
+        exec('cat /home/mineweb/user_dev-' + id + '/error.log', {
+          user: sails.config.servers.hosting.user,
+          host: sails.config.servers.hosting.host,
+          port: sails.config.servers.hosting.port,
+          password: sails.config.servers.hosting.password
+        }, function (err, stdout, stderr) {
+          callback(err, stdout)
+        }}
+      },
+
+      function (callback) {
+        exec('cat /home/mineweb/user_dev-' + id + '/access.log', {
+          user: sails.config.servers.hosting.user,
+          host: sails.config.servers.hosting.host,
+          port: sails.config.servers.hosting.port,
+          password: sails.config.servers.hosting.password
+        }, function (err, stdout, stderr) {
+          callback(err, stdout)
+        }}
+      }
+
+    ], function (err, logs) {
+
+      if (err)
+        sails.log.error(err)
+
+      next(err, {
+        'app/tmp/logs/error.log': logs[0],
+        'error.log': logs[1],
+        'access.log': logs[2]
+      })
+    })
+  },
+
+  getSQLDump: function (hosting, next) {
+    var id = (sails.config.environment === 'production') ? hosting.id : ('dev-' + hosting.id)
+
+    if (next === undefined)
+      var next = function () {}
+
+    var date = d.getDate() + '-' + d.getMonth() + '-' + d.getFullYear() + '_' + d.getHours() + '-' + d.getMinutes()
+    var sql_file = '/var/www/sql/' + uuid.v4() + '-' + hosting.id + '/' + date + '.sql'
+
+    // dump
+    exec('cp /home/mineweb/user_dev-' + id + '/app/tmp/logs/error.log', {
+      user: sails.config.servers.hosting.user,
+      host: sails.config.servers.hosting.host,
+      port: sails.config.servers.hosting.port,
+      password: sails.config.servers.hosting.password
+    }, function (err, stdout, stderr) {
+      callback(err, stdout)
+    }}
+  },*/
 
   checkEnded: function () { // Called all days at 12h
 

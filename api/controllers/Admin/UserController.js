@@ -6,6 +6,7 @@
  */
 
 var async = require('async')
+var moment = require('moment')
 
 module.exports = {
 
@@ -121,7 +122,8 @@ module.exports = {
         title: req.__("Détails d'un utilisateur"),
         userFinded: user,
         userTickets: (results[3] !== undefined) ? results[3] : [],
-        connectionLogs: (results[2] !== undefined) ? results[2] : []
+        connectionLogs: (results[2] !== undefined) ? results[2] : [],
+        moment: moment
       })
 
     })

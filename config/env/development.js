@@ -154,10 +154,34 @@ module.exports = {
       controller: 'admin/user',
       action: 'find'
     },
-    'ADMIN-VIEW': {
+    'ADMIN-VIEW_USER': {
       controller: 'admin/user',
       action: 'view'
-    }
+    },
+    'ADMIN-VIEW_HOSTING': {
+      controller: 'admin/hosting',
+      action: 'view'
+    },
+    'ADMIN-SUSPEND_HOSTING': {
+      controller: 'admin/hosting',
+      action: 'suspend'
+    },
+    'ADMIN-UNSUSPEND_HOSTING': {
+      controller: 'admin/hosting',
+      action: 'unsuspend'
+    },
+    'ADMIN-GET_DEBUG_HOSTING': {
+      controller: 'admin/hosting',
+      action: 'getDebug'
+    },
+    'ADMIN-GET_LOGS_HOSTING': {
+      controller: 'admin/getLogs',
+      action: 'getDebug'
+    },
+    'ADMIN-GET_SQL_DUMP_HOSTING': {
+      controller: 'admin/hosting',
+      action: 'getSQLDump'
+    },
   },
 
   permissionsAccess: {
@@ -183,7 +207,13 @@ module.exports = {
       'ADMIN-VIEW_LICENSE',
       'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
-      'ADMIN-VIEW'
+      'ADMIN-VIEW_USER',
+      'ADMIN-VIEW_HOSTING',
+      'ADMIN-SUSPEND_HOSTING',
+      'ADMIN-UNSUSPEND_HOSTING',
+      'ADMIN-GET_DEBUG_HOSTING',
+      'ADMIN-GET_LOGS_HOSTING',
+      //'ADMIN-GET_SQL_DUMP_HOSTING'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -205,7 +235,13 @@ module.exports = {
       'ADMIN-VIEW_LICENSE',
       'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
-      'ADMIN-VIEW'
+      'ADMIN-VIEW_USER',
+      'ADMIN-VIEW_HOSTING',
+      'ADMIN-SUSPEND_HOSTING',
+      'ADMIN-UNSUSPEND_HOSTING',
+      'ADMIN-GET_DEBUG_HOSTING',
+      'ADMIN-GET_LOGS_HOSTING',
+      'ADMIN-GET_SQL_DUMP_HOSTING'
     ],
     'FOUNDER': ['*']
   },

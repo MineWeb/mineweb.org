@@ -183,6 +183,92 @@ block content
         .col-md-12
           .ibox.float-e-margins
             .ibox-title
+              h4 #{__('Ses licences')}
+            .ibox-content
+              div.table-responsive
+                table.table(style="font-size: 13px;")
+                  thead
+                    tr
+                      th ID
+                      th #{__("ID de l'achat")}
+                      th #{__('Site')}
+                      th #{__("Clé d'activation")}
+                      th #{__('Statut')}
+                      th #{__("Date d'achat")}
+                  tbody
+                    each license in userFinded.licenses
+                      tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
+                        td
+                          a(href="/admin/license/view" + license.id) #{license.id}
+                        td #{license.purchase}
+                        td.licenseHost(data-license-id=license.id)
+                          if license.host != null && license.host.length > 0
+                            a(href=license.host, target='_blank')
+                              | #{license.host}
+                          else
+                            em #{__('Licence non installée')}
+                        td #{license.key}
+                        td.licenseState(data-license-id=license.id)
+                          if license.state
+                            span.label.label-primary #{__('Activée')}
+                          else
+                            span.label.label-danger #{__('Désactivée')}
+                        td.moment-date(data-format=__('Le {L} à {LT}')) #{license.createdAt}
+                        if license.suspended !== null
+                          tr(style="position: absolute;margin-top: -112px;")
+                            td(style='border-top: none;')
+                              h3.text-danger(style="opacity:1;")
+                                | #{__('Licence désactivée pour :')} #{license.suspended}
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Ses hébergements')}
+            .ibox-content
+              div.table-responsive
+                table.table(style="font-size: 13px;")
+                  thead
+                    tr
+                      th ID
+                      th #{__("ID de l'achat")}
+                      th #{__('Site')}
+                      th #{__("Clé d'activation")}
+                      th #{__('Statut')}
+                      th #{__("Date d'expiration")}
+                      th #{__("Date d'achat")}
+                  tbody
+                    each hosting in userFinded.hostings
+                      tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
+                        td
+                          a(href="/admin/hosting/view" + hosting.id) #{hosting.id}
+                        td #{hosting.purchase}
+                        td.hostingHost(data-host-id=hosting.id)
+                          if hosting.hostType === 'SUBDOMAIN'
+                             a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
+                               | http://#{hosting.host}.craftwb.fr
+                          else
+                            a(href='http://'+hosting.host, target='_blank')
+                              | http://#{hosting.host}
+                        td #{hosting.key}
+                        td
+                          if hosting.state
+                            span.label.label-primary #{__('Activé')}
+                          else
+                            span.label.label-danger #{__('Désactivé')}
+                        td
+                          // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
+                          if (moment(hosting.endDate).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
+                            span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                          else
+                            span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                        td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
+                      if hosting.suspended !== null
+                        tr(style="position: absolute;margin-top: -112px;")
+                          td(style='border-top: none;')
+                            h3.text-danger(style="opacity:1;")
+                              | #{__('Hébergement désactivé pour :')} #{hosting.suspended}
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
               h4 #{__('Achats de plugins')}
             .ibox-content
               .table-responsive
@@ -213,7 +299,6 @@ block content
                             span.label.label-primary #{__('Actif')}
                           else
                             span.label.label-danger #{__('Désactivé')}
-        .col-md-12
           .ibox.float-e-margins
             .ibox-title
               h4 #{__('Achats de thèmes')}
