@@ -808,26 +808,14 @@ module.exports = {
 					// save purchase
 					PurchaseService.buy({
 						userId: req.session.userId,
-						offerType: offer.toUpperCase(),
+						offerType: 'HOSTING',
 						host: custom,
 						paymentType: 'FREE'
 					}, function (success, purchaseId, itemId) {
 
 						if (success) {
 
-							// set voucher at used
-							Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offer.toUpperCase(), itemId: itemId}).exec(function (err, voucher) {
-
-								if (err) {
-									sails.log.error(err)
-									return res.serverError('An error occured on voucher update')
-								}
-
-								// Redirect on profile with notification
-								NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
-								res.redirect('/user/profile')
-
-							})
+							saveAndRender('HOSTING', itemId)
 
 						}
 						else {
@@ -837,33 +825,59 @@ module.exports = {
 					})
 				})
 			}
-			else {
+			else if (offer == 'license') {
 				// save purchase
 				PurchaseService.buy({
 					userId: req.session.userId,
-					offerType: offer.toUpperCase(),
+					offerType: 'LICENSE',
 					host: custom,
 					paymentType: 'FREE'
 				}, function (success, purchaseId, itemId) {
 
 					if (success) {
-						// set voucher at used
-						Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: offer.toUpperCase(), itemId: itemId}).exec(function (err, voucher) {
 
-							if (err) {
-								sails.log.error(err)
-								return res.serverError('An error occured on voucher update')
-							}
+						saveAndRender('LICENSE', itemId)
 
-							// Redirect on profile with notification
-							NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
-							res.redirect('/user/profile')
-
-						})
 					}
 					else {
 						return res.serverError('An error occured on purchase')
 					}
+
+				})
+			}
+			else {
+				// save purchase
+				PurchaseService.buy({
+					userId: req.session.userId,
+					offerType: offer.toUpperCase(),
+					offerId: custom,
+					paymentType: 'FREE'
+				}, function (success, purchaseId, itemId) {
+
+					if (success) {
+
+						saveAndRender(offer.toUpperCase(), itemId)
+
+					}
+					else {
+						return res.serverError('An error occured on purchase')
+					}
+
+				})
+			}
+
+			function saveAndRender(itemType, itemId) {
+				// set voucher at used
+				Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: itemType, itemId: itemId}).exec(function (err, voucher) {
+
+					if (err) {
+						sails.log.error(err)
+						return res.serverError('An error occured on voucher update')
+					}
+
+					// Redirect on profile with notification
+					NotificationService.success(req, req.__('Vous avez bien payé et reçu votre produit !'))
+					res.redirect('/user/profile')
 
 				})
 			}

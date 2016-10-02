@@ -81,9 +81,6 @@ block content
                             span.label.label-primary(style="font-size:13px") #{__('OUI')}
                           else
                             span.label.label-danger(style="font-size:13px") #{__('NON')}
-
-
-
         .col-md-12
           .ibox.float-e-margins
             .ibox-title
@@ -249,8 +246,95 @@ block content
                             span.label.label-primary #{__('Actif')}
                           else
                             span.label.label-danger #{__('Désactivé')}
-
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Connexion')}
+            .ibox-content
+              .table-responsive
+                table.table.table-hover.no-margins.dataTable(style="font-size: 13px;")
+                  thead
+                    tr
+                      th #{__('Date de la connexion')}
+                      th #{__('Adresse IP de connexion')}
+                  tbody
+                    each connection in connectionLogs
+                      tr
+                        td.moment-date(data-format='Le {L} à {LT}') #{connection.createdAt}
+                        td #{connection.ip}
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Ses tickets supports')}
+            .ibox-content
+              .project-list
+                .table-responsive
+                  table.table.table-hover
+                    tbody
+                      each ticket in userTickets
+                        tr
+                          td.project-status
+                            if ticket.state === 'WAITING_STAFF_RESPONSE'
+                              span.label.label-warning #{__('En attente de la réponse du staff')}
+                            else if ticket.state === 'WAITING_USER_RESPONSE'
+                              span.label.label-info #{__("En attente de la réponse de l'utilisateur")}
+                            else
+                              span.label.label-danger #{__('Fermé')}
+                          td.project-title
+                            a(href='/admin/support/' + ticket.id) #{ticket.title}
+                            br
+                            small.moment-date(fromNow) #{ticket.createdAt}
+                          td.project-actions
+                            a.btn.btn-outline.btn-info.btn-sm(href="/admin/support/" + ticket.id)
+                              i.fa.fa-eye
+                              | &nbsp;Voir
 
   div.clearfix
   br
   br
+
+block cssCustom
+  style.
+    .popover {
+      max-width: 300px;
+    }
+    .dataTables_filter {
+      margin-bottom: 30px;
+      float: right;
+    }
+    #DataTables_Table_0_info {
+      margin-top: 20px;
+    }
+  link(href="/styles/admin/plugins/dataTables/datatables.min.css" rel="stylesheet")
+
+block custom
+  script(type='text/javascript', src='/js/admin/plugins/dataTables/datatables.min.js')
+  script(type='text/javascript').
+    $(document).ready(function(){
+      $('.dataTable').DataTable({
+        pageLength: 25,
+        lengthChange: false,
+        language: {
+          "sProcessing":     "Traitement en cours...",
+          "sSearch":         "Rechercher&nbsp;:&nbsp;",
+          "sLengthMenu":     "Afficher _MENU_ &eacute;l&eacute;ments",
+          "sInfo":           "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+          "sInfoEmpty":      "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+          "sInfoFiltered":   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+          "sInfoPostFix":    "",
+          "sLoadingRecords": "Chargement en cours...",
+          "sZeroRecords":    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+          "sEmptyTable":     "Aucune donn&eacute;e disponible dans le tableau",
+          "oPaginate": {
+            "sFirst":      "Premier",
+            "sPrevious":   "Pr&eacute;c&eacute;dent",
+            "sNext":       "Suivant",
+            "sLast":       "Dernier"
+          },
+          "oAria": {
+            "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+            "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+          }
+        }
+      })
+    })

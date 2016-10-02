@@ -73,30 +73,55 @@ module.exports = {
     }
     var id = req.param('id')
 
-    // find
-    User.findOne({id: id}).populate(['licenses', 'hostings', 'purchases', 'paypalPayments', 'dedipassPayments', 'plugins', 'themes']).exec(function (err, user) {
+    async.parallel([
 
-      // error
+      // find user
+      function (callback) {
+        User.findOne({id: id}).populate(['licenses', 'hostings', 'purchases', 'paypalPayments', 'dedipassPayments', 'plugins', 'themes']).exec(function (err, user) {
+          callback(err, user)
+        })
+      },
+
+      // find purchases
+      function (callback) {
+        Purchase.findAllOfUser(req.session.userId, function (err, purchases) {
+          callback(err, purchases)
+        })
+      },
+
+      // find connectionLogs
+      function (callback) {
+        Log.find({data: '{"userId":'+id+'}', action: 'LOGIN'}).limit(5).sort('createdAt DESC').exec(function (err, logs) {
+          callback(err, logs)
+        })
+      },
+
+      // find tickets
+      function (callback) {
+        Ticket.find({user: id}).exec(function (err, tickets) {
+          callback(err, tickets)
+        })
+      }
+
+    ], function (err, results) {
+
       if (err) {
         sails.log.error(err)
         return res.serverError()
       }
 
-      // not found
-      if (user === undefined)
+      if (results[0] === undefined)
         return res.notFound()
+      else
+        var user = results[0]
 
-      // purchases
-      Purchase.findAllOfUser(req.session.userId, function (err, purchases) {
-        if (err) {
-          sails.log.error(err)
-          return res.serverError()
-        }
-        user.purchases = purchases
-        res.view('admin/user/view', {
-          title: req.__("Détails d'un utilisateur"),
-          userFinded: user
-        })
+
+      user.purchases = results[1]
+      res.view('admin/user/view', {
+        title: req.__("Détails d'un utilisateur"),
+        userFinded: user,
+        userTickets: (results[3] !== undefined) ? results[3] : [],
+        connectionLogs: (results[2] !== undefined) ? results[2] : []
       })
 
     })
