@@ -12,14 +12,16 @@ function initForms() {
       var submit_btn = $(this).find('button[type="submit"]')
       var submit_btn_content = submit_btn.html() // On récupère le contenu du bouton pour le remettre plus tard
 
-    // On met en place la div de message si elle existe pas encore
-      if ($(form).find('div.ajax-msg').length == 0) {
-        $(form).prepend('<div class="ajax-msg"></div>')
-      }
-      var msg = $(form).find('div.ajax-msg')
+    if (form.attr('data-no-alert') === undefined) {
+      // On met en place la div de message si elle existe pas encore
+        if ($(form).find('div.ajax-msg').length == 0) {
+          $(form).prepend('<div class="ajax-msg"></div>')
+        }
+        var msg = $(form).find('div.ajax-msg')
 
-    // On met le message de chargement
-      msg.hide().html('<div class="alert alert-info">'+locals.LOADING_MSG+'</div>').fadeIn(200)
+      // On met le message de chargement
+        msg.hide().html('<div class="alert alert-info">'+locals.LOADING_MSG+'</div>').fadeIn(200)
+    }
 
     // On désactive le bouton de submit
       submit_btn.addClass('disabled').attr('disabled', true).html(locals.LOADING_MSG)
@@ -54,7 +56,7 @@ function initForms() {
 
           if (json.status === true) {
 
-            if (form.attr('data-success-msg') === undefined || form.attr('data-success-msg') == "true") {
+            if ((form.attr('data-success-msg') === undefined || form.attr('data-success-msg') == "true") && form.attr('data-no-alert') === undefined) {
               msg.html('<div class="alert alert-success"><b>'+locals.SUCCESS_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             }
             if (form.attr('data-custom-callback') !== undefined) {
@@ -78,7 +80,7 @@ function initForms() {
 
 
             // On met des erreurs HTML directement si il y a une erreur
-              if (json.inputs !== undefined && typeof json.inputs === 'object') {
+              if (json.inputs !== undefined && typeof json.inputs === 'object' && form.attr('data-no-alert') === undefined) {
                 for (var input_name in json.inputs) {
 
                   // On set les variables
@@ -105,29 +107,33 @@ function initForms() {
               grecaptcha.reset();
             }
 
-            msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
+            if (form.attr('data-no-alert') === undefined)
+              msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+json.msg+'</div>').fadeIn(200)
             submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false)
 
           } else {
 
-            msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.INTERNAL_ERROR_MSG+'</div>')
+            if (form.attr('data-no-alert') === undefined)
+              msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.INTERNAL_ERROR_MSG+'</div>')
             submit_btn.html(submit_btn_content).removeClass('disabled').attr('disabled', false)
 
           }
         },
         error : function (xhr, textStatus, errorThrown) {
 
-          if (xhr.status == "403") {
-            if (xhr.responseJSON === undefined || xhr.responseJSON.msg === undefined) {
-              msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.FORBIDDEN_ERROR_MSG+'</div>')
+          if (form.attr('data-no-alert') === undefined) {
+            if (xhr.status == "403") {
+              if (xhr.responseJSON === undefined || xhr.responseJSON.msg === undefined) {
+                msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.FORBIDDEN_ERROR_MSG+'</div>')
+              } else {
+                msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+xhr.responseJSON.msg+'</div>')
+              }
             } else {
-              msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+xhr.responseJSON.msg+'</div>')
-            }
-          } else {
-            if (xhr.responseJSON === undefined || xhr.responseJSON.msg === undefined) {
-              msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.INTERNAL_ERROR_MSG+'</div>')
-            } else {
-              msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+xhr.responseJSON.msg+'</div>')
+              if (xhr.responseJSON === undefined || xhr.responseJSON.msg === undefined) {
+                msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+locals.INTERNAL_ERROR_MSG+'</div>')
+              } else {
+                msg.html('<div class="alert alert-danger"><b>'+locals.ERROR_MSG+' :</b> '+xhr.responseJSON.msg+'</div>')
+              }
             }
           }
 

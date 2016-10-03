@@ -199,7 +199,7 @@ block content
                     each license in userFinded.licenses
                       tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
                         td
-                          a(href="/admin/license/view" + license.id) #{license.id}
+                          a(href="/admin/license/view/" + license.id) #{license.id}
                         td #{license.purchase}
                         td.licenseHost(data-license-id=license.id)
                           if license.host != null && license.host.length > 0
@@ -239,7 +239,7 @@ block content
                     each hosting in userFinded.hostings
                       tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                         td
-                          a(href="/admin/hosting/view" + hosting.id) #{hosting.id}
+                          a(href="/admin/hosting/view/" + hosting.id) #{hosting.id}
                         td #{hosting.purchase}
                         td.hostingHost(data-host-id=hosting.id)
                           if hosting.hostType === 'SUBDOMAIN'

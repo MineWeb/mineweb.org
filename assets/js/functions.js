@@ -79,3 +79,38 @@ String.prototype.replaceAll = function(search, replacement) {
     var target = this;
     return target.split(search).join(replacement);
 }
+
+$.fn.serializeObject = function()
+{
+    var dataArray = this.serializeArray();
+    var data = {}
+
+    for (var i = 0; i < dataArray.length; i++) {
+      data[dataArray[i].name] = dataArray[i].value
+    }
+
+    var ret = {};
+    retloop:
+    for (var input in data) {
+        var val = data[input];
+
+        var parts = input.split('[');
+        var last = ret;
+
+        for (var i in parts) {
+            var part = parts[i];
+            if (part.substr(-1) == ']') {
+                part = part.substr(0, part.length - 1);
+            }
+
+            if (i == parts.length - 1) {
+                last[part] = val;
+                continue retloop;
+            } else if (!last.hasOwnProperty(part)) {
+                last[part] = {};
+            }
+            last = last[part];
+        }
+    }
+    return ret;
+};

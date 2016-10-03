@@ -94,6 +94,10 @@ module.exports.policies = {
 
   'Admin/UserController': {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
+  },
+
+  'Admin/UpdateController': {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
   }
 
 	// RabbitController: {

@@ -1,0 +1,278 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__('Gestion des mises à jour')}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Mise à jour')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .row
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Ajouter une mise à jour')}
+              .ibox-content
+
+                form.form-horizontal(method='post', action="/admin/update/add", data-ajax, data-redirect-url="/admin/update")
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Nom de la version")}
+                    .col-sm-10
+                      input.form-control(type='text', name="version", data-form-no-display-error)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Date de sortie (ou prévue) de la version")}
+                    .col-sm-10
+                      input.form-control(type='text', name="releaseDate", data-form-no-display-error)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('État de la mise à jour')}
+                    .col-sm-10
+                      select.form-control(name="state", data-form-no-display-error)
+                        option(value='STAGING') #{__('En cours de préparation')}
+                        option(value='DEVELOPMENT') #{__('En cours de développement')}
+                        option(value='SNAPSHOT') #{__('En cours de test')}
+                        option(value='RELEASE') #{__('Disponible')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Type de mise à jour')}
+                    .col-sm-10
+                      select.form-control(name="type", data-form-no-display-error)
+                        option(value='CHOICE') #{__("Laisser le choix à l'utilisateur")}
+                        option(value='FORCED') #{__('Forcée')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Liste des changements')}
+                    .col-sm-10
+                      ul.changelog
+                        li
+                          div.input-group(data-version-id="0.0.0", data-i="0")
+                            .row
+                              .col-md-2
+                                input.form-control(type='text', name='changelog[0]', placeholder="Type")
+                              .col-md-10
+                                input.form-control(type='text', name='changelog[0]', placeholder="Description du changement")
+                            span.input-group-btn
+                              button.btn.btn-danger.removeChangelog(type="button", style='padding: 9px 12px;', data-version-id="0.0.0", data-i="0")
+                                span.fa.fa-times
+                          - i++
+                        li
+                          button.btn.btn-success.btn-block.addChangelog(type="button", data-version-id="0.0.0", data-i="0") #{__('Ajouter un changement')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('La mise à jour doit-elle être visible ?')}
+                    .col-sm-10
+                      label
+                        input(type="checkbox", name="visible")
+                        | &nbsp;#{__('Oui')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    .col-sm-4.col-sm-offset-2
+                      button.btn.btn-primary(type='submit')
+                        i.fa.fa-floppy-o
+                        | &nbsp;#{__('Enregistrer la mise à jour')}
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Liste des mises à jour')}
+              .ibox-content
+
+                each version in versions
+
+                  form(data-version-id=version.id, action="/admin/update/edit/" + version.id, method="post", data-ajax, data-custom-data-formatter="formatForm", data-contentType="application/json")
+                    div.version-listing(class= version.state === "RELEASE" && displayed === undefined ? "selected" : "", style="position:relative;")
+
+                      if version.state === "RELEASE"
+                        - displayed = true
+
+                      div.row
+                        div.col-sm-12.col-md-6
+                          h4.version
+                            .row(style='margin-bottom:10px;')
+                              .col-md-2.col-sm-4
+                                input.form-control(type='text', name='version', value=version.version)
+                          p.version_changelog #{__('Liste des modifications :')}
+                          ul.changelog
+
+                            - var i = 0
+                            each changelog in version.changelog['fr_FR']
+                              li
+                                div.input-group(data-version-id=version.id, data-i=i)
+                                  .row
+                                    .col-md-2
+                                      input.form-control(type='text', name='changelog[' + i + '][type]', value=changelog.type)
+                                    .col-md-10
+                                      input.form-control(type='text', name='changelog[' + i + '][text]', value=changelog.text)
+                                  span.input-group-btn
+                                    button.btn.btn-danger.removeChangelog(type="button", style='padding: 9px 12px;', data-version-id=version.id, data-i=i)
+                                      span.fa.fa-times
+                                - i++
+                            li
+                              button.btn.btn-success.btn-block.addChangelog(type="button", data-version-id=version.id, data-i=i) #{__('Ajouter un changement')}
+
+                        div.col-md-3
+                          select.form-control(name='state')
+                            option(value='STAGING', selected=version.state == 'STAGING') #{__('En cours de préparation')}
+                            option(value='DEVELOPMENT', selected=version.state == 'DEVELOPMENT') #{__('En cours de développement')}
+                            option(value='SNAPSHOT', selected=version.state == 'SNAPSHOT') #{__('En cours de test')}
+                            option(value='RELEASE', selected=version.state == 'RELEASE') #{__('Disponible')}
+                          hr
+                          input(type="checkbox", name="visible", checked=version.visible)
+                          | &nbsp;#{__('La mise à jour doit être visible')}
+                          hr
+                          select.form-control(name="type", data-form-no-display-error)
+                            option(value='CHOICE') #{__("Laisser le choix à l'utilisateur")}
+                            option(value='FORCED') #{__('Forcée')}
+                        div.col-md-3
+                          .pull-right
+                            label #{__('Sortie le')} / #{__('Prévue pour le')}
+                            input.form-control(type='text', name='releaseDate', value=moment(version.releaseDate).format('YYYY-MM-DD HH:mm:ss'))
+                        button.btn.btn-outline.btn-primary(type="submit", style="position: absolute;bottom: 0px;right: 10px;") #{__('Modifier la version')}
+
+block custom
+  script(type='text/javascript').
+
+    $('.addChangelog').on('click', function (e) {
+
+      e.preventDefault()
+
+      var btn = $(this)
+      var i = parseInt(btn.attr('data-i'))
+      var versionId = btn.attr('data-version-id')
+
+      var changelog = ''
+      changelog += '<li>'
+        changelog += '<div class="input-group" data-version-id="'+versionId+'" data-i="'+i+'">'
+          changelog += '<div class="row">'
+            changelog += '<div class="col-md-2">'
+              changelog += '<input class="form-control" type="text" name="changelog['+i+'][type]">'
+            changelog += '</div>'
+            changelog += '<div class="col-md-10">'
+              changelog += '<input class="form-control" type="text" name="changelog['+i+'][text]">'
+            changelog += '</div>'
+          changelog += '</div>'
+          changelog += '<span class="input-group-btn">'
+            changelog += '<button class="btn btn-danger removeChangelog" type="button" style="padding: 9px 12px;" data-version-id="'+versionId+'" data-i="'+i+'">'
+              changelog += '<i class="fa fa-times"></i>'
+            changelog += '</button>'
+          changelog += '</span>'
+        changelog += '</div>'
+      changelog += '</li>'
+
+      $(changelog).insertBefore(btn.parent())
+      btn.attr('data-i', i+1)
+      initChangelogRemoveEntry()
+
+    })
+    function initChangelogRemoveEntry () {
+
+      $('.removeChangelog').unbind('click')
+      $('.removeChangelog').on('click', function (e) {
+
+        e.preventDefault()
+
+        var btn = $(this)
+        var i = btn.attr('data-i')
+        var versionId = btn.attr('data-version-id')
+
+        $('div.input-group[data-version-id="'+versionId+'"][data-i="'+i+'"]').slideUp(150, function () {
+          $(this).remove()
+        })
+
+      })
+
+    }
+    initChangelogRemoveEntry()
+
+    function formatForm (form) {
+      var inputs = $(form).serializeObject()
+      if (inputs.visible !== undefined && inputs.visible == 'on')
+        inputs.visible = true
+      else
+        inputs.visible = false
+
+      return JSON.stringify(inputs)
+    }
+
+block cssCustom
+  style.
+
+    .version-listing {
+        border: solid 1px #eee;
+        border-bottom: none;
+        padding-top: 30px;
+        padding-bottom: 10px;
+        padding-left: 19px;
+        padding-right: 15px;
+        -webkit-transition: all .2s ease-out;
+        -moz-transition: all .2s ease-out;
+        transition: all .2s ease-out
+    }
+
+    .version-listing:before, .job-listing:after {
+        content: " ";
+        display: table
+    }
+
+    .version-listing:after {
+        clear: both
+    }
+
+    .version-listing.selected {
+        border-left: solid 5px #2b90d9;
+        padding-left: 15px
+    }
+
+    .version-listing:hover {
+        background: #fafafa
+    }
+
+    h4.version {
+        margin-top: 0;
+        font-family: 'Montserrat';
+        font-family: Montserrat, Helvetica, Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: rgb(85, 85, 85);
+    }
+
+    p.version_changelog {
+      font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      text-transform: none;
+    }
+
+    ul.changelog {
+      list-style-type:none;
+      padding-left: 10px
+    }
+
+    ul.changelog li:before {
+      content: ""
+    }
+
+    ul.changelog span.type {
+      font-weight: bold;
+      font-style: italic;
+    }

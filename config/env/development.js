@@ -182,6 +182,18 @@ module.exports = {
       controller: 'admin/hosting',
       action: 'getSQLDump'
     },
+    'ADMIN-UPDATE_INDEX': {
+      controller: 'admin/update',
+      action: 'index'
+    },
+    'ADMIN-UPDATE_ADD': {
+      controller: 'admin/update',
+      action: 'add'
+    },
+    'ADMIN-UPDATE_EDIT': {
+      controller: 'admin/update',
+      action: 'edt'
+    },
   },
 
   permissionsAccess: {
@@ -213,7 +225,10 @@ module.exports = {
       'ADMIN-UNSUSPEND_HOSTING',
       'ADMIN-GET_DEBUG_HOSTING',
       'ADMIN-GET_LOGS_HOSTING',
-      //'ADMIN-GET_SQL_DUMP_HOSTING'
+      //'ADMIN-GET_SQL_DUMP_HOSTING',
+      //'ADMIN-UPDATE_INDEX',
+      //'ADMIN-UPDATE_ADD',
+      //'ADMIN-UPDATE_EDIT'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -241,7 +256,10 @@ module.exports = {
       'ADMIN-UNSUSPEND_HOSTING',
       'ADMIN-GET_DEBUG_HOSTING',
       'ADMIN-GET_LOGS_HOSTING',
-      'ADMIN-GET_SQL_DUMP_HOSTING'
+      'ADMIN-GET_SQL_DUMP_HOSTING',
+      //'ADMIN-UPDATE_INDEX',
+      //'ADMIN-UPDATE_ADD',
+      //'ADMIN-UPDATE_EDIT'
     ],
     'FOUNDER': ['*']
   },

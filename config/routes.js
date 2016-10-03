@@ -196,8 +196,13 @@ module.exports.routes = {
     '/admin/hosting/view/:id': 'Admin/HostingController.view',
     '/admin/hosting/suspend/:id/:reason': 'Admin/HostingController.suspend',
     '/admin/hosting/unsuspend/:id': 'Admin/HostingController.unsuspend',
-    '/admin/hosting/get-debug/:id': 'Admin/HostingController.getDebug'
+    '/admin/hosting/get-debug/:id': 'Admin/HostingController.getDebug',
     //'/admin/hosting/get-sql-dump/:id': 'Admin/HostingController.getSQLDump',
-    //'/admin/hosting/get-logs/:id': 'Admin/HostingController.getLogs'
+    //'/admin/hosting/get-logs/:id': 'Admin/HostingController.getLogs',
+
+
+    '/admin/update': 'Admin/UpdateController.index',
+    'post /admin/update/add': 'Admin/UpdateController.add',
+    'post /admin/update/edit/:id': 'Admin/UpdateController.edit'
 
 };
