@@ -20,7 +20,7 @@ block content
                   h5 #{__('Ajouter une mise à jour')}
               .ibox-content
 
-                form.form-horizontal(method='post', action="/admin/update/add", data-ajax, data-redirect-url="/admin/update")
+                form.form-horizontal(method='post', action="/admin/update/add", data-ajax, data-redirect-url="/admin/update", data-custom-data-formatter="formatForm", data-contentType="application/json")
 
                   .form-group
                     label.col-sm-2.control-label #{__("Nom de la version")}
@@ -64,15 +64,15 @@ block content
                           div.input-group(data-version-id="0.0.0", data-i="0")
                             .row
                               .col-md-2
-                                input.form-control(type='text', name='changelog[0]', placeholder="Type")
+                                input.form-control(type='text', name='changelog[0][type]', placeholder="Type")
                               .col-md-10
-                                input.form-control(type='text', name='changelog[0]', placeholder="Description du changement")
+                                input.form-control(type='text', name='changelog[0][text]', placeholder="Description du changement")
                             span.input-group-btn
                               button.btn.btn-danger.removeChangelog(type="button", style='padding: 9px 12px;', data-version-id="0.0.0", data-i="0")
                                 span.fa.fa-times
                           - i++
                         li
-                          button.btn.btn-success.btn-block.addChangelog(type="button", data-version-id="0.0.0", data-i="0") #{__('Ajouter un changement')}
+                          button.btn.btn-success.btn-block.addChangelog(type="button", data-version-id="0.0.0", data-i="1") #{__('Ajouter un changement')}
 
                   .hr-line-dashed
 
@@ -146,7 +146,7 @@ block content
                         div.col-md-3
                           .pull-right
                             label #{__('Sortie le')} / #{__('Prévue pour le')}
-                            input.form-control(type='text', name='releaseDate', value=moment(version.releaseDate).format('YYYY-MM-DD HH:mm:ss'))
+                            input.form-control(type='text', name='releaseDate', value=version.releaseDate ? moment(version.releaseDate).format('YYYY-MM-DD HH:mm:ss') : '')
                         button.btn.btn-outline.btn-primary(type="submit", style="position: absolute;bottom: 0px;right: 10px;") #{__('Modifier la version')}
 
 block custom
