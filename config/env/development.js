@@ -18,12 +18,12 @@ module.exports = {
    ***************************************************************************/
 
    connections: {
-     mysqlserver: {
+     main_sql: {
        adapter: 'sails-mysql',
        host: 'status.hardfight.fr',
-       user: 'mineweb',
-       password: 'mineweb42', //optional
-       database: 'mineweb' //optional
+       user: process.env.SQL_USER || 'mineweb',
+       password: process.env.SQL_PWD || 'mineweb42', //optional
+       database: process.env.SQL_DB ||'mineweb' //optional
      },
    },
 

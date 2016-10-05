@@ -69,13 +69,14 @@ module.exports.routes = {
     USER
   */
 
-    '/sign': 'UserController.loginPage',
-    '/signup': 'UserController.loginPage',
-    '/signin': 'UserController.loginPage',
-    '/register': 'UserController.loginPage',
-    '/login': 'UserController.loginPage',
+    'get /sign': 'UserController.loginPage',
+    'get /signup': 'UserController.loginPage',
+    'get /signin': 'UserController.loginPage',
+    'get /register': 'UserController.loginPage',
+    'get /login': 'UserController.loginPage',
 
     'post /user/login': 'UserController.login',
+    'post /user/signup': 'UserController.signup',
     'get /user/confirm-email/:token': 'UserController.confirmEmail',
     'get /user/reset-password/:token': 'UserController.resetPasswordPage',
     'post /user/reset-password': 'UserController.resetPassword',

@@ -78,8 +78,31 @@ module.exports = {
 
       // find user
       function (callback) {
-        User.findOne({id: id}).populate(['licenses', 'hostings', 'purchases', 'paypalPayments', 'dedipassPayments', 'plugins', 'themes']).exec(function (err, user) {
-          callback(err, user)
+        User.findOne({ id: request.session.userId }).populate(['licenses', 'paypalPayments', 'dedipassPayments', , 'plugins', 'themes']).exec(function (err, user) {
+          if (err) return callback(err, null)
+
+          user.hostings = [];
+
+          // delete licenses that are linked to hostings
+          for (var i = 0; i < user.licenses.length; i++) {
+            if (license.hosting !== undefined) {
+              user.hostings.push(user.licenses[i].id);
+              delete user.licenses[i];
+            }
+          }
+
+          License.find({ id: user.hostings }).populate('hosting').exec(function (err, hostings) {
+            if (err) return callback(err, null)
+            user.hostings = [];
+
+            hostings.forEach(function (hosting) {
+              var formatted = _.extend(hosting.toJSON(), license.toJSON());
+              delete formatted.hostings;
+              user.hostings.push(formatted);
+            })
+
+            return callback(null, user)
+          })
         })
       },
 
