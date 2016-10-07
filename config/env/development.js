@@ -20,10 +20,14 @@ module.exports = {
    connections: {
      main_sql: {
        adapter: 'sails-mysql',
-       host: 'status.hardfight.fr',
+       /*host: 'status.hardfight.fr',
        user: process.env.SQL_USER || 'mineweb',
        password: process.env.SQL_PWD || 'mineweb42', //optional
-       database: process.env.SQL_DB ||'mineweb' //optional
+       database: process.env.SQL_DB ||'mineweb' //optional*/
+       host: 'localhost',
+       user: 'root',
+       password: 'root',
+       database: 'node'
      },
    },
 
@@ -130,10 +134,6 @@ module.exports = {
       controller: 'admin/license',
       action: 'view'
     },
-    'ADMIN-FIND_HOSTING': {
-      controller: 'admin/hosting',
-      action: 'find'
-    },
     'ADMIN-SUSPEND_LICENSE': {
       controller: 'admin/license',
       action: 'suspend'
@@ -157,30 +157,6 @@ module.exports = {
     'ADMIN-VIEW_USER': {
       controller: 'admin/user',
       action: 'view'
-    },
-    'ADMIN-VIEW_HOSTING': {
-      controller: 'admin/hosting',
-      action: 'view'
-    },
-    'ADMIN-SUSPEND_HOSTING': {
-      controller: 'admin/hosting',
-      action: 'suspend'
-    },
-    'ADMIN-UNSUSPEND_HOSTING': {
-      controller: 'admin/hosting',
-      action: 'unsuspend'
-    },
-    'ADMIN-GET_DEBUG_HOSTING': {
-      controller: 'admin/hosting',
-      action: 'getDebug'
-    },
-    'ADMIN-GET_LOGS_HOSTING': {
-      controller: 'admin/getLogs',
-      action: 'getDebug'
-    },
-    'ADMIN-GET_SQL_DUMP_HOSTING': {
-      controller: 'admin/hosting',
-      action: 'getSQLDump'
     },
     'ADMIN-UPDATE_INDEX': {
       controller: 'admin/update',
@@ -212,7 +188,6 @@ module.exports = {
       'ADMIN-UPDATE_SETTINGS',
       'ADMIN-FIND_LICENSE_OR_HOSTING',
       'ADMIN-FIND_LICENSE',
-      'ADMIN-FIND_HOSTING',
       //'ADMIN-SUSPEND_LICENSE',
       //'ADMIN-UNSUSPEND_LICENSE',
       'ADMIN-GET_DEBUG_LICENSE',
@@ -220,11 +195,6 @@ module.exports = {
       'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
       'ADMIN-VIEW_USER',
-      'ADMIN-VIEW_HOSTING',
-      'ADMIN-SUSPEND_HOSTING',
-      'ADMIN-UNSUSPEND_HOSTING',
-      'ADMIN-GET_DEBUG_HOSTING',
-      'ADMIN-GET_LOGS_HOSTING',
       //'ADMIN-GET_SQL_DUMP_HOSTING',
       //'ADMIN-UPDATE_INDEX',
       //'ADMIN-UPDATE_ADD',
@@ -243,7 +213,6 @@ module.exports = {
       'ADMIN-UPDATE_SETTINGS',
       'ADMIN-FIND_LICENSE_OR_HOSTING',
       'ADMIN-FIND_LICENSE',
-      'ADMIN-FIND_HOSTING',
       'ADMIN-SUSPEND_LICENSE',
       'ADMIN-UNSUSPEND_LICENSE',
       'ADMIN-GET_DEBUG_LICENSE',
@@ -251,12 +220,6 @@ module.exports = {
       'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
       'ADMIN-VIEW_USER',
-      'ADMIN-VIEW_HOSTING',
-      'ADMIN-SUSPEND_HOSTING',
-      'ADMIN-UNSUSPEND_HOSTING',
-      'ADMIN-GET_DEBUG_HOSTING',
-      'ADMIN-GET_LOGS_HOSTING',
-      'ADMIN-GET_SQL_DUMP_HOSTING',
       //'ADMIN-UPDATE_INDEX',
       //'ADMIN-UPDATE_ADD',
       //'ADMIN-UPDATE_EDIT'

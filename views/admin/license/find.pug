@@ -1,4 +1,4 @@
-extends ./layouts/default
+extends ../layouts/default
 
 block content
   .row.wrapper.border-bottom.white-bg.page-heading
@@ -20,16 +20,7 @@ block content
             form.form-horizontal(method='post', action="/admin/license/find/", data-ajax, data-custom-callback="afterFinded")
 
               .form-group
-                label.col-sm-2.control-label #{__('Type de recherche')}
-                .col-sm-10
-                  select.form-control(name="type", data-form-no-display-error)
-                    option(value="license") #{__('Licence')}
-                    option(value="hosting") #{__('Hébergement')}
-
-              .hr-line-dashed
-
-              .form-group
-                label.col-sm-2.control-label #{__("ID de la licence/de l'hébergement")}
+                label.col-sm-2.control-label #{__("ID de la licence")}
                 .col-sm-10
                   input.form-control(type='text', name="id", data-form-no-display-error)
 
@@ -72,17 +63,8 @@ block content
 
 block custom
   script(type="text/javascript").
-    $('select[name="type"]').on('change', function (e) {
-
-      var action = $('form').attr('action')
-      action = '/admin/' + $(this).val() + '/find'
-
-      $('form').attr('action', action)
-
-    })
 
     function afterFinded (form, json) {
-      var type = $('select[name="type"]').val()
-      document.location = '/admin/'+ type +'/view/' + json.data[type].id
+      document.location = '/admin/license/view/' + json.data.license.id
       return false
     }

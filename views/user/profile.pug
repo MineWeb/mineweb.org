@@ -168,7 +168,7 @@ block content
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                           td #{hosting.id}
                           td.hostingHost(data-host-id=hosting.id)
-                            if hosting.hostType === 'SUBDOMAIN'
+                            if hosting.hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
                                  | http://#{hosting.host}.craftwb.fr
                             else
@@ -182,14 +182,14 @@ block content
                               span.tag.tag-danger #{__('Désactivé')}
                           td
                             // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
-                            if (moment(hosting.endDate).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
-                              span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                            if (moment(hosting.expireAt).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
+                              span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.expireAt}
                             else
-                              span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                              span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.expireAt}
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
                           td
                             div.btn-group-vertical
-                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
+                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
                               a(href='/hosting/renew/'+hosting.id).btn.btn-success #{__('Renouveler')}
                         if hosting.suspended !== null
                           tr(style="position: absolute;margin-top: -112px;")

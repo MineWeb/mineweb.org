@@ -95,6 +95,27 @@ block content
                   div.col-md-2.text-center
                     a.btn.btn-outline.btn-primary(href='/admin/license/unsuspend/' + license.id) #{__('Je veux réactiver cette licence')}
 
+        if license.hosting
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                h4 #{__('Hébergement lié')}
+              .ibox-content
+                div.row
+                  .table-responsive
+                    table.table.table-hover.no-margins(style="font-size: 13px;")
+                      thead
+                        tr
+                          th #{__('ID')}
+                          th #{__('Type du domaine')}
+                          th #{__("Date d'expiration")}
+                      tbody
+                        tr
+                          td #{license.hosting.id}
+                          td #{license.hosting.hostType}
+                          td.moment-date(data-format="Le {L} à {LT}") #{license.expireAt}
+
+
         .col-md-12
           .ibox.float-e-margins
             .ibox-title

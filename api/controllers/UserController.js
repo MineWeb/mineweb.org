@@ -600,32 +600,7 @@ module.exports = {
 
       // On cherche l'utilisateur avec plus d'infos
       function (callback) {
-        User.findOne({ id: request.session.userId }).populate(['licenses', 'paypalPayments', 'dedipassPayments']).exec(function (err, user) {
-          if (err) return callback(err, null)
-
-          user.hostings = [];
-
-          // delete licenses that are linked to hostings
-          for (var i = 0; i < user.licenses.length; i++) {
-            if (license.hosting !== undefined) {
-              user.hostings.push(user.licenses[i].id);
-              delete user.licenses[i];
-            }
-          }
-
-          License.find({ id: user.hostings }).populate('hosting').exec(function (err, hostings) {
-            if (err) return callback(err, null)
-            user.hostings = [];
-
-            hostings.forEach(function (hosting) {
-              var formatted = _.extend(hosting.toJSON(), license.toJSON());
-              delete formatted.hostings;
-              user.hostings.push(formatted);
-            })
-
-            return callback(null, user)
-          })
-        })
+        User.findOne({ id: request.session.userId }).populate(['paypalPayments', 'dedipassPayments']).exec(callback)
       },
 
       // on récupère ses paiements paypals
@@ -646,6 +621,28 @@ module.exports = {
       // on récupère ses achats
       function (callback) {
         Purchase.findAllOfUser(request.session.userId, callback)
+      },
+
+      // get his licenses
+      function (callback) {
+        License.find({user: request.session.userId}).populate(['hosting']).exec(function (err, licenses) {
+          if (err)
+            return callback(err)
+
+          var results = {licenses: [], hostings: []}
+
+          for (var i = 0; i < licenses.length; i++) {
+            if (licenses[i].hosting) {
+              results.hostings.push(licenses[i])
+            }
+            else {
+              results.licenses.push(licenses[i])
+            }
+          }
+
+          callback(null, results)
+
+        })
       }
 
     ], function (err, results) {
@@ -661,8 +658,13 @@ module.exports = {
       response.locals.user.purchases = results[4]
       response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
       response.locals.user.connectionLogs = results[3]
+      response.locals.user.licenses = results[5].licenses
+      response.locals.user.hostings = results[5].hostings
 
       response.locals.moment = moment
+
+      console.log(response.locals.user.licenses)
+      console.log(response.locals.user.hostings)
 
       response.render('./user/profile')
     })

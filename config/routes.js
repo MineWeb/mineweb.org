@@ -185,21 +185,11 @@ module.exports.routes = {
     '/admin/license/get-debug/:id': 'Admin/LicenseController.getDebug',
 
     'get /admin/license/find': 'Admin/LicenseController.findPage',
-    'get /admin/hosting/find': 'Admin/LicenseController.findPage',
     'post /admin/license/find': 'Admin/LicenseController.find',
-    'post /admin/hosting/find': 'Admin/HostingController.find',
-
 
     'get /admin/user/find': 'Admin/UserController.findPage',
     'post /admin/user/find': 'Admin/UserController.find',
     '/admin/user/view/:id': 'Admin/UserController.view',
-
-    '/admin/hosting/view/:id': 'Admin/HostingController.view',
-    '/admin/hosting/suspend/:id/:reason': 'Admin/HostingController.suspend',
-    '/admin/hosting/unsuspend/:id': 'Admin/HostingController.unsuspend',
-    '/admin/hosting/get-debug/:id': 'Admin/HostingController.getDebug',
-    //'/admin/hosting/get-sql-dump/:id': 'Admin/HostingController.getSQLDump',
-    //'/admin/hosting/get-logs/:id': 'Admin/HostingController.getLogs',
 
 
     '/admin/update': 'Admin/UpdateController.index',
