@@ -78,37 +78,12 @@ module.exports = {
 
       // find user
       function (callback) {
-        User.findOne({ id: request.session.userId }).populate(['licenses', 'paypalPayments', 'dedipassPayments', , 'plugins', 'themes']).exec(function (err, user) {
-          if (err) return callback(err, null)
-
-          user.hostings = [];
-
-          // delete licenses that are linked to hostings
-          for (var i = 0; i < user.licenses.length; i++) {
-            if (license.hosting !== undefined) {
-              user.hostings.push(user.licenses[i].id);
-              delete user.licenses[i];
-            }
-          }
-
-          License.find({ id: user.hostings }).populate('hosting').exec(function (err, hostings) {
-            if (err) return callback(err, null)
-            user.hostings = [];
-
-            hostings.forEach(function (hosting) {
-              var formatted = _.extend(hosting.toJSON(), license.toJSON());
-              delete formatted.hostings;
-              user.hostings.push(formatted);
-            })
-
-            return callback(null, user)
-          })
-        })
+        User.findOne({ id: id }).populate(['paypalPayments', 'dedipassPayments', , 'plugins', 'themes']).exec(callback)
       },
 
       // find purchases
       function (callback) {
-        Purchase.findAllOfUser(req.session.userId, function (err, purchases) {
+        Purchase.findAllOfUser(id, function (err, purchases) {
           callback(err, purchases)
         })
       },
@@ -125,6 +100,28 @@ module.exports = {
         Ticket.find({user: id}).exec(function (err, tickets) {
           callback(err, tickets)
         })
+      },
+
+      // find licenses
+      function (callback) {
+        License.find({user: id}).populate(['hosting']).exec(function (err, licenses) {
+          if (err)
+            return callback(err)
+
+          var results = {licenses: [], hostings: []}
+
+          for (var i = 0; i < licenses.length; i++) {
+            if (licenses[i].hosting) {
+              results.hostings.push(licenses[i])
+            }
+            else {
+              results.licenses.push(licenses[i])
+            }
+          }
+
+          callback(null, results)
+
+        })
       }
 
     ], function (err, results) {
@@ -139,6 +136,8 @@ module.exports = {
       else
         var user = results[0]
 
+      user.licenses = results[4].licenses
+      user.hostings = results[4].hostings
 
       user.purchases = results[1]
       res.view('admin/user/view', {

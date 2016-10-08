@@ -20,6 +20,15 @@ block content
             form.form-horizontal(method='post', action="/admin/license/find/", data-ajax, data-custom-callback="afterFinded")
 
               .form-group
+                label.col-sm-2.control-label #{__('Type de recherche')}
+                .col-sm-10
+                  select.form-control(name="type", data-form-no-display-error)
+                    option(value="LICENSE") #{__('Licence')}
+                    option(value="HOSTING") #{__('Licence hébergée')}
+
+              .hr-line-dashed
+
+              .form-group
                 label.col-sm-2.control-label #{__("ID de la licence")}
                 .col-sm-10
                   input.form-control(type='text', name="id", data-form-no-display-error)

@@ -167,7 +167,7 @@ block content
                       each hosting, index in user.hostings
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                           td #{hosting.id}
-                          td.hostingHost(data-host-id=hosting.id)
+                          td.hostingHost(data-host-id=hosting.hosting.id)
                             if hosting.hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
                                  | http://#{hosting.host}.craftwb.fr
@@ -189,8 +189,8 @@ block content
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
                           td
                             div.btn-group-vertical
-                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
-                              a(href='/hosting/renew/'+hosting.id).btn.btn-success #{__('Renouveler')}
+                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
+                              a(href='/hosting/renew/'+hosting.hosting.id).btn.btn-success #{__('Renouveler')}
                         if hosting.suspended !== null
                           tr(style="position: absolute;margin-top: -112px;")
                             td(style='border-top: none;')

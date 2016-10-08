@@ -230,6 +230,7 @@ block content
                     tr
                       th ID
                       th #{__("ID de l'achat")}
+                      th #{__('Licence liée')}
                       th #{__('Site')}
                       th #{__("Clé d'activation")}
                       th #{__('Statut')}
@@ -238,11 +239,12 @@ block content
                   tbody
                     each hosting in userFinded.hostings
                       tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
-                        td
-                          a(href="/admin/hosting/view/" + hosting.id) #{hosting.id}
+                        td #{hosting.hosting.id}
                         td #{hosting.purchase}
+                        td
+                          a(href="/admin/license/view/" + hosting.id) #{hosting.id}
                         td.hostingHost(data-host-id=hosting.id)
-                          if hosting.hostType === 'SUBDOMAIN'
+                          if hosting.hosting.hostType === 'SUBDOMAIN'
                              a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
                                | http://#{hosting.host}.craftwb.fr
                           else
@@ -256,10 +258,10 @@ block content
                             span.label.label-danger #{__('Désactivé')}
                         td
                           // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
-                          if (moment(hosting.endDate).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
-                            span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                          if (moment(hosting.expireAt).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
+                            span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.expireAt}
                           else
-                            span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                            span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.expireAt}
                         td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
                       if hosting.suspended !== null
                         tr(style="position: absolute;margin-top: -112px;")

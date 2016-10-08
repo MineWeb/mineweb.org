@@ -219,11 +219,11 @@ module.exports = {
         Hosting ended today
       */
       function (callback) {
-        // Find hosting with endDate <= now || endDate <= now + 12h && state == 1
+        // Find hosting with expireAt <= now || expireAt <= now + 12h && state == 1
         Hosting.find({
-          endDate: {'<=': moment().hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')},
+          expireAt: {'<=': moment().hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')},
           state: true
-        }).populate(['user']).exec(function (err, hostings) {
+        }).populate(['user', 'licence']).exec(function (err, hostings) {
 
           if (err)
             sails.log.error(err)
@@ -242,7 +242,7 @@ module.exports = {
                 // Send mail
                 sails.config.i18n = hosting.user.lang.split('-')[0]
                 MailService.send('hostings/disable', {
-                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.host + '.craftwb.fr' : 'http://' + hosting.host,
+                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
                   username: hosting.user.username
                 }, sails.__('Désactivation de votre hébergement'), hosting.user.email)
@@ -273,29 +273,29 @@ module.exports = {
           Hosting.find({
             or: [
               {
-                endDate: {'>=': moment().add(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(7, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(7, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(6, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(6, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(6, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(6, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(5, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(5, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(5, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(5, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(4, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(4, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(4, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(4, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(3, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(3, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(3, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(3, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(2, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(2, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(2, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(2, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(1, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(1, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               }
             ],
             state: true
-          }).populate(['user']).exec(function (err, hostings) {
+          }).populate(['user', 'license']).exec(function (err, hostings) {
 
             if (err)
               sails.log.error(err)
@@ -307,9 +307,9 @@ module.exports = {
                 // Send mail
                 sails.config.i18n = hosting.user.lang.split('-')[0]
                 MailService.send('hostings/lastDays', {
-                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.host + '.craftwb.fr' : 'http://' + hosting.host,
+                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
-                  days: Math.floor(Math.abs( (new Date(hosting.endDate) - Date.now()) / (24 * 60 * 60 * 1000) )),
+                  days: Math.floor(Math.abs( (new Date(hosting.expireAt) - Date.now()) / (24 * 60 * 60 * 1000) )),
                   username: hosting.user.username
                 }, sails.__('Expiration de votre hébergement'), hosting.user.email)
 
@@ -334,9 +334,9 @@ module.exports = {
       */
       function (callback) {
 
-        // Find hosting with endDate <= now - 7 days && state == 0
+        // Find hosting with expireAt <= now - 7 days && state == 0
         Hosting.find({
-          endDate: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
+          expireAt: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
           state: false
         }).populate(['user']).exec(function (err, hostings) {
 

@@ -53,6 +53,8 @@ module.exports = {
       var conditions = {}
       if (user !== undefined && user.length > 0)
         conditions.user = user
+      if (req.body.type !== undefined && req.body.type.length > 0)
+        conditions.hosting = (req.body.type == 'LICENSE') ? null : {'!': null}
       if (req.body.key !== undefined && req.body.key.length > 0)
         conditions.key = req.body.key
       if (req.body.host !== undefined && req.body.host.length > 0)

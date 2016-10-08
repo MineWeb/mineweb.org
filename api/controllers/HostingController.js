@@ -48,7 +48,7 @@ module.exports = {
 						})
 					}
 
-					if (req.body.hostType == 'domain' && !(new RegExp(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/).test(req.body.domain))) {
+					if (req.body.hostType == 'domain' && !(new RegExp(/([a-z0-9|-]+\.)*[a-z0-9|-]+\.[a-z]+/).test(req.body.domain))) {
 						return res.json({
 							status: false,
 							msg: req.__("Votre domaine est invalide !"),
@@ -58,14 +58,14 @@ module.exports = {
 
 					// Check if not already used
 					var host = (req.body.hostType == 'domain') ? req.body.domain : req.body.subdomain
-					Hosting.count({host: host, hostType: req.body.hostType.toUpperCase()}).exec(function (err, count) {
+					Hosting.findOne({hostType: req.body.hostType.toUpperCase()}).populate('license', {'host': host}).exec(function (err, count) {
 
 						if (err) {
 							sails.log.error(err)
 							return res.serverError()
 						}
 
-						if (count > 0) {
+						if (count !== undefined && count.license !== undefined) {
 							return res.json({
 								status: false,
 								msg: req.__("Votre domaine/sous-domaine est déjà utilisé !"),
@@ -80,30 +80,41 @@ module.exports = {
 								return res.serverError()
 
 							// Edit on db
-							Hosting.update({id: hosting.id}, {hostType: req.body.hostType.toUpperCase(), host: host}).exec(function (err, hostingUpdated) {
+							Hosting.update({id: hosting.id}, {hostType: req.body.hostType.toUpperCase()}).exec(function (err, hostingUpdated) {
 
 								if (err) {
 									sails.log.error(err)
 									return res.serverError()
 								}
 
-								hostingUpdated = hostingUpdated[0]
-								if (hostingUpdated.hostType === 'SUBDOMAIN')
-									var hostFormatted = '<a href="http://'+hostingUpdated.host+'.craftwb.fr" target="_blank">http://' + hostingUpdated.host +'.craftwb.fr'
-								else
-									var hostFormatted = '<a href="http://'+hostingUpdated.host+'" target="_blank">http://' + hostingUpdated.host
+								License.update({hosting: hosting.id}, {host: host}).exec(function (err, licenseUpdated) {
 
-								// send response
-								return res.json({
-									status: true,
-									msg: req.__("Le nom de domaine a bien été modifié !"),
-									inputs: {},
-									data: {
-										id: hostingUpdated.id,
-										host: hostingUpdated.host,
-										hostType: hostingUpdated.hostType,
-										hostFormatted: hostFormatted
+									if (err) {
+										sails.log.error(err)
+										return res.serverError()
 									}
+
+									hostingUpdated = hostingUpdated[0]
+									licenseUpdated = licenseUpdated[0]
+
+									if (hostingUpdated.hostType === 'SUBDOMAIN')
+										var hostFormatted = '<a href="http://'+licenseUpdated.host+'.craftwb.fr" target="_blank">http://' + licenseUpdated.host +'.craftwb.fr'
+									else
+										var hostFormatted = '<a href="http://'+licenseUpdated.host+'" target="_blank">http://' + licenseUpdated.host
+
+									// send response
+									return res.json({
+										status: true,
+										msg: req.__("Le nom de domaine a bien été modifié !"),
+										inputs: {},
+										data: {
+											id: hostingUpdated.id,
+											host: licenseUpdated.host,
+											hostType: hostingUpdated.hostType,
+											hostFormatted: hostFormatted
+										}
+									})
+
 								})
 
 							})
