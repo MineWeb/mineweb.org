@@ -77,15 +77,9 @@ module.exports = {
 		var subdomain = req.param('subdomain')
 
 		// Check subdomain
-		Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: subdomain}).exec(function (err, count) {
+		Hosting.checkSubdomainAvailability(subdomain, function (available) {
 
-			if (err) {
-				sails.log.error(err)
-				return res.serverError('An error occured on dedipass api')
-			}
-			console.log(subdomain)
-			console.log(count)
-			if (count !== undefined && count.license !== undefined) {
+			if (!available) {
 				return res.json({
 					status: true,
 					available: false
@@ -183,14 +177,9 @@ module.exports = {
 								// If not a renew
 								if(req.body.custom.split('renew-').length !== 2) {
 
-									Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: subdomain}).exec(function (err, count) {
+									Hosting.checkSubdomainAvailability(req.body.custom, function (available) {
 
-										if (err) {
-											sails.log.error(err)
-											return res.serverError('An error occured on dedipass api')
-										}
-
-										if (count !== undefined && count.license !== undefined) {
+										if (!available) {
 											NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
 											return res.redirect('/purchase/hosting')
 										}
@@ -260,14 +249,9 @@ module.exports = {
 
 				// If not a renew
 				if(req.body.custom.split('renew-').length !== 2) {
-					Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: subdomain}).exec(function (err, count) {
+					Hosting.checkSubdomainAvailability(req.body.custom, function (available) {
 
-						if (err) {
-							sails.log.error(err)
-							return res.serverError('An error occured on dedipass api')
-						}
-
-						if (count !== undefined && count.license !== undefined) {
+						if (!available) {
 							NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
 							return res.redirect('/purchase/hosting')
 						}
@@ -794,14 +778,9 @@ module.exports = {
 					return res.redirect('/purchase/hosting')
 				}
 
-				Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: custom}).exec(function (err, count) {
+				Hosting.checkSubdomainAvailability(custom, function (available) {
 
-					if (err) {
-						sails.log.error(err)
-						return res.serverError('An error occured on hosting check')
-					}
-
-					if (count !== undefined && count.license !== undefined) {
+					if (!available) {
 						NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
 						return res.redirect('/purchase/hosting')
 					}

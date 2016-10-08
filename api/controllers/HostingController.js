@@ -58,14 +58,9 @@ module.exports = {
 
 					// Check if not already used
 					var host = (req.body.hostType == 'domain') ? req.body.domain : req.body.subdomain
-					Hosting.findOne({hostType: req.body.hostType.toUpperCase()}).populate('license', {'host': host}).exec(function (err, count) {
+					Hosting.checkSubdomainAvailability(host, function (available) {
 
-						if (err) {
-							sails.log.error(err)
-							return res.serverError()
-						}
-
-						if (count !== undefined && count.license !== undefined) {
+						if (!available) {
 							return res.json({
 								status: false,
 								msg: req.__("Votre domaine/sous-domaine est déjà utilisé !"),
