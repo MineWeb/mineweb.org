@@ -222,7 +222,7 @@ module.exports = {
                     Renew hosting
                   */
 
-                  // find endDate
+                  // find expireAt
                   Hosting.findOne({id: purchase.hostRenew}).exec(function (err, hosting) {
                     if (err) {
                       sails.log.error(err)
@@ -233,11 +233,11 @@ module.exports = {
                     }
 
                     // add +1month
-                    var endDate = new Date(hosting.endDate);
-                    endDate.setMonth(endDate.getMonth() + 1)
-                    
+                    var expireAt = new Date(hosting.expireAt);
+                    expireAt.setMonth(expireAt.getMonth() + 1)
+
                     // reactive in db + add 1 month to end
-                    Hosting.update({id: hosting.id}, {state: 1, endDate: endDate}).exec(function (err, hostingUpdated) {
+                    Hosting.update({id: hosting.id}, {state: 1, expireAt: expireAt}).exec(function (err, hostingUpdated) {
 
                       if (err) {
                         sails.log.error(err)
@@ -325,8 +325,8 @@ module.exports = {
       if (offerType === 'LICENSE' || offerType === 'HOSTING') {
 
         // Save purchase id into License/purchase.hosting entry
-        var model = (offerType === 'LICENSE') ? License : Hosting
-        model.update({id: itemId}, {purchase: purchase.id}).exec(function (err, item) {
+        var conditions = (offerType === 'LICENSE') ? {id: itemId} : {hosting: itemId}
+        License.update(conditions, {purchase: purchase.id}).exec(function (err, item) {
 
           if (err) {
             sails.log.error(err)

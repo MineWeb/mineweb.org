@@ -77,14 +77,15 @@ module.exports = {
 		var subdomain = req.param('subdomain')
 
 		// Check subdomain
-		Hosting.count({host: subdomain, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+		Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: subdomain}).exec(function (err, count) {
 
 			if (err) {
 				sails.log.error(err)
 				return res.serverError('An error occured on dedipass api')
 			}
-
-			if (count > 0) {
+			console.log(subdomain)
+			console.log(count)
+			if (count !== undefined && count.license !== undefined) {
 				return res.json({
 					status: true,
 					available: false
@@ -143,7 +144,7 @@ module.exports = {
 							var item_name = req.__("Achat d'une licence MineWeb")
 						}
 						else if (offer == "hosting") {
-							var item_name = req.__("Location d'une licence et d'un hebergement MineWeb pour 1 mois")
+							var item_name = req.__("Location d'une licence et d'un hébergement MineWeb pour 1 mois")
 						}
 						else if (offer == "plugin") {
 							var item_name = req.__("Achat d'un plugin MineWeb")
@@ -182,14 +183,14 @@ module.exports = {
 								// If not a renew
 								if(req.body.custom.split('renew-').length !== 2) {
 
-									Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+									Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: subdomain}).exec(function (err, count) {
 
 										if (err) {
 											sails.log.error(err)
 											return res.serverError('An error occured on dedipass api')
 										}
 
-										if (count > 0) {
+										if (count !== undefined && count.license !== undefined) {
 											NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
 											return res.redirect('/purchase/hosting')
 										}
@@ -259,14 +260,14 @@ module.exports = {
 
 				// If not a renew
 				if(req.body.custom.split('renew-').length !== 2) {
-					Hosting.count({host: req.body.custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+					Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: subdomain}).exec(function (err, count) {
 
 						if (err) {
 							sails.log.error(err)
 							return res.serverError('An error occured on dedipass api')
 						}
 
-						if (count > 0) {
+						if (count !== undefined && count.license !== undefined) {
 							NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
 							return res.redirect('/purchase/hosting')
 						}
@@ -548,11 +549,11 @@ module.exports = {
 
 							// Update suspended reason if license/hosting
 							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
-								var model = (purchase.type == 'LICENSE') ? License : Hosting
 
-								model.update({id: purchase.itemId}, {suspended: req.__('Paiement PayPal remboursé')}).exec(function (err, item) {
+								License.update({hosting: purchase.itemId}, {suspended: req.__('Paiement PayPal remboursé')}).exec(function (err, item) {
 									return res.send()
 								})
+
 							}
 							else {
 								return res.send()
@@ -593,11 +594,11 @@ module.exports = {
 
 							// Update suspended reason if license/hosting
 							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
-								var model = (purchase.type == 'LICENSE') ? License : Hosting
 
-								model.update({id: purchase.itemId}, {suspended: req.__('Litige PayPal')}).exec(function (err, item) {
+								License.update({hosting: purchase.itemId}, {suspended: req.__('Litige PayPal')}).exec(function (err, item) {
 									return res.send()
 								})
+
 							}
 							else {
 								return res.send()
@@ -626,11 +627,11 @@ module.exports = {
 
 							// Update suspended reason if license/hosting
 							if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
-								var model = (purchase.type == 'LICENSE') ? License : Hosting
 
-								model.update({id: purchase.itemId}, {suspended: null}).exec(function (err, item) {
+								License.update({hosting: purchase.itemId}, {suspended: null}).exec(function (err, item) {
 									return res.send()
 								})
+
 							}
 							else {
 								return res.send()
@@ -793,14 +794,14 @@ module.exports = {
 					return res.redirect('/purchase/hosting')
 				}
 
-				Hosting.count({host: custom, hostType: 'SUBDOMAIN'}).exec(function (err, count) {
+				Hosting.findOne({hostType: 'SUBDOMAIN'}).populate('license', {host: custom}).exec(function (err, count) {
 
 					if (err) {
 						sails.log.error(err)
 						return res.serverError('An error occured on hosting check')
 					}
 
-					if (count > 0) {
+					if (count !== undefined && count.license !== undefined) {
 						NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
 						return res.redirect('/purchase/hosting')
 					}

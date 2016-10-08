@@ -5,9 +5,10 @@ var uuid = require('node-uuid')
 
 module.exports = {
 
-  create: function (hosting, next) {
+  create: function (hosting, host, next) {
     var id = (sails.config.environment === 'production') ? hosting.id : ('dev-' + hosting.id)
-    var host = (sails.config.environment === 'production') ? hosting.host : ('dev-' + hosting.host)
+    var host = (sails.config.environment === 'production') ? host : ('dev-' + host)
+
     exec('/home/mineweb.sh creation ' + id + ' ' + host + ' sdomain', {
       user: sails.config.servers.hosting.user,
       host: sails.config.servers.hosting.host,
@@ -27,12 +28,12 @@ module.exports = {
         sails.log.error(e)
       }
 
-      if (ids && ids.state === 'success') {
+      if (ids && ids.status === 'success') {
         ids = ids.ftp
         //Save
         Hosting.update({id: hosting.id}, {ftpUser: ids.user, ftpPassword: ids.password}).exec(function (err, hosting) {
           if (err)
-            sails.log.error(err)
+            return sails.log.error(err)
           return next()
         })
       }
@@ -223,7 +224,7 @@ module.exports = {
         Hosting.find({
           expireAt: {'<=': moment().hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')},
           state: true
-        }).populate(['user', 'licence']).exec(function (err, hostings) {
+        }).populate(['user', 'license']).exec(function (err, hostings) {
 
           if (err)
             sails.log.error(err)
@@ -235,7 +236,7 @@ module.exports = {
               // Disabled hosting (server)
               // Set state == 0 (db)
               HostingService.disable(hosting)
-              Hosting.update({id: hosting.id}, {state: false}).exec(function (err, hostingUpdated) {
+              License.update({hosting: hosting.id}, {state: false}).exec(function (err, licenseUpdated) {
                 if (err)
                   sails.log.error(err)
 
@@ -353,9 +354,14 @@ module.exports = {
                 if (err)
                   sails.log.error(err)
 
-                // Save stats
-                hostingsDeleted++
-                next()
+                License.destroy({hosting: hosting.id}).exec(function (err, licenseDestroyed) {
+                  if (err)
+                    sails.log.error(err)
+
+                  // Save stats
+                  hostingsDeleted++
+                  next()
+                })
 
               })
 

@@ -129,7 +129,7 @@ module.exports = {
 
 			// Find licenses
 			function (callback) {
-				License.find({user:req.session.userId}).exec(function (err, licenses) {
+				License.find({user:req.session.userId, hosting: null}).exec(function (err, licenses) {
 					if (err)
 						callback(err, null)
 					else
@@ -139,7 +139,7 @@ module.exports = {
 
 			// Find hostings
 			function (callback) {
-				Hosting.find({user:req.session.userId}).exec(function (err, hostings) {
+				Hosting.find({user:req.session.userId}).populate(['license']).exec(function (err, hostings) {
 					if (err)
 						callback(err, null)
 					else
