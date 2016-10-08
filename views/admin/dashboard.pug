@@ -23,7 +23,7 @@ block content
         .ibox.float-e-margins
           .ibox-title
             span.label.label-info.pull-right #{__('Mensuel')}
-            h5 #{__('Hébergements')}
+            h5 #{__('Licence hébergées')}
           .ibox-content
             h1.no-margins #{hostingsCount}
             small #{__('En ligne')}
@@ -161,7 +161,7 @@ block custom
                     data: [#{sales['licenses'][0]}, #{sales['licenses'][1]}, #{sales['licenses'][2]}, #{sales['licenses'][3]}, #{sales['licenses'][4]}, #{sales['licenses'][5]}]
                 },
                 {
-                    label: "#{__('Ventes d\'hébergements')}",
+                    label: "#{__('Ventes de licence hébergées')}",
                     fillColor: "rgba(26,179,148,0.5)",
                     strokeColor: "rgba(26,179,148,0.7)",
                     pointColor: "rgba(26,179,148,1)",
@@ -192,7 +192,6 @@ block custom
 
         var ctx = document.getElementById("lineChart").getContext("2d");
         var myNewChart = new Chart(ctx).Line(lineData, lineOptions);
-        console.log(myNewChart.generateLegend())
         $('#chart').prepend(myNewChart.generateLegend())
 
     });

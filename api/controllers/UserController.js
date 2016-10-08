@@ -663,9 +663,6 @@ module.exports = {
 
       response.locals.moment = moment
 
-      console.log(response.locals.user.licenses)
-      console.log(response.locals.user.hostings)
-
       response.render('./user/profile')
     })
 

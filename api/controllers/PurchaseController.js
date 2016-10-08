@@ -209,7 +209,7 @@ module.exports = {
 										}
 
 										if (count === 0) {
-											NotificationService.error(req, req.__('Vous ne pouvez pas renouveler un hébergement inexistant !'))
+											NotificationService.error(req, req.__('Vous ne pouvez pas renouveler une licence hébergée inexistant !'))
 											return res.redirect('/purchase/hosting')
 										}
 
@@ -293,7 +293,7 @@ module.exports = {
 						}
 
 						if (count === 0) {
-							NotificationService.error(req, req.__('Vous ne pouvez pas renouveler un hébergement inexistant !'))
+							NotificationService.error(req, req.__('Vous ne pouvez pas renouveler une licence hébergée inexistant !'))
 							return res.redirect('/purchase/hosting')
 						}
 

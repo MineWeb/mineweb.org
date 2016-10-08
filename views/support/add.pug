@@ -37,7 +37,7 @@ block content
                     option(value='LICENSE:' + license.id) ID##{license.id}
                       if license.host !== undefined && license.host != null && license.host.length > 0
                         | (#{license.host})
-                optgroup(label=__('Hébergements'))
+                optgroup(label=__('Licence hébergées'))
                   each hosting in hostings
                     option(value='HOSTING:' + hosting.id) ID##{hosting.id}
                       if hosting.hostType === 'SUBDOMAIN'

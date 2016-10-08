@@ -245,7 +245,7 @@ module.exports = {
                   host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
                   username: hosting.user.username
-                }, sails.__('Désactivation de votre hébergement'), hosting.user.email)
+                }, sails.__('Désactivation de votre licence hébergée'), hosting.user.email)
 
                 // Save stats
                 hostingsDisabled++
@@ -311,7 +311,7 @@ module.exports = {
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
                   days: Math.floor(Math.abs( (new Date(hosting.expireAt) - Date.now()) / (24 * 60 * 60 * 1000) )),
                   username: hosting.user.username
-                }, sails.__('Expiration de votre hébergement'), hosting.user.email)
+                }, sails.__('Expiration de votre licence hébergée'), hosting.user.email)
 
                 // Save stats
                 hostingsLastDays++
@@ -382,7 +382,7 @@ module.exports = {
       // Send stats mail
       MailService.send('stats/hostings', {
         stats: stats
-      }, sails.__('Statistiques des hébergements'), sails.config.stats.email)
+      }, sails.__('Statistiques des licences hébergées'), sails.config.stats.email)
 
       console.log('Hostings checked!', stats)
 
