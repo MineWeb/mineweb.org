@@ -37,6 +37,14 @@ module.exports = {
 
   removeHTML: function (content) {
     return content.replace(/(<([^>]+)>)/ig,"")
+  },
+
+  numberWithSpaces: function (x) {
+    if (x === undefined || x === null)
+      return 0
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return parts[0];
   }
 
 };

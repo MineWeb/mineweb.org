@@ -1,0 +1,306 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__("Statistiques")}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Statistiques')}
+  .row
+
+    - console.log(stats)
+    .col-lg-2
+      .widget.style1.navy-bg
+        .row.vertical-align
+          .col-xs-3
+            i.fa.fa-users.fa-3x
+          .col-xs-9.text-right
+            span #{__('Utilisateurs totaux')}
+            h2.font-bold #{stats.usersCount}
+    .col-lg-2
+      .widget.style1.blue-bg
+        .row.vertical-align
+          .col-xs-3
+            i.fa.fa-user.fa-3x
+          .col-xs-9.text-right
+            span #{__('Moyenne mensuelle')}
+            h2.font-bold +#{stats.usersMonthlyAverageRegister}
+    .col-lg-2
+      .widget.style1.red-bg
+        .row.vertical-align
+          .col-xs-3
+            i.fa.fa-user.fa-3x
+          .col-xs-9.text-right
+            span #{__('Inscrits ce mois-ci')}
+            h2.font-bold #{stats.usersRegisterCountThisMonth}
+    .col-lg-2
+      .widget.style1.yellow-bg
+        .row.vertical-align
+          .col-xs-3
+            i.fa.fa-euro.fa-3x
+          .col-xs-9.text-right
+            span #{__('Généré au total')}
+            h2.font-bold #{stats.totalProfit} EUR
+    .col-lg-2
+      .widget.style1.lazur-bg
+        .row.vertical-align
+          .col-xs-3
+            i.fa.fa-euro.fa-3x
+          .col-xs-9.text-right
+            span #{__('Moyenne mensuelle')}
+            h2.font-bold #{stats.averageMonthlyProfit} EUR
+    .col-lg-2
+      .widget.style1.navy-bg
+        .row.vertical-align
+          .col-xs-3
+            i.fa.fa-euro.fa-3x
+          .col-xs-9.text-right
+            span #{__('Généré ce mois-ci')}
+            h2.font-bold #{stats.monthProfit} EUR
+
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .row
+
+          .col-lg-6
+            .ibox.float-e-margins
+              .ibox-title
+                h5 #{__('Moyens de paiments (journalier)')}
+              .ibox-content
+                div#chartPaymentTypesDaily
+                  canvas#barChartPaymentTypesDaily(height="140")
+              .ibox-footer
+                span #{__('Moyennes :')}
+                span.pull-right
+                  b PayPal :&nbsp;
+                  small #{__('~ %s/jour', 10)}
+                span.pull-right &nbsp;|&nbsp;
+                span.pull-right
+                  b Dédipass :&nbsp;
+                  small #{__('~ %s/jour', 10)}
+          .col-lg-6
+            .ibox.float-e-margins
+              .ibox-title
+                h5 #{__('Moyens de paiments (mensuel)')}
+              .ibox-content
+                div#chartPaymentTypesMonthly
+                  canvas#barChartPaymentTypesMonthly(height="140")
+              .ibox-footer
+                span #{__('Moyennes :')}
+                span.pull-right
+                  b PayPal :&nbsp;
+                  small #{__('~ %s/mois', 10)}
+                span.pull-right &nbsp;|&nbsp;
+                span.pull-right
+                  b Dédipass :&nbsp;
+                  small #{__('~ %s/mois', 10)}
+
+        .row
+
+          .col-lg-6
+            .ibox.float-e-margins
+              .ibox-title
+                h5 #{__('Achats mensuels (licences/hébergements)')}
+              .ibox-content
+                div#chartLicensesHostingsPurchases
+                  canvas#lineChartLicensesHostingsPurchases(height="140")
+              .ibox-footer
+                span #{__('Moyennes :')}
+                span.pull-right
+                  b #{__('Licences')} :&nbsp;
+                  small #{__('~ %s/mois', 10)}
+                span.pull-right &nbsp;|&nbsp;
+                span.pull-right
+                  b #{__('Hébergements')} :&nbsp;
+                  small #{__('~ %s/mois', 10)}
+
+          .col-lg-6
+            .ibox.float-e-margins
+              .ibox-title
+                h5 #{__('Achats mensuels (plugins/thèmes)')}
+              .ibox-content
+                div#chartPluginsThemesPurchases
+                  canvas#lineChartPluginsThemesPurchases(height="140")
+              .ibox-footer
+                span #{__('Moyennes :')}
+                span.pull-right
+                  b PayPal :&nbsp;
+                  small #{__('~ %s/mois', 10)}
+                span.pull-right &nbsp;|&nbsp;
+                span.pull-right
+                  b Dédipass :&nbsp;
+                  small #{__('~ %s/mois', 10)}
+
+
+block cssCustom
+  style.
+    .bar-legend li span,
+    .line-legend li span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 5px;
+    }
+    ul.bar-legend,
+    ul.line-legend {
+      list-style: none;
+      padding-left: 0;
+      text-align: center;
+    }
+    .bar-legend li,
+    .line-legend li {
+      display: inline-block;
+      margin-right: 10px;
+      margin-left: 10px;
+    }
+block custom
+  script(src="/js/admin/plugins/chartJs/Chart.min.js")
+  script(type='text/javascript').
+
+    // Payments types (months)
+    $(function () {
+      var barData = {
+        labels: ["Vendredi", "Samedi", "Dimanche", "Lundi", "Mardi", "Hier", "Aujourd'hui"],
+        datasets: [
+          {
+            label: "Dédipass",
+            fillColor: 'rgba(220, 220, 220, 0.5)',
+            data: [65, 59, 80, 81, 56, 55, 40]
+          },
+          {
+            label: "PayPal",
+            fillColor: 'rgba(26,179,148,0.5)',
+            data: [28, 48, 40, 19, 86, 27, 90]
+          }
+        ]
+      }
+
+      var barOptions = {
+          responsive: true
+      }
+
+      var canvas = document.getElementById("barChartPaymentTypesDaily").getContext("2d")
+      var chart = new Chart(canvas)
+      chart = chart.Bar(barData, barOptions)
+
+      $('#chartPaymentTypesDaily').prepend(chart.generateLegend())
+    })
+
+    // Payments types (global)
+    $(function () {
+      var barData = {
+        labels: ["Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre"],
+        datasets: [
+          {
+            label: "Dédipass",
+            fillColor: 'rgba(220, 220, 220, 0.5)',
+            data: [65, 59, 80, 81, 56, 55, 40]
+          },
+          {
+            label: "PayPal",
+            fillColor: 'rgba(26,179,148,0.5)',
+            data: [28, 48, 40, 19, 86, 27, 90]
+          }
+        ]
+      }
+
+      var barOptions = {
+          responsive: true
+      }
+
+      var canvas = document.getElementById("barChartPaymentTypesMonthly").getContext("2d")
+      var chart = new Chart(canvas)
+      chart = chart.Bar(barData, barOptions)
+
+      $('#chartPaymentTypesMonthly').prepend(chart.generateLegend())
+    })
+
+    // Purchases (licences/hostings)
+    $(function () {
+      var data = {
+        labels: ["#{__('Avril')}", "#{__('Mai')}", "#{__('Juin')}", "#{__('Juillet')}", "#{__('Août')}", "#{__('Septembre')}", "#{__('Octobre')}"], // TODO
+        datasets: [
+          {
+             label: "Licences",
+             fillColor: "rgba(220,220,220,0.2)",
+             strokeColor: "rgba(220,220,220,1)",
+             pointColor: "rgba(220,220,220,1)",
+             pointStrokeColor: "#fff",
+             pointHighlightFill: "#fff",
+             pointHighlightStroke: "rgba(220,220,220,1)",
+             //data: [7, 11, 13, 17, 19, 23, 29]
+             data: [
+              #{stats.licencesHostingsPurchasesThisMonth.licences}, // TODO
+              '',
+              '',
+              '',
+              '',
+              '',
+              ''
+             ]
+           },
+           {
+             label: "Hébergements",
+             fillColor: "rgba(151,187,205,0.2)",
+             strokeColor: "rgba(151,187,205,1)",
+             pointColor: "rgba(151,187,205,1)",
+             pointStrokeColor: "#fff",
+             pointHighlightFill: "#fff",
+             pointHighlightStroke: "rgba(151,187,205,1)",
+             data: [2, 3, 5, 8, 13, 21, 34]
+           }
+        ]
+      }
+
+      var options = {
+        responsive: true
+      }
+
+      var canvas = document.getElementById("lineChartLicensesHostingsPurchases").getContext("2d")
+      var chart = new Chart(canvas)
+      chart = chart.Line(data, options)
+
+      $('#chartLicensesHostingsPurchases').prepend(chart.generateLegend())
+    })
+
+    // Purchases (licences/hostings)
+    $(function () {
+      var data = {
+        labels: ["Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre"],
+        datasets: [
+          {
+             label: "Plugins",
+             fillColor: "rgba(220,220,220,0.2)",
+             strokeColor: "rgba(220,220,220,1)",
+             pointColor: "rgba(220,220,220,1)",
+             pointStrokeColor: "#fff",
+             pointHighlightFill: "#fff",
+             pointHighlightStroke: "rgba(220,220,220,1)",
+             data: [7, 11, 13, 17, 19, 23, 29]
+           },
+           {
+             label: "Thèmes",
+             fillColor: "rgba(151,187,205,0.2)",
+             strokeColor: "rgba(151,187,205,1)",
+             pointColor: "rgba(151,187,205,1)",
+             pointStrokeColor: "#fff",
+             pointHighlightFill: "#fff",
+             pointHighlightStroke: "rgba(151,187,205,1)",
+             data: [2, 3, 5, 8, 13, 21, 34]
+           }
+        ]
+      }
+
+      var options = {
+        responsive: true
+      }
+
+      var canvas = document.getElementById("lineChartPluginsThemesPurchases").getContext("2d")
+      var chart = new Chart(canvas)
+      chart = chart.Line(data, options)
+
+      $('#chartPluginsThemesPurchases').prepend(chart.generateLegend())
+    })

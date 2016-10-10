@@ -192,7 +192,6 @@ block custom
 
         var ctx = document.getElementById("lineChart").getContext("2d");
         var myNewChart = new Chart(ctx).Line(lineData, lineOptions);
-        console.log(myNewChart.generateLegend())
         $('#chart').prepend(myNewChart.generateLegend())
 
     });

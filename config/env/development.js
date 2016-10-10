@@ -192,7 +192,10 @@ module.exports = {
     },
     'ADMIN-UPDATE_EDIT': {
       controller: 'admin/update',
-      action: 'edt'
+      action: 'edit'
+    },
+    'ADMIN-VIEW_STATS': {
+      controller: 'admin/statistic'
     },
   },
 
@@ -228,7 +231,8 @@ module.exports = {
       //'ADMIN-GET_SQL_DUMP_HOSTING',
       //'ADMIN-UPDATE_INDEX',
       //'ADMIN-UPDATE_ADD',
-      //'ADMIN-UPDATE_EDIT'
+      //'ADMIN-UPDATE_EDIT',
+      //'ADMIN-VIEW_STATS'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -259,7 +263,8 @@ module.exports = {
       'ADMIN-GET_SQL_DUMP_HOSTING',
       //'ADMIN-UPDATE_INDEX',
       //'ADMIN-UPDATE_ADD',
-      //'ADMIN-UPDATE_EDIT'
+      //'ADMIN-UPDATE_EDIT',
+      'ADMIN-VIEW_STATS'
     ],
     'FOUNDER': ['*']
   },
