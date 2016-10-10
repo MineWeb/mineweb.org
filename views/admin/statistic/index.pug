@@ -11,7 +11,6 @@ block content
             strong #{__('Statistiques')}
   .row
 
-    - console.log(stats)
     .col-lg-2
       .widget.style1.navy-bg
         .row.vertical-align
@@ -111,11 +110,11 @@ block content
                 span #{__('Moyennes :')}
                 span.pull-right
                   b #{__('Licences')} :&nbsp;
-                  small #{__('~ %s/mois', 10)}
+                  small #{__('~ %s/mois', Utils.avg(stats.licencesHostingsPurchasesThisMonth.licences))}
                 span.pull-right &nbsp;|&nbsp;
                 span.pull-right
                   b #{__('Hébergements')} :&nbsp;
-                  small #{__('~ %s/mois', 10)}
+                  small #{__('~ %s/mois', Utils.avg(stats.licencesHostingsPurchasesThisMonth.hostings))}
 
           .col-lg-6
             .ibox.float-e-margins
@@ -133,7 +132,6 @@ block content
                 span.pull-right
                   b Dédipass :&nbsp;
                   small #{__('~ %s/mois', 10)}
-
 
 block cssCustom
   style.
@@ -163,7 +161,7 @@ block custom
     // Payments types (months)
     $(function () {
       var barData = {
-        labels: ["Vendredi", "Samedi", "Dimanche", "Lundi", "Mardi", "Hier", "Aujourd'hui"],
+        labels: !{JSON.stringify(lastDays)},
         datasets: [
           {
             label: "Dédipass",
@@ -192,7 +190,7 @@ block custom
     // Payments types (global)
     $(function () {
       var barData = {
-        labels: ["Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre"],
+        labels: !{JSON.stringify(lastMonths)},
         datasets: [
           {
             label: "Dédipass",
@@ -221,7 +219,7 @@ block custom
     // Purchases (licences/hostings)
     $(function () {
       var data = {
-        labels: ["#{__('Avril')}", "#{__('Mai')}", "#{__('Juin')}", "#{__('Juillet')}", "#{__('Août')}", "#{__('Septembre')}", "#{__('Octobre')}"], // TODO
+        labels: !{JSON.stringify(lastMonths)},
         datasets: [
           {
              label: "Licences",
@@ -231,16 +229,7 @@ block custom
              pointStrokeColor: "#fff",
              pointHighlightFill: "#fff",
              pointHighlightStroke: "rgba(220,220,220,1)",
-             //data: [7, 11, 13, 17, 19, 23, 29]
-             data: [
-              #{stats.licencesHostingsPurchasesThisMonth.licences}, // TODO
-              '',
-              '',
-              '',
-              '',
-              '',
-              ''
-             ]
+             data: #{JSON.stringify(stats.licencesHostingsPurchasesThisMonth.licences)}
            },
            {
              label: "Hébergements",
@@ -250,7 +239,7 @@ block custom
              pointStrokeColor: "#fff",
              pointHighlightFill: "#fff",
              pointHighlightStroke: "rgba(151,187,205,1)",
-             data: [2, 3, 5, 8, 13, 21, 34]
+             data: #{JSON.stringify(stats.licencesHostingsPurchasesThisMonth.hostings)}
            }
         ]
       }
@@ -269,7 +258,7 @@ block custom
     // Purchases (licences/hostings)
     $(function () {
       var data = {
-        labels: ["Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre"],
+        labels: !{JSON.stringify(lastMonths)},
         datasets: [
           {
              label: "Plugins",

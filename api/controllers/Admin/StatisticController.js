@@ -6,10 +6,19 @@
  */
 
 var async = require('async')
+var moment = require('moment')
 
 module.exports = {
 
   index: function (req, res) {
+    var dataMonths = {}
+      dataMonths[moment().subtract('6', 'month').month() + 1] = 0
+      dataMonths[moment().subtract('5', 'month').month() + 1] = 0
+      dataMonths[moment().subtract('4', 'month').month() + 1] = 0
+      dataMonths[moment().subtract('3', 'month').month() + 1] = 0
+      dataMonths[moment().subtract('2', 'month').month() + 1] = 0
+      dataMonths[moment().subtract('1', 'month').month() + 1] = 0
+      dataMonths[moment().month() + 1] = 0
 
     async.parallel([
 
@@ -44,41 +53,74 @@ module.exports = {
         User.query('SELECT SUM(a.profit) AS monthProfit FROM (SELECT SUM(paymentAmount - taxAmount) AS profit FROM paypalhistory WHERE MONTH(createdAt) = \'' + ((new Date()).getMonth() +1) + '\' UNION SELECT SUM(payout) AS profit FROM dedipasshistory WHERE MONTH(createdAt) = \'' + ((new Date()).getMonth() +1) + '\') AS a', callback)
       },
 
-      // Get licences purchases this week
+      // Get licences purchases last 7 months
       function (callback) {
-        License.query('SELECT COUNT(*) AS count, DAY(createdAt) AS day FROM license WHERE createdAt > DATE_SUB(NOW(), INTERVAL 1 WEEK) GROUP BY day', callback)
+        License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license GROUP BY month LIMIT 7', function (err, data) {
+          if (err) return callback(err)
+          // add results to defaults results
+          for (var i = 0; i < data.length; i++) {
+            dataMonths[data[i].month] = data[i].count
+          }
+          // format into simple array
+          var dataFormatted = []
+          for (var month in dataMonths) {
+            dataFormatted.push(dataMonths[month])
+          }
+          // return data
+          callback(null, dataFormatted)
+        })
       },
 
-      // Get hostings purchases this week
+      // Get hostings purchases last 7 months
       function (callback) {
-        Hosting.query('SELECT COUNT(*) AS count, DAY(createdAt) AS day FROM hosting WHERE createdAt > DATE_SUB(NOW(), INTERVAL 1 WEEK) GROUP BY day', callback)
+        Hosting.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM hosting GROUP BY month LIMIT 7', function (err, data) {
+          if (err) return callback(err)
+          // add results to defaults results
+          for (var i = 0; i < data.length; i++) {
+            dataMonths[data[i].month] = data[i].count
+          }
+          // format into simple array
+          var dataFormatted = []
+          for (var month in dataMonths) {
+            dataFormatted.push(dataMonths[month])
+          }
+          // return data
+          callback(null, dataFormatted)
+        })
       },
-
-      // Get licences purchases last months
-      function (callback) {
-        License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license GROUP BY month', callback)
-      },
-
-      // Get hostings purchases last months
-      function (callback) {
-        Hosting.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM hosting GROUP BY month', callback)
-      },
-
-      // Get percentage hosting/licences buy this month
 
       // Get plugins purchases last months
 
       // Get themes purchases last months
 
     ], function (err, results) {
-
       if (err) {
         sails.log.error(err)
         return res.serverError()
       }
 
+      moment.locale(res.locals.user.lang)
+
       res.view('admin/statistic/index', {
-        title: req.__("Statistiques"),
+        title: req.__('Statistiques'),
+        lastMonths: [
+          Utils.ucfirst(moment().subtract('6', 'month').format('MMMM')),
+          Utils.ucfirst(moment().subtract('5', 'month').format('MMMM')),
+          Utils.ucfirst(moment().subtract('4', 'month').format('MMMM')),
+          Utils.ucfirst(moment().subtract('3', 'month').format('MMMM')),
+          Utils.ucfirst(moment().subtract('2', 'month').format('MMMM')),
+          Utils.ucfirst(moment().subtract('1', 'month').format('MMMM')),
+          Utils.ucfirst(moment().format('MMMM'))
+        ],
+        lastDays: [
+          Utils.ucfirst(moment().subtract('6', 'day').format('dddd')),
+          Utils.ucfirst(moment().subtract('5', 'day').format('dddd')),
+          Utils.ucfirst(moment().subtract('4', 'day').format('dddd')),
+          Utils.ucfirst(moment().subtract('3', 'day').format('dddd')),
+          Utils.ucfirst(moment().subtract('2', 'day').format('dddd')),
+          Utils.ucfirst(moment().subtract('1', 'day').format('dddd')),
+          Utils.ucfirst(moment().format('dddd'))
+        ],
         stats: {
           usersCount: Utils.numberWithSpaces(results[0]),
           usersMonthlyAverageRegister: results[1][0].avg,
@@ -87,14 +129,12 @@ module.exports = {
           totalProfit: Utils.numberWithSpaces(results[4][0].totalProfit),
           monthProfit: Utils.numberWithSpaces(results[5][0].monthProfit),
           licencesHostingsPurchasesThisMonth: {
-            licences: results[8],
-            hostings: results[9]
+            licences: results[6],
+            hostings: results[7]
           }
         }
       })
-
     })
-
   }
 
 }

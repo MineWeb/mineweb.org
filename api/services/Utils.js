@@ -45,6 +45,21 @@ module.exports = {
     var parts = x.toString().split(".");
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
     return parts[0];
+  },
+
+  ucfirst: function (str) {
+    str += ''
+    var f = str.charAt(0)
+      .toUpperCase()
+    return f + str.substr(1)
+  },
+
+  avg: function (array) {
+    var total = 0
+    for(var i = 0; i < array.length; i++) {
+        total += array[i]
+    }
+    return Math.round(total / array.length)
   }
 
 };
