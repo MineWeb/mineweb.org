@@ -197,6 +197,7 @@ module.exports.routes = {
     'post /admin/update/edit/:id': 'Admin/UpdateController.edit',
 
 
-    '/admin/stats': 'Admin/StatisticController.index'
+    '/admin/stats': 'Admin/StatisticController.index',
+    '/admin/payments/list': 'Admin/PaymentController.view'
 
 };

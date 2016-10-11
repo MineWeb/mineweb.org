@@ -1,0 +1,158 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__("Listes des paiements")}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Paiments')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Paiements PayPal')}
+                small &nbsp;#{__('Dernier paiement %s', moment(paypalPayments[0].createdAt).fromNow())}
+            .ibox-content
+              .table-responsive
+                table.table.table-hover.no-margins(style="font-size: 13px;")
+                  thead
+                    tr
+                      th #{__("ID de l'achat")}
+                      th #{__("Type de l'achat")}
+                      th #{__("Détails de l'achat")}
+                      th #{__('Utilisateur')}
+                      th #{__("ID du paiement")}
+                      th #{__('ID de la transaction PayPal')}
+                      th #{__("Montant payé par l'utilisateur")}
+                      th #{__("Taxes payée par l'utilisateur")}
+                      th #{__('Montant reçu')}
+                      th #{__("Email PayPal de l'utilisateur")}
+                      th #{__("Date du paiement")}
+                      th #{__('Statut du paiement')}
+                      th #{__('Raison du litige')}
+                      th #{__('Date du litige')}
+                      th #{__('Date du remboursement')}
+                      th #{__('Dernière mise à jour du paiement')}
+                  tbody
+                    each payment in paypalPayments
+                      tr
+                        td
+                          if payment.purchase
+                            | #{payment.purchase.id}
+                          else
+                            | N/A
+                        td
+                          if payment.purchase
+                            | #{payment.purchase.type}
+                          else
+                            | N/A
+                        td
+                          if payment.purchase && (payment.purchase.type === 'LICENSE' || payment.purchase.type === 'LICENSE_HOSTED')
+                            a(href='/admin/license/view/' + payment.purchase.itemId) #{__('Voir')}
+                          else if payment.purchase && (payment.purchase.type === 'PLUGIN' || payment.purchase.type === 'LICENSE_HOSTED')
+                            em #{lists[payment.purchase.type][payment.purchase.itemId].name}
+                          else
+                            | N/A
+                        td
+                          a(href='/admin/user/view/' + payment.user.id) #{payment.user.username}##{payment.user.id}
+                        td #{payment.id}
+                        td
+                          a(href='https://www.paypal.com/fr/cgi-bin/webscr?cmd=_view-a-trans&id='+payment.paymentId, target='_blank') #{payment.paymentId}
+                        td.text-info #{payment.paymentAmount} €
+                        td.text-danger #{payment.taxAmount} €
+                        td.text-success #{payment.paymentAmount - payment.taxAmount} €
+                        td #{payment.buyerEmail}
+                        td
+                          span.fa.fa-calendar
+                          | &nbsp;
+                          span.moment-date(data-format="Le {L} à {LT}") #{payment.paymentDate}
+                        td
+                          if payment.state === 'COMPLETED'
+                            span.label.label-primary #{__('Complété')}
+                          else if payment.state === 'PENDING'
+                            span.label.label-warning #{__('En attente')}
+                          else if payment.state === 'REVERSED'
+                            span.label.label-warning #{__('Suspendu')}
+                          else if payment.state === 'REFUNDED'
+                            span.label.label-danger #{__('Remboursé')}
+                          else if payment.state === 'FAILED'
+                            span.label.label-danger #{__('Échoué')}
+                        td #{payment.reversedReason}
+                        td
+                          if payment.caseDate
+                            span.fa.fa-calendar
+                            | &nbsp;
+                            span.moment-date(data-format="Le {L} à {LT}") #{payment.caseDate}
+                          else
+                            | N/A
+                        td
+                          if payment.refundDate
+                            span.fa.fa-calendar
+                            | &nbsp;
+                            span.moment-date(data-format="Le {L} à {LT}") #{payment.refundDate}
+                          else
+                            | N/A
+                        td
+                          span.fa.fa-calendar
+                          | &nbsp;
+                          span.moment-date(data-format="Le {L} à {LT}") #{payment.updatedAt}
+        .col-md-12
+          .ibox.float-e-margins
+            .ibox-title
+              h4 #{__('Paiements Dédipass')}
+                small &nbsp;#{__('Dernier paiement %s', moment(dedipassPayments[0].createdAt).fromNow())}
+            .ibox-content
+              .table-responsive
+                table.table.table-hover.no-margins(style="font-size: 13px;")
+                  thead
+                    tr
+                      th #{__("ID de l'achat")}
+                      th #{__("Type de l'achat")}
+                      th #{__("Détails de l'achat")}
+                      th #{__('Utilisateur')}
+                      th #{__("ID du paiement")}
+                      th #{__('Montant reçu')}
+                      th #{__("Code utilisé par l'utilisateur")}
+                      th #{__("Palier utilisé par l'utilisateur")}
+                      th #{__("Date du paiement")}
+                      th #{__('Dernière mise à jour du paiement')}
+                  tbody
+                    each payment in dedipassPayments
+                      tr
+                        td
+                          if payment.purchase
+                            | #{payment.purchase.id}
+                          else
+                            | N/A
+                        td
+                          if payment.purchase
+                            | #{payment.purchase.type}
+                          else
+                            | N/A
+                        td
+                          if payment.purchase && (payment.purchase.type === 'LICENSE' || payment.purchase.type === 'LICENSE_HOSTED')
+                            a(href='/admin/license/view/' + payment.purchase.itemId) #{__('Voir')}
+                          else if payment.purchase && (payment.purchase.type === 'PLUGIN' || payment.purchase.type === 'LICENSE_HOSTED')
+                            em #{lists[payment.purchase.type][payment.purchase.itemId].name}
+                          else
+                            | N/A
+                        td
+                          a(href='/admin/user/view/' + payment.user.id) #{payment.user.username}##{payment.user.id}
+                        td #{payment.id}
+                        td.text-success #{payment.payout} €
+                        td #{payment.code}
+                        td #{payment.rate}
+                        td
+                          span.fa.fa-calendar
+                          | &nbsp;
+                          span.moment-date(data-format="Le {L} à {LT}") #{payment.createdAt}
+                        td
+                          span.fa.fa-calendar
+                          | &nbsp;
+                          span.moment-date(data-format="Le {L} à {LT}") #{payment.updatedAt}

@@ -246,10 +246,10 @@ block content
                         td.hostingHost(data-host-id=hosting.id)
                           if hosting.hosting.hostType === 'SUBDOMAIN'
                              a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
-                               | http://#{hosting.host}.craftwb.fr
+                               | http://#{hosting.host}.craftwb.fr
                           else
                             a(href='http://'+hosting.host, target='_blank')
-                              | http://#{hosting.host}
+                              | http://#{hosting.host}
                         td #{hosting.key}
                         td
                           if hosting.state

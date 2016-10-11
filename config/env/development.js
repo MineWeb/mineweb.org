@@ -20,14 +20,10 @@ module.exports = {
    connections: {
      main_sql: {
        adapter: 'sails-mysql',
-       /*host: 'status.hardfight.fr',
+       host: 'status.hardfight.fr',
        user: process.env.SQL_USER || 'mineweb',
        password: process.env.SQL_PWD || 'mineweb42', //optional
-       database: process.env.SQL_DB ||'mineweb' //optional*/
-       host: 'localhost',
-       user: 'root',
-       password: 'root',
-       database: 'node'
+       database: process.env.SQL_DB ||'mineweb' //optional
      },
    },
 
@@ -173,6 +169,9 @@ module.exports = {
     'ADMIN-VIEW_STATS': {
       controller: 'admin/statistic'
     },
+    'ADMIN-VIEW_PAYMENTS_LIST': {
+      controller: 'admin/payment'
+    },
   },
 
   permissionsAccess: {
@@ -202,7 +201,8 @@ module.exports = {
       //'ADMIN-UPDATE_INDEX',
       //'ADMIN-UPDATE_ADD',
       //'ADMIN-UPDATE_EDIT',
-      //'ADMIN-VIEW_STATS'
+      //'ADMIN-VIEW_STATS',
+      //'ADMIN-VIEW_PAYMENTS_LIST'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -227,7 +227,8 @@ module.exports = {
       //'ADMIN-UPDATE_INDEX',
       //'ADMIN-UPDATE_ADD',
       //'ADMIN-UPDATE_EDIT',
-      'ADMIN-VIEW_STATS'
+      'ADMIN-VIEW_STATS',
+      'ADMIN-VIEW_PAYMENTS_LIST'
     ],
     'FOUNDER': ['*']
   },

@@ -28,7 +28,7 @@ module.exports = {
       dataDaysList[moment().subtract('2', 'day').format('D')] = 0
       dataDaysList[moment().subtract('1', 'day').format('D')] = 0
       dataDaysList[moment().format('D')] = 0
-    console.log(dataDaysList)
+
     async.parallel([
 
       // Get users count
