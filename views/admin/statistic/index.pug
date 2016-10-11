@@ -75,11 +75,11 @@ block content
                 span #{__('Moyennes :')}
                 span.pull-right
                   b PayPal :&nbsp;
-                  small #{__('~ %s/jour', 10)}
+                  small #{__('~ %s/jour', Utils.avg(stats.purchasesLastDays.paypal))}
                 span.pull-right &nbsp;|&nbsp;
                 span.pull-right
                   b Dédipass :&nbsp;
-                  small #{__('~ %s/jour', 10)}
+                  small #{__('~ %s/jour', Utils.avg(stats.purchasesLastDays.dedipass))}
           .col-lg-6
             .ibox.float-e-margins
               .ibox-title
@@ -91,11 +91,11 @@ block content
                 span #{__('Moyennes :')}
                 span.pull-right
                   b PayPal :&nbsp;
-                  small #{__('~ %s/mois', 10)}
+                  small #{__('~ %s/mois', Utils.avg(stats.purchasesThisMonth.paypal))}
                 span.pull-right &nbsp;|&nbsp;
                 span.pull-right
                   b Dédipass :&nbsp;
-                  small #{__('~ %s/mois', 10)}
+                  small #{__('~ %s/mois', Utils.avg(stats.purchasesThisMonth.dedipass))}
 
         .row
 
@@ -110,11 +110,11 @@ block content
                 span #{__('Moyennes :')}
                 span.pull-right
                   b #{__('Licences')} :&nbsp;
-                  small #{__('~ %s/mois', Utils.avg(stats.licencesHostingsPurchasesThisMonth.licences))}
+                  small #{__('~ %s/mois', Utils.avg(stats.purchasesThisMonth.licences))}
                 span.pull-right &nbsp;|&nbsp;
                 span.pull-right
                   b #{__('Hébergements')} :&nbsp;
-                  small #{__('~ %s/mois', Utils.avg(stats.licencesHostingsPurchasesThisMonth.hostings))}
+                  small #{__('~ %s/mois', Utils.avg(stats.purchasesThisMonth.hostings))}
 
           .col-lg-6
             .ibox.float-e-margins
@@ -126,12 +126,12 @@ block content
               .ibox-footer
                 span #{__('Moyennes :')}
                 span.pull-right
-                  b PayPal :&nbsp;
-                  small #{__('~ %s/mois', 10)}
+                  b #{__('Plugins')} :&nbsp;
+                  small #{__('~ %s/mois', Utils.avg(stats.purchasesThisMonth.plugins))}
                 span.pull-right &nbsp;|&nbsp;
                 span.pull-right
-                  b Dédipass :&nbsp;
-                  small #{__('~ %s/mois', 10)}
+                  b #{__('Thèmes')} :&nbsp;
+                  small #{__('~ %s/mois', Utils.avg(stats.purchasesThisMonth.hostings))}
 
 block cssCustom
   style.
@@ -166,18 +166,19 @@ block custom
           {
             label: "Dédipass",
             fillColor: 'rgba(220, 220, 220, 0.5)',
-            data: [65, 59, 80, 81, 56, 55, 40]
+            data: #{JSON.stringify(stats.purchasesLastDays.dedipass)}
           },
           {
             label: "PayPal",
             fillColor: 'rgba(26,179,148,0.5)',
-            data: [28, 48, 40, 19, 86, 27, 90]
+            data: #{JSON.stringify(stats.purchasesLastDays.paypal)}
           }
         ]
       }
 
       var barOptions = {
-          responsive: true
+        responsive: true,
+        multiTooltipTemplate: "<%= value %> <%= datasetLabel %>"
       }
 
       var canvas = document.getElementById("barChartPaymentTypesDaily").getContext("2d")
@@ -195,18 +196,19 @@ block custom
           {
             label: "Dédipass",
             fillColor: 'rgba(220, 220, 220, 0.5)',
-            data: [65, 59, 80, 81, 56, 55, 40]
+            data: #{JSON.stringify(stats.purchasesThisMonth.dedipass)}
           },
           {
             label: "PayPal",
             fillColor: 'rgba(26,179,148,0.5)',
-            data: [28, 48, 40, 19, 86, 27, 90]
+            data: #{JSON.stringify(stats.purchasesThisMonth.paypal)}
           }
         ]
       }
 
       var barOptions = {
-          responsive: true
+        responsive: true,
+        multiTooltipTemplate: "<%= value %> <%= datasetLabel %>"
       }
 
       var canvas = document.getElementById("barChartPaymentTypesMonthly").getContext("2d")
@@ -229,7 +231,7 @@ block custom
              pointStrokeColor: "#fff",
              pointHighlightFill: "#fff",
              pointHighlightStroke: "rgba(220,220,220,1)",
-             data: #{JSON.stringify(stats.licencesHostingsPurchasesThisMonth.licences)}
+             data: #{JSON.stringify(stats.purchasesThisMonth.licences)}
            },
            {
              label: "Hébergements",
@@ -239,13 +241,14 @@ block custom
              pointStrokeColor: "#fff",
              pointHighlightFill: "#fff",
              pointHighlightStroke: "rgba(151,187,205,1)",
-             data: #{JSON.stringify(stats.licencesHostingsPurchasesThisMonth.hostings)}
+             data: #{JSON.stringify(stats.purchasesThisMonth.hostings)}
            }
         ]
       }
 
       var options = {
-        responsive: true
+        responsive: true,
+        multiTooltipTemplate: "<%= value %> <%= datasetLabel %>"
       }
 
       var canvas = document.getElementById("lineChartLicensesHostingsPurchases").getContext("2d")
@@ -268,7 +271,7 @@ block custom
              pointStrokeColor: "#fff",
              pointHighlightFill: "#fff",
              pointHighlightStroke: "rgba(220,220,220,1)",
-             data: [7, 11, 13, 17, 19, 23, 29]
+             data: #{JSON.stringify(stats.purchasesThisMonth.plugins)}
            },
            {
              label: "Thèmes",
@@ -278,13 +281,14 @@ block custom
              pointStrokeColor: "#fff",
              pointHighlightFill: "#fff",
              pointHighlightStroke: "rgba(151,187,205,1)",
-             data: [2, 3, 5, 8, 13, 21, 34]
+             data: #{JSON.stringify(stats.purchasesThisMonth.themes)}
            }
         ]
       }
 
       var options = {
-        responsive: true
+        responsive: true,
+        multiTooltipTemplate: "<%= value %> <%= datasetLabel %>"
       }
 
       var canvas = document.getElementById("lineChartPluginsThemesPurchases").getContext("2d")
