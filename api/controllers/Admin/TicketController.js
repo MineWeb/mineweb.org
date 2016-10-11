@@ -100,7 +100,7 @@ module.exports = {
 
       // find ticket
       function (callback) {
-        Ticket.findOne({id: id}).sort('id DESC').populate(['user']).exec(function (err, ticket) {
+        Ticket.findOne({id: id}).sort('id DESC').populate(['user', 'hosting']).exec(function (err, ticket) {
           if (err) {
             return callback(err)
           }

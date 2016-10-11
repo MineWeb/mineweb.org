@@ -19,7 +19,7 @@ module.exports.models = {
   ***************************************************************************/
   //connection: 'localDiskDb',
   //connection: 'mysql',
-  connection: 'mysqlserver',
+  connection: 'main_sql',
 
   /***************************************************************************
   *                                                                          *
@@ -29,6 +29,6 @@ module.exports.models = {
   * See http://sailsjs.org/#!/documentation/concepts/ORM/model-settings.html  *
   *                                                                          *
   ***************************************************************************/
-	migrate: 'safe'
+	migrate: 'alter'
 
 };

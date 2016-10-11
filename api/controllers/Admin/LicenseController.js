@@ -10,9 +10,19 @@ var request = require('request')
 
 module.exports = {
 
+  getHost: function (license) {
+    if (!license.hosting)
+      return license.host
+
+    if (license.hosting.hostType === 'SUBDOMAIN')
+      return 'http://' + license.host +  '.craftwb.fr'
+    else
+      return 'http://' + license.host
+  },
+
   findPage: function (req, res) {
-    res.view('admin/find_license_or_hosting', {
-      title: req.__('Chercher un(e) licence/hébergement')
+    res.view('admin/license/find', {
+      title: req.__('Chercher une licence')
     })
   },
 
@@ -43,6 +53,8 @@ module.exports = {
       var conditions = {}
       if (user !== undefined && user.length > 0)
         conditions.user = user
+      if (req.body.type !== undefined && req.body.type.length > 0)
+        conditions.hosting = (req.body.type == 'LICENSE') ? null : {'!': null}
       if (req.body.key !== undefined && req.body.key.length > 0)
         conditions.key = req.body.key
       if (req.body.host !== undefined && req.body.host.length > 0)
@@ -97,9 +109,10 @@ module.exports = {
 			return res.notFound('Id is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
     // find
-    License.findOne({id: id}).populate(['user', 'purchase']).exec(function (err, license) {
+    License.findOne({id: id}).populate(['user', 'purchase', 'hosting']).exec(function (err, license) {
 
       // error
       if (err) {
@@ -131,6 +144,8 @@ module.exports = {
 
       // render
       function render() {
+
+        license.host = self.getHost(license)
 
         res.view('admin/license/view', {
           title: req.__("Détails d'une licence"),
@@ -174,8 +189,10 @@ module.exports = {
 		}
 		var reason = req.param('reason')
 
+    var self = this
+
     // find
-    License.findOne({id: id}).populate(['user']).exec(function (err, license) {
+    License.findOne({id: id}).populate(['user', 'hosting']).exec(function (err, license) {
 
       // error
       if (err) {
@@ -206,7 +223,7 @@ module.exports = {
           username: license.user.username,
           reason: reason,
           licenseId: license.id,
-          licenseHost: license.host
+          licenseHost: self.getHost(license)
         }, req.__('Suspension de votre licence'), license.user.email)
 
       })
@@ -220,9 +237,10 @@ module.exports = {
 			return res.notFound('Id is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
     // find
-    License.findOne({id: id}).populate(['user']).exec(function (err, license) {
+    License.findOne({id: id}).populate(['user', 'hosting']).exec(function (err, license) {
 
       // error
       if (err) {
@@ -253,7 +271,7 @@ module.exports = {
           username: license.user.username,
           reason: license.suspended,
           licenseId: license.id,
-          licenseHost: license.host
+          licenseHost: self.getHost(license)
         }, req.__('Réactivation de votre licence'), license.user.email)
 
       })
@@ -267,9 +285,10 @@ module.exports = {
 			return res.notFound('Id is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
     // find
-    License.findOne({id: id}).exec(function (err, license) {
+    License.findOne({id: id}).populate(['hosting']).exec(function (err, license) {
 
       // error
       if (err) {
@@ -291,7 +310,7 @@ module.exports = {
       // request
       request.post(
       {
-        url: license.host,
+        url: self.getHost(license),
         form: {
           call: 'api',
           key: license.key,

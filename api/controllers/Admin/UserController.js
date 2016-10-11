@@ -78,14 +78,12 @@ module.exports = {
 
       // find user
       function (callback) {
-        User.findOne({id: id}).populate(['licenses', 'hostings', 'purchases', 'paypalPayments', 'dedipassPayments', 'plugins', 'themes']).exec(function (err, user) {
-          callback(err, user)
-        })
+        User.findOne({ id: id }).populate(['paypalPayments', 'dedipassPayments', , 'plugins', 'themes']).exec(callback)
       },
 
       // find purchases
       function (callback) {
-        Purchase.findAllOfUser(req.session.userId, function (err, purchases) {
+        Purchase.findAllOfUser(id, function (err, purchases) {
           callback(err, purchases)
         })
       },
@@ -102,6 +100,28 @@ module.exports = {
         Ticket.find({user: id}).exec(function (err, tickets) {
           callback(err, tickets)
         })
+      },
+
+      // find licenses
+      function (callback) {
+        License.find({user: id}).populate(['hosting']).exec(function (err, licenses) {
+          if (err)
+            return callback(err)
+
+          var results = {licenses: [], hostings: []}
+
+          for (var i = 0; i < licenses.length; i++) {
+            if (licenses[i].hosting) {
+              results.hostings.push(licenses[i])
+            }
+            else {
+              results.licenses.push(licenses[i])
+            }
+          }
+
+          callback(null, results)
+
+        })
       }
 
     ], function (err, results) {
@@ -116,6 +136,8 @@ module.exports = {
       else
         var user = results[0]
 
+      user.licenses = results[4].licenses
+      user.hostings = results[4].hostings
 
       user.purchases = results[1]
       res.view('admin/user/view', {

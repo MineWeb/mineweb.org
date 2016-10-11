@@ -28,7 +28,7 @@ block content
                 option(value='QUESTION') #{__('Question')}
                 option(value='OTHER') #{__('Autre')}
             .form-group
-              label #{__('Licence ou hébergement associé')}
+              label #{__('Licence ou licence hébergée associée')}
                 small.text-muted &nbsp;#{__("(facultatif)")}
               select(name='license_hosting').form-control
                 option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
@@ -37,13 +37,13 @@ block content
                     option(value='LICENSE:' + license.id) ID##{license.id}
                       if license.host !== undefined && license.host != null && license.host.length > 0
                         | (#{license.host})
-                optgroup(label=__('Hébergements'))
+                optgroup(label=__('Licences hébergées'))
                   each hosting in hostings
                     option(value='HOSTING:' + hosting.id) ID##{hosting.id}
                       if hosting.hostType === 'SUBDOMAIN'
-                        | (http://#{hosting.host}.craftwb.fr)
+                        | (http://#{hosting.license.host}.craftwb.fr)
                       else
-                        | (http://#{hosting.host})
+                        | (http://#{hosting.license.host})
 
             .form-group
               label #{__("Contenu")}

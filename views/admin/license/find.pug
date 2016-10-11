@@ -1,4 +1,4 @@
-extends ./layouts/default
+extends ../layouts/default
 
 block content
   .row.wrapper.border-bottom.white-bg.page-heading
@@ -23,13 +23,13 @@ block content
                 label.col-sm-2.control-label #{__('Type de recherche')}
                 .col-sm-10
                   select.form-control(name="type", data-form-no-display-error)
-                    option(value="license") #{__('Licence')}
-                    option(value="hosting") #{__('Hébergement')}
+                    option(value="LICENSE") #{__('Licence')}
+                    option(value="HOSTING") #{__('Licence hébergée')}
 
               .hr-line-dashed
 
               .form-group
-                label.col-sm-2.control-label #{__("ID de la licence/de l'hébergement")}
+                label.col-sm-2.control-label #{__("ID de la licence")}
                 .col-sm-10
                   input.form-control(type='text', name="id", data-form-no-display-error)
 
@@ -53,7 +53,7 @@ block content
                 label.col-sm-2.control-label #{__("URL")}
                 .col-sm-10
                   input.form-control(type='text', name="host", data-form-no-display-error)
-                  span.help-block.m-b-none #{__("Ne spécifier pas 'http://' et '.craftwb.fr' si il s'agit d'un hébergement utilisant notre sous-domaine.")}
+                  span.help-block.m-b-none #{__("Ne spécifier pas 'http://' et '.craftwb.fr' si il s'agit d'une licence hébergée utilisant notre sous-domaine.")}
 
               .hr-line-dashed
 
@@ -72,17 +72,8 @@ block content
 
 block custom
   script(type="text/javascript").
-    $('select[name="type"]').on('change', function (e) {
-
-      var action = $('form').attr('action')
-      action = '/admin/' + $(this).val() + '/find'
-
-      $('form').attr('action', action)
-
-    })
 
     function afterFinded (form, json) {
-      var type = $('select[name="type"]').val()
-      document.location = '/admin/'+ type +'/view/' + json.data[type].id
+      document.location = '/admin/license/view/' + json.data.license.id
       return false
     }

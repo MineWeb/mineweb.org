@@ -21,7 +21,7 @@ block content
             li.nav-item
               a.nav-link(data-toggle="tab" href="#licenses" role="tab") #{__('Vos licences')}
             li.nav-item
-              a.nav-link(data-toggle="tab" href="#hostings" role="tab") #{__('Vos hébergements')}
+              a.nav-link(data-toggle="tab" href="#hostings" role="tab") #{__('Vos licences hébergées')}
             li.nav-item
               a.nav-link(data-toggle="tab" href="#transactions" role="tab") #{__('Vos transactions')}
             li.nav-item
@@ -147,7 +147,7 @@ block content
             div.tab-pane.fade(id="hostings" role="tabpanel")
 
               // ===================================
-                 ====== Liste des hébergements =====
+                 ====== Liste des licences hébergées =====
                  ===================================
 
 
@@ -167,8 +167,8 @@ block content
                       each hosting, index in user.hostings
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                           td #{hosting.id}
-                          td.hostingHost(data-host-id=hosting.id)
-                            if hosting.hostType === 'SUBDOMAIN'
+                          td.hostingHost(data-host-id=hosting.hosting.id)
+                            if hosting.hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
                                  | http://#{hosting.host}.craftwb.fr
                             else
@@ -182,22 +182,22 @@ block content
                               span.tag.tag-danger #{__('Désactivé')}
                           td
                             // Si la date de fin est inférieur à dans 1 semaine, l'hébergement va bientôt expiré
-                            if (moment(hosting.endDate).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
-                              span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                            if (moment(hosting.expireAt).unix() < moment().add(7, 'days').hours(0).minutes(0).seconds(0).unix())
+                              span.text-danger.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.expireAt}
                             else
-                              span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.endDate}
+                              span.moment-date(data-format=__('Le {L} à 12:00')) #{hosting.expireAt}
                           td.moment-date(data-format=__('Le {L} à {LT}')) #{hosting.createdAt}
                           td
                             div.btn-group-vertical
-                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
-                              a(href='/hosting/renew/'+hosting.id).btn.btn-success #{__('Renouveler')}
+                              button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
+                              a(href='/hosting/renew/'+hosting.hosting.id).btn.btn-success #{__('Renouveler')}
                         if hosting.suspended !== null
                           tr(style="position: absolute;margin-top: -112px;")
                             td(style='border-top: none;')
                               h3.text-danger(style="opacity:1;")
-                                | #{__('Hébergement désactivé pour :')} #{hosting.suspended}
+                                | #{__('Licence hébergée désactivé pour :')} #{hosting.suspended}
               else
-                div.alert.alert-danger !{__('Vous ne disposez pas encore d\'hébergement ! Vous pouvez dès maintenant en louer un sur <a href="/download">cette page</a>.')}
+                div.alert.alert-danger !{__('Vous ne disposez pas encore de licence hébergée ! Vous pouvez dès maintenant en louer un sur <a href="/download">cette page</a>.')}
 
             div.tab-pane.fade(id="transactions" role="tabpanel")
 
@@ -230,7 +230,7 @@ block content
                               if payment.purchase.type === 'LICENSE'
                                 | #{__('Licence')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'HOSTING'
-                                | #{__('Hébergement')}##{payment.purchase.itemId}
+                                | #{__('Licence hébergée')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'PLUGIN'
                                 | #{__('Plugin')}
                               else if payment.purchase.type === 'THEME'
@@ -278,7 +278,7 @@ block content
                               if payment.purchase.type === 'LICENSE'
                                 | #{__('Licence')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'HOSTING'
-                                | #{__('Hébergement')}##{payment.purchase.itemId}
+                                | #{__('Licence hébergée')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'PLUGIN'
                                 | #{__('Plugin')}
                               else if payment.purchase.type === 'THEME'

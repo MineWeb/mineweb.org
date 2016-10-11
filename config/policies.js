@@ -88,10 +88,6 @@ module.exports.policies = {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
   },
 
-  'Admin/HostingController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
-  },
-
   'Admin/UserController': {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'logger']
   },

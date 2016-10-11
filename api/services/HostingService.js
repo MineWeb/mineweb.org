@@ -5,9 +5,10 @@ var uuid = require('node-uuid')
 
 module.exports = {
 
-  create: function (hosting, next) {
+  create: function (hosting, host, next) {
     var id = (sails.config.environment === 'production') ? hosting.id : ('dev-' + hosting.id)
-    var host = (sails.config.environment === 'production') ? hosting.host : ('dev-' + hosting.host)
+    var host = (sails.config.environment === 'production') ? host : ('dev-' + host)
+
     exec('/home/mineweb.sh creation ' + id + ' ' + host + ' sdomain', {
       user: sails.config.servers.hosting.user,
       host: sails.config.servers.hosting.host,
@@ -27,12 +28,12 @@ module.exports = {
         sails.log.error(e)
       }
 
-      if (ids && ids.state === 'success') {
+      if (ids && ids.status === 'success') {
         ids = ids.ftp
         //Save
         Hosting.update({id: hosting.id}, {ftpUser: ids.user, ftpPassword: ids.password}).exec(function (err, hosting) {
           if (err)
-            sails.log.error(err)
+            return sails.log.error(err)
           return next()
         })
       }
@@ -219,11 +220,11 @@ module.exports = {
         Hosting ended today
       */
       function (callback) {
-        // Find hosting with endDate <= now || endDate <= now + 12h && state == 1
+        // Find hosting with expireAt <= now || expireAt <= now + 12h && state == 1
         Hosting.find({
-          endDate: {'<=': moment().hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')},
+          expireAt: {'<=': moment().hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')},
           state: true
-        }).populate(['user']).exec(function (err, hostings) {
+        }).populate(['user', 'license']).exec(function (err, hostings) {
 
           if (err)
             sails.log.error(err)
@@ -235,17 +236,17 @@ module.exports = {
               // Disabled hosting (server)
               // Set state == 0 (db)
               HostingService.disable(hosting)
-              Hosting.update({id: hosting.id}, {state: false}).exec(function (err, hostingUpdated) {
+              License.update({hosting: hosting.id}, {state: false}).exec(function (err, licenseUpdated) {
                 if (err)
                   sails.log.error(err)
 
                 // Send mail
                 sails.config.i18n = hosting.user.lang.split('-')[0]
                 MailService.send('hostings/disable', {
-                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.host + '.craftwb.fr' : 'http://' + hosting.host,
+                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
                   username: hosting.user.username
-                }, sails.__('Désactivation de votre hébergement'), hosting.user.email)
+                }, sails.__('Désactivation de votre licence hébergée'), hosting.user.email)
 
                 // Save stats
                 hostingsDisabled++
@@ -273,29 +274,29 @@ module.exports = {
           Hosting.find({
             or: [
               {
-                endDate: {'>=': moment().add(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(7, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(7, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(6, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(6, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(6, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(6, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(5, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(5, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(5, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(5, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(4, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(4, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(4, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(4, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(3, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(3, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(3, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(3, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(2, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(2, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(2, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(2, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               },
               {
-                endDate: {'>=': moment().add(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(1, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
+                expireAt: {'>=': moment().add(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(1, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               }
             ],
             state: true
-          }).populate(['user']).exec(function (err, hostings) {
+          }).populate(['user', 'license']).exec(function (err, hostings) {
 
             if (err)
               sails.log.error(err)
@@ -307,11 +308,11 @@ module.exports = {
                 // Send mail
                 sails.config.i18n = hosting.user.lang.split('-')[0]
                 MailService.send('hostings/lastDays', {
-                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.host + '.craftwb.fr' : 'http://' + hosting.host,
+                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
-                  days: Math.floor(Math.abs( (new Date(hosting.endDate) - Date.now()) / (24 * 60 * 60 * 1000) )),
+                  days: Math.floor(Math.abs( (new Date(hosting.expireAt) - Date.now()) / (24 * 60 * 60 * 1000) )),
                   username: hosting.user.username
-                }, sails.__('Expiration de votre hébergement'), hosting.user.email)
+                }, sails.__('Expiration de votre licence hébergée'), hosting.user.email)
 
                 // Save stats
                 hostingsLastDays++
@@ -334,9 +335,9 @@ module.exports = {
       */
       function (callback) {
 
-        // Find hosting with endDate <= now - 7 days && state == 0
+        // Find hosting with expireAt <= now - 7 days && state == 0
         Hosting.find({
-          endDate: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
+          expireAt: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
           state: false
         }).populate(['user']).exec(function (err, hostings) {
 
@@ -353,9 +354,14 @@ module.exports = {
                 if (err)
                   sails.log.error(err)
 
-                // Save stats
-                hostingsDeleted++
-                next()
+                License.destroy({hosting: hosting.id}).exec(function (err, licenseDestroyed) {
+                  if (err)
+                    sails.log.error(err)
+
+                  // Save stats
+                  hostingsDeleted++
+                  next()
+                })
 
               })
 
@@ -382,7 +388,7 @@ module.exports = {
       // Send stats mail
       MailService.send('stats/hostings', {
         stats: stats
-      }, sails.__('Statistiques des hébergements'), sails.config.stats.email)
+      }, sails.__('Statistiques des licences hébergées'), sails.config.stats.email)
 
       console.log('Hostings checked!', stats)
 
