@@ -21,7 +21,7 @@
 
 module.exports.connections = {
 
-  /***************************************************************************
+  /* **************************************************************************
   *                                                                          *
   * Local disk storage for DEVELOPMENT ONLY                                  *
   *                                                                          *
@@ -30,9 +30,9 @@ module.exports.connections = {
   ***************************************************************************/
   localDiskDb: {
     adapter: 'sails-disk'
-  },
+  }
 
-  /***************************************************************************
+  /* **************************************************************************
   *                                                                          *
   * MySQL is the world's most popular relational database.                   *
   * http://en.wikipedia.org/wiki/MySQL                                       *
@@ -48,7 +48,7 @@ module.exports.connections = {
   //   database: 'YOUR_MYSQL_DB' //optional
   // },
 
-  /*mysql: {
+  /* mysql: {
     module    : 'sails-mysql',
     host      : 'localhost',
     port      : 3306,
@@ -61,7 +61,7 @@ module.exports.connections = {
     collation : 'utf8_swedish_ci'
   }*/
 
-  /***************************************************************************
+  /* **************************************************************************
   *                                                                          *
   * MongoDB is the leading NoSQL database.                                   *
   * http://en.wikipedia.org/wiki/MongoDB                                     *
@@ -78,7 +78,7 @@ module.exports.connections = {
   //   database: 'your_mongo_db_name_here' //optional
   // },
 
-  /***************************************************************************
+  /* **************************************************************************
   *                                                                          *
   * PostgreSQL is another officially supported relational database.          *
   * http://en.wikipedia.org/wiki/PostgreSQL                                  *
@@ -95,11 +95,10 @@ module.exports.connections = {
   //   database: 'YOUR_POSTGRES_DB' //optional
   // }
 
-
-  /***************************************************************************
+  /* **************************************************************************
   *                                                                          *
   * More adapters: https://github.com/balderdashy/sails                      *
   *                                                                          *
   ***************************************************************************/
 
-};
+}

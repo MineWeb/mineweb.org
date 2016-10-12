@@ -12,40 +12,42 @@
 
 module.exports = {
 
-  /***************************************************************************
+  /* **************************************************************************
    * Set the default database connection for models in the development       *
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
 
-   connections: {
-     main_sql: {
-       adapter: 'sails-mysql',
-       host: 'status.hardfight.fr',
-       user: process.env.SQL_USER || 'mineweb',
-       password: process.env.SQL_PWD || 'mineweb42', //optional
-       database: process.env.SQL_DB ||'mineweb' //optional
-     },
-   },
+  connections: {
+    main_sql: {
+      adapter: 'sails-mysql',
+      host: 'status.hardfight.fr',
+      user: process.env.SQL_USER || 'mineweb',
+      password: process.env.SQL_PWD || 'mineweb42', // optional
+      database: process.env.SQL_DB || 'mineweb' // optional
+    }
+  },
 
-   hookTimeout: 160000,
+  orm: {
+    _hookTimeout: 16000
+  },
 
-   dedipass: {
- 		publicKeys: {
- 			license: 'a4e7b35c40c18f69431cd8e29f4d9bba',
- 			hosting: '45fd9efcda58b6d009ce44cdc7dc73e8'
- 		}
- 	},
+  dedipass: {
+    publicKeys: {
+      license: 'a4e7b35c40c18f69431cd8e29f4d9bba',
+      hosting: '45fd9efcda58b6d009ce44cdc7dc73e8'
+    }
+  },
 
   paypal: {
     sandbox: true,
-    //merchantEmail: 'paypal@mineweb.org'
+    // merchantEmail: 'paypal@mineweb.org'
     merchantEmail: 'paypal-facilitator@mineweb.org'
   },
 
   pushbullet: {
     apiKey: 'o.t2qhJTBxN65oDTc35GN69IeKhYM7OrGv',
     principalEmail: 'mineconstruct@gmail.com'
-    //channelTag: 'minewebsupport'
+    // channelTag: 'minewebsupport'
   },
 
   servers: {
@@ -72,7 +74,7 @@ module.exports = {
     upload: {
       folders: {
         plugins: 'uploads/plugins',
-        themes: 'uploads/themes',
+        themes: 'uploads/themes'
       }
     }
   },
@@ -171,7 +173,7 @@ module.exports = {
     },
     'ADMIN-VIEW_PAYMENTS_LIST': {
       controller: 'admin/payment'
-    },
+    }
   },
 
   permissionsAccess: {
@@ -190,19 +192,19 @@ module.exports = {
       'ADMIN-UPDATE_SETTINGS',
       'ADMIN-FIND_LICENSE_OR_HOSTING',
       'ADMIN-FIND_LICENSE',
-      //'ADMIN-SUSPEND_LICENSE',
-      //'ADMIN-UNSUSPEND_LICENSE',
+      // 'ADMIN-SUSPEND_LICENSE',
+      // 'ADMIN-UNSUSPEND_LICENSE',
       'ADMIN-GET_DEBUG_LICENSE',
       'ADMIN-VIEW_LICENSE',
       'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
-      'ADMIN-VIEW_USER',
-      //'ADMIN-GET_SQL_DUMP_HOSTING',
-      //'ADMIN-UPDATE_INDEX',
-      //'ADMIN-UPDATE_ADD',
-      //'ADMIN-UPDATE_EDIT',
-      //'ADMIN-VIEW_STATS',
-      //'ADMIN-VIEW_PAYMENTS_LIST'
+      'ADMIN-VIEW_USER'
+      // 'ADMIN-GET_SQL_DUMP_HOSTING',
+      // 'ADMIN-UPDATE_INDEX',
+      // 'ADMIN-UPDATE_ADD',
+      // 'ADMIN-UPDATE_EDIT',
+      // 'ADMIN-VIEW_STATS',
+      // 'ADMIN-VIEW_PAYMENTS_LIST'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -224,9 +226,9 @@ module.exports = {
       'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
       'ADMIN-VIEW_USER',
-      //'ADMIN-UPDATE_INDEX',
-      //'ADMIN-UPDATE_ADD',
-      //'ADMIN-UPDATE_EDIT',
+      // 'ADMIN-UPDATE_INDEX',
+      // 'ADMIN-UPDATE_ADD',
+      // 'ADMIN-UPDATE_EDIT',
       'ADMIN-VIEW_STATS',
       'ADMIN-VIEW_PAYMENTS_LIST'
     ],
@@ -239,8 +241,8 @@ module.exports = {
         day: 'Bonjour,',
         night: 'Bonsoir,'
       },
-      signature: "Cordialement,<br>{USERNAME}.<br>{ROLENAME}"
+      signature: 'Cordialement,<br>{USERNAME}.<br>{ROLENAME}'
     }
   }
 
-};
+}

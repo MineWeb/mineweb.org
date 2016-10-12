@@ -17,10 +17,11 @@ block content
           .ibox.float-e-margins
             .ibox-title
               h4 #{__('Paiements PayPal')}
-                small &nbsp;#{__('Dernier paiement %s', moment(paypalPayments[0].createdAt).fromNow())}
+                if lastPayPalPayment[0] !== undefined
+                  small &nbsp;#{__('Dernier paiement %s', moment(lastPayPalPayment[0].createdAt).fromNow())}
             .ibox-content
               .table-responsive
-                table.table.table-hover.no-margins(style="font-size: 13px;")
+                table.table.table-hover.no-margins#paypalTable(style="font-size: 13px;")
                   thead
                     tr
                       th #{__("ID de l'achat")}
@@ -40,76 +41,16 @@ block content
                       th #{__('Date du remboursement')}
                       th #{__('Dernière mise à jour du paiement')}
                   tbody
-                    each payment in paypalPayments
-                      tr
-                        td
-                          if payment.purchase
-                            | #{payment.purchase.id}
-                          else
-                            | N/A
-                        td
-                          if payment.purchase
-                            | #{payment.purchase.type}
-                          else
-                            | N/A
-                        td
-                          if payment.purchase && (payment.purchase.type === 'LICENSE' || payment.purchase.type === 'LICENSE_HOSTED')
-                            a(href='/admin/license/view/' + payment.purchase.itemId) #{__('Voir')}
-                          else if payment.purchase && (payment.purchase.type === 'PLUGIN' || payment.purchase.type === 'LICENSE_HOSTED')
-                            em #{lists[payment.purchase.type][payment.purchase.itemId].name}
-                          else
-                            | N/A
-                        td
-                          a(href='/admin/user/view/' + payment.user.id) #{payment.user.username}##{payment.user.id}
-                        td #{payment.id}
-                        td
-                          a(href='https://www.paypal.com/fr/cgi-bin/webscr?cmd=_view-a-trans&id='+payment.paymentId, target='_blank') #{payment.paymentId}
-                        td.text-info #{payment.paymentAmount} €
-                        td.text-danger #{payment.taxAmount} €
-                        td.text-success #{payment.paymentAmount - payment.taxAmount} €
-                        td #{payment.buyerEmail}
-                        td
-                          span.fa.fa-calendar
-                          | &nbsp;
-                          span.moment-date(data-format="Le {L} à {LT}") #{payment.paymentDate}
-                        td
-                          if payment.state === 'COMPLETED'
-                            span.label.label-primary #{__('Complété')}
-                          else if payment.state === 'PENDING'
-                            span.label.label-warning #{__('En attente')}
-                          else if payment.state === 'REVERSED'
-                            span.label.label-warning #{__('Suspendu')}
-                          else if payment.state === 'REFUNDED'
-                            span.label.label-danger #{__('Remboursé')}
-                          else if payment.state === 'FAILED'
-                            span.label.label-danger #{__('Échoué')}
-                        td #{payment.reversedReason}
-                        td
-                          if payment.caseDate
-                            span.fa.fa-calendar
-                            | &nbsp;
-                            span.moment-date(data-format="Le {L} à {LT}") #{payment.caseDate}
-                          else
-                            | N/A
-                        td
-                          if payment.refundDate
-                            span.fa.fa-calendar
-                            | &nbsp;
-                            span.moment-date(data-format="Le {L} à {LT}") #{payment.refundDate}
-                          else
-                            | N/A
-                        td
-                          span.fa.fa-calendar
-                          | &nbsp;
-                          span.moment-date(data-format="Le {L} à {LT}") #{payment.updatedAt}
+
         .col-md-12
           .ibox.float-e-margins
             .ibox-title
               h4 #{__('Paiements Dédipass')}
-                small &nbsp;#{__('Dernier paiement %s', moment(dedipassPayments[0].createdAt).fromNow())}
+                if lastDedipassPayment[0] !== undefined
+                  small &nbsp;#{__('Dernier paiement %s', moment(lastDedipassPayment[0].createdAt).fromNow())}
             .ibox-content
               .table-responsive
-                table.table.table-hover.no-margins(style="font-size: 13px;")
+                table.table.table-hover.no-margins#dedipassTable(style="font-size: 13px;")
                   thead
                     tr
                       th #{__("ID de l'achat")}
@@ -123,36 +64,118 @@ block content
                       th #{__("Date du paiement")}
                       th #{__('Dernière mise à jour du paiement')}
                   tbody
-                    each payment in dedipassPayments
-                      tr
-                        td
-                          if payment.purchase
-                            | #{payment.purchase.id}
-                          else
-                            | N/A
-                        td
-                          if payment.purchase
-                            | #{payment.purchase.type}
-                          else
-                            | N/A
-                        td
-                          if payment.purchase && (payment.purchase.type === 'LICENSE' || payment.purchase.type === 'LICENSE_HOSTED')
-                            a(href='/admin/license/view/' + payment.purchase.itemId) #{__('Voir')}
-                          else if payment.purchase && (payment.purchase.type === 'PLUGIN' || payment.purchase.type === 'LICENSE_HOSTED')
-                            em #{lists[payment.purchase.type][payment.purchase.itemId].name}
-                          else
-                            | N/A
-                        td
-                          a(href='/admin/user/view/' + payment.user.id) #{payment.user.username}##{payment.user.id}
-                        td #{payment.id}
-                        td.text-success #{payment.payout} €
-                        td #{payment.code}
-                        td #{payment.rate}
-                        td
-                          span.fa.fa-calendar
-                          | &nbsp;
-                          span.moment-date(data-format="Le {L} à {LT}") #{payment.createdAt}
-                        td
-                          span.fa.fa-calendar
-                          | &nbsp;
-                          span.moment-date(data-format="Le {L} à {LT}") #{payment.updatedAt}
+
+
+block cssCustom
+  link(href="/styles/admin/plugins/dataTables/datatables.min.css" rel="stylesheet")
+  style.
+    .dataTables_filter {
+      margin-bottom: 30px;
+      float: right;
+    }
+    #DataTables_Table_0_info {
+      margin-top: 20px;
+    }
+block custom
+  script(type='text/javascript', src='/js/admin/plugins/dataTables/datatables.min.js')
+  script(type='text/javascript').
+    $(document).ready(function(){
+      $('#paypalTable').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": false,
+        "info": false,
+        "autoWidth": false,
+        'searching': true,
+        "processing": true,
+        "serverSide": true,
+        "ajax": "/admin/payments/get/paypal",
+        "columns": [
+            {mData:"purchase.id","bSearchable": false},
+            {mData:"purchase.type","bSearchable": false},
+            {mData:"purchase.itemId","bSearchable": false},
+            {mData:"user.username","bSearchable": false},
+            {mData:"id","bSearchable": true},
+            {mData:"paymentId","bSearchable": true},
+            {mData:"paymentAmount","bSearchable": true},
+            {mData:"taxAmount","bSearchable": true},
+            {mData:"profit","bSearchable": false},
+            {mData:"buyerEmail","bSearchable": true},
+            {mData:"paymentDate","bSearchable": true},
+            {mData:"state","bSearchable": true},
+            {mData:"reversedReason","bSearchable": true},
+            {mData:"caseDate","bSearchable": true},
+            {mData:"refundDate","bSearchable": true},
+            {mData:"updatedAt","bSearchable": true}
+        ],
+        language: {
+          "sProcessing":     "Traitement en cours...",
+          "sSearch":         "Rechercher&nbsp;:&nbsp;",
+          "sLengthMenu":     "Afficher _MENU_ &eacute;l&eacute;ments",
+          "sInfo":           "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+          "sInfoEmpty":      "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+          "sInfoFiltered":   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+          "sInfoPostFix":    "",
+          "sLoadingRecords": "Chargement en cours...",
+          "sZeroRecords":    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+          "sEmptyTable":     "Aucune donn&eacute;e disponible dans le tableau",
+          "oPaginate": {
+            "sFirst":      "Premier",
+            "sPrevious":   "Pr&eacute;c&eacute;dent",
+            "sNext":       "Suivant",
+            "sLast":       "Dernier"
+          },
+          "oAria": {
+            "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+            "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+          }
+        }
+      })
+      $('#dedipassTable').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": false,
+        "info": false,
+        "autoWidth": false,
+        'searching': true,
+        "processing": true,
+        "serverSide": true,
+        "ajax": "/admin/payments/get/dedipass",
+        "columns": [
+            {mData:"purchase.id","bSearchable": false},
+            {mData:"purchase.type","bSearchable": false},
+            {mData:"purchase.itemId","bSearchable": false},
+            {mData:"user.username","bSearchable": false},
+            {mData:"id","bSearchable": true},
+            {mData:"payout","bSearchable": true},
+            {mData:"code","bSearchable": true},
+            {mData:"rate","bSearchable": true},
+            {mData:"createdAt","bSearchable": true},
+            {mData:"updatedAt","bSearchable": true}
+        ],
+        language: {
+          "sProcessing":     "Traitement en cours...",
+          "sSearch":         "Rechercher&nbsp;:&nbsp;",
+          "sLengthMenu":     "Afficher _MENU_ &eacute;l&eacute;ments",
+          "sInfo":           "Affichage de l'&eacute;l&eacute;ment _START_ &agrave; _END_ sur _TOTAL_ &eacute;l&eacute;ments",
+          "sInfoEmpty":      "Affichage de l'&eacute;l&eacute;ment 0 &agrave; 0 sur 0 &eacute;l&eacute;ment",
+          "sInfoFiltered":   "(filtr&eacute; de _MAX_ &eacute;l&eacute;ments au total)",
+          "sInfoPostFix":    "",
+          "sLoadingRecords": "Chargement en cours...",
+          "sZeroRecords":    "Aucun &eacute;l&eacute;ment &agrave; afficher",
+          "sEmptyTable":     "Aucune donn&eacute;e disponible dans le tableau",
+          "oPaginate": {
+            "sFirst":      "Premier",
+            "sPrevious":   "Pr&eacute;c&eacute;dent",
+            "sNext":       "Suivant",
+            "sLast":       "Dernier"
+          },
+          "oAria": {
+            "sSortAscending":  ": activer pour trier la colonne par ordre croissant",
+            "sSortDescending": ": activer pour trier la colonne par ordre d&eacute;croissant"
+          }
+        }
+      })
+    })
