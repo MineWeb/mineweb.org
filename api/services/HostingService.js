@@ -15,7 +15,6 @@ module.exports = {
       port: sails.config.servers.hosting.port,
       password: sails.config.servers.hosting.password
     }, function (err, stdout, stderr) {
-
       if (err) {
         sails.log.error(err)
         return next()
@@ -53,7 +52,6 @@ module.exports = {
       port: sails.config.servers.hosting.port,
       password: sails.config.servers.hosting.password
     }, function (err, stdout, stderr) {
-
       if (err) {
         sails.log.error(err)
         return next()
@@ -76,7 +74,6 @@ module.exports = {
       port: sails.config.servers.hosting.port,
       password: sails.config.servers.hosting.password
     }, function (err, stdout, stderr) {
-
       if (err) {
         sails.log.error(err)
         return next()
@@ -99,7 +96,6 @@ module.exports = {
       port: sails.config.servers.hosting.port,
       password: sails.config.servers.hosting.password
     }, function (err, stdout, stderr) {
-
       if (err) {
         sails.log.error(err)
         return next()
@@ -125,7 +121,6 @@ module.exports = {
       port: sails.config.servers.hosting.port,
       password: sails.config.servers.hosting.password
     }, function (err, stdout, stderr) {
-
       if (err) {
         sails.log.error(err)
         return next(err)
@@ -212,7 +207,7 @@ module.exports = {
 
   checkEnded: function () { // Called all days at 12h
 
-    console.log('Check hostings')
+    console.log('Check licensesHosted')
 
     async.parallel([
 
@@ -221,18 +216,18 @@ module.exports = {
       */
       function (callback) {
         // Find hosting with expireAt <= now || expireAt <= now + 12h && state == 1
-        Hosting.find({
+        License.find({
           expireAt: {'<=': moment().hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')},
-          state: true
-        }).populate(['user', 'license']).exec(function (err, hostings) {
-
+          state: true,
+          hosting: {'!': null}
+        }).populate(['user', 'hosting']).exec(function (err, licensesHosted) {
           if (err)
             sails.log.error(err)
 
-          if (hostings !== undefined && hostings.length > 0) {
-            var hostingsDisabled = 0
-            async.forEach(hostings, function (hosting, next) {
-
+          if (licensesHosted !== undefined && licensesHosted.length > 0) {
+            var licensesHostedDisabled = 0
+            async.forEach(licensesHosted, function (license, next) {
+              var hosting = license.hosting
               // Disabled hosting (server)
               // Set state == 0 (db)
               HostingService.disable(hosting)
@@ -241,27 +236,23 @@ module.exports = {
                   sails.log.error(err)
 
                 // Send mail
-                sails.config.i18n = hosting.user.lang.split('-')[0]
-                MailService.send('hostings/disable', {
-                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
+                sails.config.i18n = license.user.lang.split('-')[0]
+                MailService.send('licensesHosted/disable', {
+                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + license.host + '.craftwb.fr' : 'http://' + license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
-                  username: hosting.user.username
-                }, sails.__('Désactivation de votre licence hébergée'), hosting.user.email)
-
+                  username: license.user.username
+                }, sails.__('Désactivation de votre licence hébergée'), license.user.email)
                 // Save stats
-                hostingsDisabled++
+                licensesHostedDisabled++
                 next()
-
               })
-
             }, function () {
-              callback(null, hostingsDisabled)
+              callback(null, licensesHostedDisabled)
             })
           }
           else {
             callback(null, 0)
           }
-
         })
       },
 
@@ -269,9 +260,8 @@ module.exports = {
         Hosting ended in 7 days
       */
       function (callback) {
-
         // Find hosting
-          Hosting.find({
+          License.find({
             or: [
               {
                 expireAt: {'>=': moment().add(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(7, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
@@ -295,59 +285,55 @@ module.exports = {
                 expireAt: {'>=': moment().add(1, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss'), '<=': moment().add(1, 'days').hours(23).minutes(59).seconds(59).format('YYYY-MM-DD HH:mm:ss')}
               }
             ],
-            state: true
-          }).populate(['user', 'license']).exec(function (err, hostings) {
-
+            state: true,
+            hosting: {'!': null}
+          }).populate(['user', 'hosting']).exec(function (err, licensesHosted) {
             if (err)
               sails.log.error(err)
 
-            if (hostings !== undefined && hostings.length > 0) {
-              var hostingsLastDays = 0
-              async.forEach(hostings, function (hosting, next) {
-
+            if (licensesHosted !== undefined && licensesHosted.length > 0) {
+              var licensesHostedLastDays = 0
+              async.forEach(licensesHosted, function (license, next) {
+                var hosting = license.hosting
                 // Send mail
-                sails.config.i18n = hosting.user.lang.split('-')[0]
-                MailService.send('hostings/lastDays', {
-                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + hosting.license.host + '.craftwb.fr' : 'http://' + hosting.license.host,
+                sails.config.i18n = license.user.lang.split('-')[0]
+                MailService.send('licensesHosted/lastDays', {
+                  host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + license.host + '.craftwb.fr' : 'http://' + license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
-                  days: Math.floor(Math.abs( (new Date(hosting.expireAt) - Date.now()) / (24 * 60 * 60 * 1000) )),
-                  username: hosting.user.username
-                }, sails.__('Expiration de votre licence hébergée'), hosting.user.email)
+                  days: Math.floor(Math.abs( (new Date(license.expireAt) - Date.now()) / (24 * 60 * 60 * 1000) )),
+                  username: license.user.username
+                }, sails.__('Expiration de votre licence hébergée'), license.user.email)
 
                 // Save stats
-                hostingsLastDays++
+                licensesHostedLastDays++
                 next()
-
               }, function () {
-                callback(null, hostingsLastDays)
+                callback(null, licensesHostedLastDays)
               })
             }
             else {
               callback(null, 0)
             }
-
           })
-
       },
 
       /*
         Delete site after 7 days of state == 0
       */
       function (callback) {
-
         // Find hosting with expireAt <= now - 7 days && state == 0
-        Hosting.find({
+        License.find({
           expireAt: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
-          state: false
-        }).populate(['user']).exec(function (err, hostings) {
-
+          state: false,
+          hosting: {'!': null}
+        }).populate(['user', 'hosting']).exec(function (err, licensesHosted) {
           if (err)
             sails.log.error(err)
 
-          if (hostings !== undefined && hostings.length > 0) {
-            var hostingsDeleted = 0
-            async.forEach(hostings, function (hosting, next) {
-
+          if (licensesHosted !== undefined && licensesHosted.length > 0) {
+            var licensesHostedDeleted = 0
+            async.forEach(licensesHosted, function (license, next) {
+              var hosting = license.hosting
               // Delete hosting (server && db)
               HostingService.delete(hosting)
               Hosting.destroy({id: hosting.id}).exec(function (err, hostingDestroyed) {
@@ -359,25 +345,21 @@ module.exports = {
                     sails.log.error(err)
 
                   // Save stats
-                  hostingsDeleted++
+                  licensesHostedDeleted++
                   next()
                 })
-
               })
-
             }, function () {
-              callback(null, hostingsDeleted)
+              callback(null, licensesHostedDeleted)
             })
           }
           else {
             callback(null, 0)
           }
-
         })
       }
 
     ], function (err, results) {
-
       // Group stats
       var stats = {
         hostingsDisabled: results[0],
@@ -386,7 +368,7 @@ module.exports = {
       }
 
       // Send stats mail
-      MailService.send('stats/hostings', {
+      MailService.send('stats/licensesHosted', {
         stats: stats
       }, sails.__('Statistiques des licences hébergées'), sails.config.stats.email)
 

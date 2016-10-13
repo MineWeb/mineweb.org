@@ -74,7 +74,6 @@ module.exports = {
 
       // search
       License.findOne(conditions).exec(function (err, license) {
-
         if (err) {
           sails.log.error(err)
           return res.serverError()
@@ -113,7 +112,6 @@ module.exports = {
 
     // find
     License.findOne({id: id}).populate(['user', 'purchase', 'hosting']).exec(function (err, license) {
-
       // error
       if (err) {
         sails.log.error(err)
@@ -127,7 +125,7 @@ module.exports = {
       var payment = undefined
 
       // if purchase type is paypal/dedipass, find payment
-      if (license.purchase.paymentType === 'PAYPAL' || license.purchase.paymentType === 'DEDIPASS') {
+      if (license.purchase && (license.purchase.paymentType === 'PAYPAL' || license.purchase.paymentType === 'DEDIPASS')) {
         var model = (license.purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
         model.findOne({purchase: license.purchase.id}).exec(function (err, purchasePayment) {
           if (err) {
@@ -143,8 +141,7 @@ module.exports = {
       }
 
       // render
-      function render() {
-
+      function render () {
         license.host = self.getHost(license)
 
         res.view('admin/license/view', {
@@ -170,11 +167,8 @@ module.exports = {
             }
           ]
         })
-
       }
-
     })
-
   },
 
   suspend: function (req, res) {
@@ -193,7 +187,6 @@ module.exports = {
 
     // find
     License.findOne({id: id}).populate(['user', 'hosting']).exec(function (err, license) {
-
       // error
       if (err) {
         sails.log.error(err)
@@ -225,9 +218,7 @@ module.exports = {
           licenseId: license.id,
           licenseHost: self.getHost(license)
         }, req.__('Suspension de votre licence'), license.user.email)
-
       })
-
     })
   },
 
@@ -241,7 +232,6 @@ module.exports = {
 
     // find
     License.findOne({id: id}).populate(['user', 'hosting']).exec(function (err, license) {
-
       // error
       if (err) {
         sails.log.error(err)
@@ -273,9 +263,7 @@ module.exports = {
           licenseId: license.id,
           licenseHost: self.getHost(license)
         }, req.__('Réactivation de votre licence'), license.user.email)
-
       })
-
     })
   },
 
@@ -289,7 +277,6 @@ module.exports = {
 
     // find
     License.findOne({id: id}).populate(['hosting']).exec(function (err, license) {
-
       // error
       if (err) {
         sails.log.error(err)
@@ -323,7 +310,6 @@ module.exports = {
         followAllRedirects: true
       },
       function (err, httpResponse, body){
-
         if (err) {
           sails.log.error(err)
           return res.serverError()

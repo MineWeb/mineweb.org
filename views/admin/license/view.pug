@@ -121,7 +121,7 @@ block content
             .ibox-title
               h4 #{__('Paiement')}
             .ibox-content
-              if (license.purchase.paymentType === 'FREE' || !payment)
+              if (!license.purchase || license.purchase.paymentType === 'FREE' || !payment)
                 .alert.alert-warning #{__('Cette licence a été obtenue gratuitement (ajout manuel ou code promotionnel du prix total de la licence).')}
               else
                 .table-responsive
