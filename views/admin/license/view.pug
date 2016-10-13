@@ -230,12 +230,12 @@ block content
                   tbody
                     each log in apiLogs
                       tr
-                        td v#{log.apiVersion}
+                        td v#{log.api_version}
                         td #{log.action}
                         td
                           span.fa.fa-calendar
                           | &nbsp;
-                          span.moment-date(data-format="Le {L} à {LT}") #{log.date}
+                          span.moment-date(data-format="Le {L} à {LT}") #{log.createdAt}
                         td
                           if log.status
                             span.label.label-primary #{__('Succès')}
@@ -245,7 +245,7 @@ block content
                           unless log.status
                             code #{log.errorMessage}
                         td
-                          code #{log.data}
+                          code #{JSON.stringify(log.data)}
 
   div.clearfix
   br

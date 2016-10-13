@@ -58,7 +58,7 @@ module.exports = {
       if (req.body.key !== undefined && req.body.key.length > 0)
         conditions.key = req.body.key
       if (req.body.host !== undefined && req.body.host.length > 0)
-        conditions.host = req.body.host
+        conditions.host = {'like': '%' + req.body.host + '%'}
       if (req.body.purchase !== undefined && req.body.purchase.length > 0)
         conditions.purchase = req.body.purchase
       if (req.body.id !== undefined && req.body.id.length > 0)
@@ -138,25 +138,29 @@ module.exports = {
 
         // find apiLogs
         function (callback) {
-          // Log.find()
+          Log.find({license: license.id}).sort('id DESC').exec(callback)
+          // callback(undefined, [ // TODO
+          //   {
+          //     apiVersion: 2,
+          //     action: 'CHECK',
+          //     date: new Date(Date.now()),
+          //     status: true,
+          //     data: '{"id":1,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://update.craftwb.fr"}'
+          //   },
+          //   {
+          //     apiVersion: 1,
+          //     action: 'GET_SECRET_KEY',
+          //     date: new Date(Date.now()),
+          //     status: false,
+          //     errorMessage: 'Unknown license',
+          //     data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
+          //   }
+          // ])
+        },
 
-          callback(undefined, [ // TODO
-            {
-              apiVersion: 2,
-              action: 'CHECK',
-              date: new Date(Date.now()),
-              status: true,
-              data: '{"id":1,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://update.craftwb.fr"}'
-            },
-            {
-              apiVersion: 1,
-              action: 'GET_SECRET_KEY',
-              date: new Date(Date.now()),
-              status: false,
-              errorMessage: 'Unknown license',
-              data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
-            }
-          ])
+        // find lastCheckDate
+        function (callback) {
+          Log.findOne({license: license.id, action: 'KEY_VERIFY'}).sort('id DESC').exec(callback)
         }
 
       ], function (err, results) {
@@ -170,58 +174,10 @@ module.exports = {
           title: req.__("Détails d'une licence"),
           payment: results[0],
           license: license,
-          lastCheckDate: (Date.now() - 60 * 60 * 60), // TODO
-          apiLogs: results[1]
+          lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
+          apiLogs: results[1] || []
         })
       })
-
-
-      // var payment = undefined
-      //
-      // // if purchase type is paypal/dedipass, find payment
-      // if (license.purchase && (license.purchase.paymentType === 'PAYPAL' || license.purchase.paymentType === 'DEDIPASS')) {
-      //   var model = (license.purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
-      //   model.findOne({purchase: license.purchase.id}).exec(function (err, purchasePayment) {
-      //     if (err) {
-      //       sails.log.error(err)
-      //       return res.serverError()
-      //     }
-      //     payment = purchasePayment
-      //     render()
-      //   })
-      // }
-      // else {
-      //   render()
-      // }
-
-      // render
-      // function render () {
-      //   license.host = self.getHost(license)
-      //
-      //   res.view('admin/license/view', {
-      //     title: req.__("Détails d'une licence"),
-      //     payment: payment,
-      //     license: license,
-      //     lastCheckDate: (Date.now() - 60 * 60 * 60), // TODO
-      //     apiLogs: [ // TODO
-      //       {
-      //         apiVersion: 2,
-      //         action: 'CHECK',
-      //         date: new Date(Date.now()),
-      //         status: true,
-      //         data: '{"id":1,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://update.craftwb.fr"}'
-      //       },
-      //       {
-      //         apiVersion: 1,
-      //         action: 'GET_SECRET_KEY',
-      //         date: new Date(Date.now()),
-      //         status: false,
-      //         errorMessage: 'Unknown license',
-      //         data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
-      //       }
-      //     ]
-      //   })
-      // }
     })
   },
 
