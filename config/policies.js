@@ -104,6 +104,10 @@ module.exports.policies = {
 
   'Admin/PaymentController': {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
+  },
+
+  'Admin/ApiController': {
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   }
 
 	// RabbitController: {

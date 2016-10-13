@@ -197,6 +197,9 @@ module.exports.routes = {
 
   '/admin/payments/list': 'Admin/PaymentController.view',
   '/admin/payments/get/paypal': 'Admin/PaymentController.getPayPalPayements',
-  '/admin/payments/get/dedipass': 'Admin/PaymentController.getDedipassPayements'
+  '/admin/payments/get/dedipass': 'Admin/PaymentController.getDedipassPayements',
+
+  '/admin/api/logs': 'Admin/ApiController.log',
+  '/admin/api/get/logs': 'Admin/ApiController.getLogs'
 
 }

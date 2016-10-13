@@ -139,23 +139,6 @@ module.exports = {
         // find apiLogs
         function (callback) {
           Log.find({license: license.id}).sort('id DESC').exec(callback)
-          // callback(undefined, [ // TODO
-          //   {
-          //     apiVersion: 2,
-          //     action: 'CHECK',
-          //     date: new Date(Date.now()),
-          //     status: true,
-          //     data: '{"id":1,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://update.craftwb.fr"}'
-          //   },
-          //   {
-          //     apiVersion: 1,
-          //     action: 'GET_SECRET_KEY',
-          //     date: new Date(Date.now()),
-          //     status: false,
-          //     errorMessage: 'Unknown license',
-          //     data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
-          //   }
-          // ])
         },
 
         // find lastCheckDate
