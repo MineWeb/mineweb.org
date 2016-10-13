@@ -122,34 +122,25 @@ module.exports = {
       if (license === undefined)
         return res.notFound()
 
-      var payment = undefined
+      async.parallel([
 
-      // if purchase type is paypal/dedipass, find payment
-      if (license.purchase && (license.purchase.paymentType === 'PAYPAL' || license.purchase.paymentType === 'DEDIPASS')) {
-        var model = (license.purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
-        model.findOne({purchase: license.purchase.id}).exec(function (err, purchasePayment) {
-          if (err) {
-            sails.log.error(err)
-            return res.serverError()
+        // find payment
+        function (callback) {
+          // if purchase type is paypal/dedipass, find payment
+          if (license.purchase && (license.purchase.paymentType === 'PAYPAL' || license.purchase.paymentType === 'DEDIPASS')) {
+            var model = (license.purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
+            model.findOne({purchase: license.purchase.id}).exec(callback)
           }
-          payment = purchasePayment
-          render()
-        })
-      }
-      else {
-        render()
-      }
+          else {
+            callback()
+          }
+        },
 
-      // render
-      function render () {
-        license.host = self.getHost(license)
+        // find apiLogs
+        function (callback) {
+          // Log.find()
 
-        res.view('admin/license/view', {
-          title: req.__("Détails d'une licence"),
-          payment: payment,
-          license: license,
-          lastCheckDate: (Date.now() - 60 * 60 * 60), // TODO
-          apiLogs: [ // TODO
+          callback(undefined, [ // TODO
             {
               apiVersion: 2,
               action: 'CHECK',
@@ -165,9 +156,72 @@ module.exports = {
               errorMessage: 'Unknown license',
               data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
             }
-          ]
+          ])
+        }
+
+      ], function (err, results) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+
+        license.host = self.getHost(license)
+        res.view('admin/license/view', {
+          title: req.__("Détails d'une licence"),
+          payment: results[0],
+          license: license,
+          lastCheckDate: (Date.now() - 60 * 60 * 60), // TODO
+          apiLogs: results[1]
         })
-      }
+      })
+
+
+      // var payment = undefined
+      //
+      // // if purchase type is paypal/dedipass, find payment
+      // if (license.purchase && (license.purchase.paymentType === 'PAYPAL' || license.purchase.paymentType === 'DEDIPASS')) {
+      //   var model = (license.purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
+      //   model.findOne({purchase: license.purchase.id}).exec(function (err, purchasePayment) {
+      //     if (err) {
+      //       sails.log.error(err)
+      //       return res.serverError()
+      //     }
+      //     payment = purchasePayment
+      //     render()
+      //   })
+      // }
+      // else {
+      //   render()
+      // }
+
+      // render
+      // function render () {
+      //   license.host = self.getHost(license)
+      //
+      //   res.view('admin/license/view', {
+      //     title: req.__("Détails d'une licence"),
+      //     payment: payment,
+      //     license: license,
+      //     lastCheckDate: (Date.now() - 60 * 60 * 60), // TODO
+      //     apiLogs: [ // TODO
+      //       {
+      //         apiVersion: 2,
+      //         action: 'CHECK',
+      //         date: new Date(Date.now()),
+      //         status: true,
+      //         data: '{"id":1,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://update.craftwb.fr"}'
+      //       },
+      //       {
+      //         apiVersion: 1,
+      //         action: 'GET_SECRET_KEY',
+      //         date: new Date(Date.now()),
+      //         status: false,
+      //         errorMessage: 'Unknown license',
+      //         data: '{"id":10,"key":"f87f-e655-1c2a-57ef-e6bc","domain":"http://custom.tld"}'
+      //       }
+      //     ]
+      //   })
+      // }
     })
   },
 

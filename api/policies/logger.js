@@ -7,7 +7,7 @@
  *
  */
 module.exports = function(req, res, next) {
-
+  return next()
   // User is authenticated
   if (req.session.authenticated) {
 

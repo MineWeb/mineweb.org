@@ -17,18 +17,18 @@ module.exports = {
 		Action de connexion, doit être call en ajax
 	*/
 
-  login: function (request, response) {
+  login: function (req, res) {
 
     // On vérifie qu'il ne soit pas déjà connecté
-    if (request.session.authenticated !== undefined && request.session.authenticated === true) {
-      return response.json({
+    if (req.session.authenticated !== undefined && req.session.authenticated === true) {
+      return res.json({
         status: false,
-        msg: request.__("Vous êtes déjà connecté !"),
+        msg: req.__("Vous êtes déjà connecté !"),
         inputs: {}
       })
     }
 
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['username', "Vous devez spécifier un nom d'utilisateur"],
         ['password', 'Vous devez spécifier un mot de passe']
@@ -36,53 +36,49 @@ module.exports = {
     }, function () {
 
       // On vérifie que l'ip n'est pas bloquée à cause de l'anti-bruteforce
-      Log.count({
+      UserLog.count({
         action: 'TRY_LOGIN',
-        ip: request.ip,
+        ip: req.ip,
         createdAt: {
           '>=': (new Date(Date.now() - (60 * 60 * 1000)))
         }
       }).exec(function (err, retries) {
-
         if (err) {
           sails.log.error(err)
-          return response.serverError()
+          return res.serverError()
         }
 
         if (retries >= 10) {
           // Bloqué par l'anti-bruteforce
-          return response.json({
+          return res.json({
             status: false,
-            msg: request.__("Vous êtes temporairement bloqué ! Vous avez essayé trop de fois le mauvais mot de passe."),
+            msg: req.__("Vous êtes temporairement bloqué ! Vous avez essayé trop de fois le mauvais mot de passe."),
             inputs: {}
           })
         }
 
         // On vérifie qu'un utilisateur existe avec cet combinaison d'identifiants
-        User.findOne({ username: request.body.username, password: User.hashPassword(request.body.password) }).populate('tokens', { where: { type: 'VALIDATION' }, limit: 1 }).exec(function (err, user) {
-
+        User.findOne({username: req.body.username, password: User.hashPassword(req.body.password) }).populate('tokens', { where: { type: 'VALIDATION' }, limit: 1 }).exec(function (err, user) {
           if (err) {
             sails.log.error(err)
-            return response.serverError()
+            return res.serverError()
           }
 
           if (user === undefined) {
             // Utilisateur inconnu
 
             // on stocke dans les logs
-            Log.create({ action: 'TRY_LOGIN', ip: request.ip, status: false, error: 'Invalid credentials', type: 'USER' }).exec(function (err, log) {
-
+            UserLog.create({ action: 'TRY_LOGIN', ip: req.ip, status: false, error: 'Invalid credentials'}).exec(function (err, log) {
               if (err) {
                 sails.log.error(err)
-                return response.serverError()
+                return res.serverError()
               }
-
-            });
+            })
 
             // on renvoie le json
-            return response.json({
+            return res.json({
               status: false,
-              msg: request.__("Aucun utilisateur ne correspond à ces identifiants."),
+              msg: req.__("Aucun utilisateur ne correspond à ces identifiants."),
               inputs: {}
             })
 
@@ -92,9 +88,9 @@ module.exports = {
 
             // On vérifie que l'email de l'account est bien confirmé
             if (user.tokens.length > 0 && user.tokens[0].usedAt === null) {
-              return response.json({
+              return res.json({
                 status: false,
-                msg: request.__("Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte."),
+                msg: req.__("Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte."),
                 inputs: {}
               })
             }
@@ -102,28 +98,28 @@ module.exports = {
             // On vérifie si la double auth est active
             if (user.twoFactorAuthKey !== undefined && user.twoFactorAuthKey !== null) {
               // On stocke l'user dans la session temporairement pour la vérification
-              user.wantRemember = (request.body.remember_me !== undefined && request.body.remember_me)
-              request.session.loginUser = user
+              user.wantRemember = (req.body.remember_me !== undefined && req.body.remember_me)
+              req.session.loginUser = user
 
               // On répond à l'user pour qu'il soit redirigé
-              return response.json({
+              return res.json({
                 status: true,
-                msg: request.__("Vous vous êtes bien connecté !"),
+                msg: req.__("Vous vous êtes bien connecté !"),
                 inputs: {},
                 twoFactorAuth: true
               })
             }
 
             // On sauvegarde la session/on le connecte, on gère le cookie de remember
-            request.session.userId = user.id
+            req.session.userId = user.id
 
-            if (request.body.remember_me !== undefined && request.body.remember_me) {
+            if (req.body.remember_me !== undefined && req.body.remember_me) {
 
               // On créé l'entrée dans la table de remember
               var expire = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
               RememberTokens.create({ user: user.id, expireAt: expire }).exec(function (err, token) {
 
-                response.cookie('remember_me', {
+                res.cookie('remember_me', {
                   userId: token.user,
                   token: token.token
                 },
@@ -133,12 +129,12 @@ module.exports = {
                   });
 
                 // On set la notification toastr
-                NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+                NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
 
                 // On lui envoie un message de succès
-                response.json({
+                res.json({
                   status: true,
-                  msg: request.__("Vous vous êtes bien connecté !"),
+                  msg: req.__("Vous vous êtes bien connecté !"),
                   inputs: {}
                 })
 
@@ -147,23 +143,22 @@ module.exports = {
             else { // Pas de cookie de remember
 
               // On set la notification toastr
-              NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+              NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
 
               // On lui envoie un message de succès
-              response.json({
+              res.json({
                 status: true,
-                msg: request.__("Vous vous êtes bien connecté !"),
+                msg: req.__("Vous vous êtes bien connecté !"),
                 inputs: {}
               })
 
             }
 
             // On ajoute une connexion aux logs de connexions de l'utilisateur
-            Log.create({ action: 'LOGIN', ip: request.ip, data: { userId: user.id }, status: true, type: 'USER' }).exec(function (err, log) {
-
+            UserLog.create({ action: 'LOGIN', ip: req.ip, user: user.id, status: true}).exec(function (err, log) {
               if (err) {
                 sails.log.error(err)
-                return response.serverError()
+                return res.serverError()
               }
 
             });
@@ -184,50 +179,44 @@ module.exports = {
 		Action de déconnexion, aucune vue d'affiché
 	*/
 
-  logout: function (request, response) {
-
+  logout: function (req, res) {
     // On clear le cookie de remember
-    response.clearCookie('remember_me')
-
+    res.clearCookie('remember_me')
     // On supprime les infos dans la session
-    request.session.destroy(function (err) {
-
+    req.session.destroy(function (err) {
       if (err) {
         sails.log.error(err)
-        return response.serverError()
+        return res.serverError()
       }
 
-      return response.redirect('/login')
-
-    });
-
+      return res.redirect('/login')
+    })
   },
 
 	/*
 		Action statique, affichage de la page
 	*/
 
-  loginPage: function (request, response) {
-    response.locals.title = 'Se connecter ou s\'enregistrer'
-    response.render('user/sign')
+  loginPage: function (req, res) {
+    res.locals.title = 'Se connecter ou s\'enregistrer'
+    res.render('user/sign')
   },
 
 	/*
 		Action d'inscription, doit être call en ajax
 	*/
 
-  signup: function (request, response) {
-
+  signup: function (req, res) {
     // Vérifier qu'il est pas déjà connecté
-    if (request.session.authenticated !== undefined && request.session.authenticated === true) {
-      return response.json({
+    if (req.session.authenticated !== undefined && req.session.authenticated === true) {
+      return res.json({
         status: false,
-        msg: request.__("Vous êtes déjà connecté !"),
+        msg: req.__("Vous êtes déjà connecté !"),
         inputs: {}
       })
     }
 
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['username', "Vous devez spécifier un nom d'utilisateur"],
         ['email', 'Vous devez spécifier un email'],
@@ -251,7 +240,7 @@ module.exports = {
       "Les mots de passes ne sont pas identiques !": [
         {
           field: 'password_confirmation',
-          value: request.body.password,
+          value: req.body.password,
           error: 'Le mot de passe doit être identique à celui fourni ci-dessus.'
         }
       ]
@@ -263,51 +252,51 @@ module.exports = {
         secretKey: sails.config.recaptcha.secretKey
       })
 
-      recaptcha.validateRequest(request).then(function () {
+      recaptcha.validateRequest(req).then(function () {
 
 
-        User.count({ username: request.body.username }).exec(function (err, count) {
+        User.count({ username: req.body.username }).exec(function (err, count) {
 
           if (err) {
             sails.log.error(err)
-            return response.serverError()
+            return res.serverError()
           }
 
           // Pseudo déjà utilisé
           if (count > 0) {
-            return response.json({
+            return res.json({
               status: false,
-              msg: request.__("Vous devez choisir un pseudo non utilisé !"),
+              msg: req.__("Vous devez choisir un pseudo non utilisé !"),
               inputs: {
-                username: request.__("Cet pseudo est déjà utilisé.")
+                username: req.__("Cet pseudo est déjà utilisé.")
               }
             })
           }
 
-          User.count({ email: request.body.email }).exec(function (err, count) {
+          User.count({ email: req.body.email }).exec(function (err, count) {
 
             if (err) {
               sails.log.error(err)
-              return response.serverError()
+              return res.serverError()
             }
 
             // Pseudo déjà utilisé
             if (count > 0) {
-              return response.json({
+              return res.json({
                 status: false,
-                msg: request.__("Vous devez choisir un email non utilisé !"),
+                msg: req.__("Vous devez choisir un email non utilisé !"),
                 inputs: {
-                  email: request.__("Cet email est déjà utilisé.")
+                  email: req.__("Cet email est déjà utilisé.")
                 }
               })
             }
 
             // Sauvegarde de l'user
-            User.create({ username: request.body.username, password: request.body.password, email: request.body.email, lang: request.acceptedLanguages[0], ip: request.ip }).exec(function (err, user) {
+            User.create({ username: req.body.username, password: req.body.password, email: req.body.email, lang: req.acceptedLanguages[0], ip: req.ip }).exec(function (err, user) {
 
               if (err) {
                 sails.log.error(err)
-                return response.serverError()
+                return res.serverError()
               }
 
               // Sauvegarde du token de validation, envoie de l'email de confirmation
@@ -315,13 +304,13 @@ module.exports = {
 
                 if (err) {
                   sails.log.error(err)
-                  return response.serverError()
+                  return res.serverError()
                 }
 
                 // Envoyer le message de succès en JSON
-                response.json({
+                res.json({
                   status: true,
-                  msg: request.__("Vous vous êtes bien inscrit ! Vous devez maintenant confirmer votre email pour pouvoir vous connecter."),
+                  msg: req.__("Vous vous êtes bien inscrit ! Vous devez maintenant confirmer votre email pour pouvoir vous connecter."),
                   inputs: {}
                 })
 
@@ -330,7 +319,7 @@ module.exports = {
                   url: RouteService.getBaseUrl() + '/user/confirm-email/' + token.token,
                   username: user.username,
                   ip: user.ip
-                }, request.__('Confirmation de votre email'), user.email);
+                }, req.__('Confirmation de votre email'), user.email);
 
 
               })
@@ -343,11 +332,11 @@ module.exports = {
 
       }).catch(function (errorCodes) {
         // invalid
-        return response.json({
+        return res.json({
           status: false,
-          msg: request.__("Veuillez valider la sécurité anti-robots"),
+          msg: req.__("Veuillez valider la sécurité anti-robots"),
           inputs: {
-            captcha_msg: request.__("Vous devez prouver que vous êtes un humain en validant l'étape ci-dessus")
+            captcha_msg: req.__("Vous devez prouver que vous êtes un humain en validant l'étape ci-dessus")
           }
         })
       })
@@ -362,43 +351,43 @@ module.exports = {
 		@params Token
 	*/
 
-  confirmEmail: function (request, response) {
+  confirmEmail: function (req, res) {
 
     // On récupère le token de validation
-    if (request.param('token') === undefined) {
-      return response.notFound('Validation token is missing')
+    if (req.param('token') === undefined) {
+      return res.notFound('Validation token is missing')
     }
-    var key = request.param('token')
+    var key = req.param('token')
 
     // On cherche le token
     Token.findOne({ token: key, type: 'VALIDATION', usedAt: null, usedLocation: null }).exec(function (err, data) {
 
       if (err) {
         sails.log.error(err)
-        return response.serverError('An error occured on token select')
+        return res.serverError('An error occured on token select')
       }
 
       // Si on ne trouve pas le token
       if (data === undefined) {
-        return response.notFound('Unknown validation token or already used')
+        return res.notFound('Unknown validation token or already used')
       }
 
       // On passe le token en validé
-      Token.update({ id: data.id }, { usedAt: (new Date()), usedLocation: request.ip }).exec(function (err, data) {
+      Token.update({ id: data.id }, { usedAt: (new Date()), usedLocation: req.ip }).exec(function (err, data) {
 
         if (err) {
           sails.log.error(err)
-          return response.serverError('An error occured on token update')
+          return res.serverError('An error occured on token update')
         }
 
         // On sauvegarde la session/on le connecte
-        request.session.userId = data[0].user
+        req.session.userId = data[0].user
 
         // On set le flash message
-        FlashService.success(request, request.__('Vous avez bien validé votre adresse email !'))
+        FlashService.success(req, req.__('Vous avez bien validé votre adresse email !'))
 
         // On redirige l'utilisateur sur son compte
-        return response.redirect('/user/profile')
+        return res.redirect('/user/profile')
 
 
       })
@@ -411,9 +400,9 @@ module.exports = {
 		Action statique, affichage de la page
 	*/
 
-  lostPasswordPage: function (request, response) {
-    response.locals.title = "J'ai perdu mon mot de passe"
-    response.render('user/lost_password')
+  lostPasswordPage: function (req, res) {
+    res.locals.title = "J'ai perdu mon mot de passe"
+    res.render('user/lost_password')
   },
 
 	/*
@@ -422,37 +411,37 @@ module.exports = {
 		Data: [email]
 	*/
 
-  lostPassword: function (request, response) {
+  lostPassword: function (req, res) {
     // On vérifie qu'il ne soit pas déjà connecté
-    if (request.session.authenticated !== undefined && request.session.authenticated === true) {
-      return response.json({
+    if (req.session.authenticated !== undefined && req.session.authenticated === true) {
+      return res.json({
         status: false,
-        msg: request.__("Vous êtes déjà connecté !"),
+        msg: req.__("Vous êtes déjà connecté !"),
         inputs: {}
       })
     }
 
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['email', 'Vous devez spécifier un nom email'],
       ]
     }, function () {
 
       // On vérifie que l'email appartient à un utilisateur
-      User.findOne({ email: request.body.email }).exec(function (err, user) {
+      User.findOne({ email: req.body.email }).exec(function (err, user) {
 
         if (err) {
           sails.log.error(err)
-          return response.serverError()
+          return res.serverError()
         }
 
         // Si aucun utilisateur ne correspond
         if (user === undefined) {
-          return response.json({
+          return res.json({
             status: false,
-            msg: request.__("Aucun utilisateur ne correspond à ces informations"),
+            msg: req.__("Aucun utilisateur ne correspond à ces informations"),
             inputs: {
-              email: request.__("Vous devez spécifier l'email appartenant à votre compte")
+              email: req.__("Vous devez spécifier l'email appartenant à votre compte")
             }
           })
         }
@@ -462,13 +451,13 @@ module.exports = {
 
           if (err) {
             sails.log.error(err)
-            return response.serverError()
+            return res.serverError()
           }
 
           // Envoyer le message de succès en JSON
-          response.json({
+          res.json({
             status: true,
-            msg: request.__("Un email de rénitilisation vous a été envoyé ! Cliquez sur le lien contenu dans celui-ci pour suivre les étapes de rénitilisation."),
+            msg: req.__("Un email de rénitilisation vous a été envoyé ! Cliquez sur le lien contenu dans celui-ci pour suivre les étapes de rénitilisation."),
             inputs: {}
           })
 
@@ -477,7 +466,7 @@ module.exports = {
             url: RouteService.getBaseUrl() + '/user/reset-password/' + token.token,
             username: user.username,
             ip: user.ip
-          }, request.__('Rénitialisation de votre mot de passe'), user.email);
+          }, req.__('Rénitialisation de votre mot de passe'), user.email);
 
 
         })
@@ -493,9 +482,9 @@ module.exports = {
 		Action statique, affichage de la page
 	*/
 
-  resetPasswordPage: function (request, response) {
-    response.locals.title = "Rénitiliser mon mot de passe"
-    response.render('user/reset_password')
+  resetPasswordPage: function (req, res) {
+    res.locals.title = "Rénitiliser mon mot de passe"
+    res.render('user/reset_password')
   },
 
 
@@ -505,17 +494,17 @@ module.exports = {
 		Data: [token, password, password_confirmation]
 	*/
 
-  resetPassword: function (request, response) {
+  resetPassword: function (req, res) {
     // On vérifie qu'il ne soit pas déjà connecté
-    if (request.session.authenticated !== undefined && request.session.authenticated === true) {
-      return response.json({
+    if (req.session.authenticated !== undefined && req.session.authenticated === true) {
+      return res.json({
         status: false,
-        msg: request.__("Vous êtes déjà connecté !"),
+        msg: req.__("Vous êtes déjà connecté !"),
         inputs: {}
       })
     }
 
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['password', 'Vous devez spécifier un mot de passe'],
         ['password_confirmation', 'Vous devez confirmer votre mot de passe']
@@ -523,7 +512,7 @@ module.exports = {
       "Les mots de passes ne sont pas identiques !": [
         {
           field: 'password_confirmation',
-          value: request.body.password,
+          value: req.body.password,
           error: 'Le mot de passe doit être identique à celui fourni ci-dessus.'
         }
       ]
@@ -531,7 +520,7 @@ module.exports = {
 
       // Vérifie le token (expire au bout d'une heure)
       Token.findOne({
-        token: request.body.token,
+        token: req.body.token,
         type: 'FORGOT',
         usedAt: null,
         usedLocation: null,
@@ -542,38 +531,38 @@ module.exports = {
 
         if (err) {
           sails.log.error(err)
-          return response.serverError('An error occured on token select')
+          return res.serverError('An error occured on token select')
         }
 
         // Si on ne trouve pas le token
         if (token === undefined) {
-          return response.json({
+          return res.json({
             status: false,
-            msg: request.__("Le token utilisé n'est pas valide ou a déjà expiré"),
+            msg: req.__("Le token utilisé n'est pas valide ou a déjà expiré"),
             inputs: {}
           })
         }
 
         // On update le mot de passe
-        User.update({ id: token.user }, { password: request.body.password }).exec(function (err, user) {
+        User.update({ id: token.user }, { password: req.body.password }).exec(function (err, user) {
 
           if (err) {
             sails.log.error(err)
-            return response.serverError('An error occured on token select')
+            return res.serverError('An error occured on token select')
           }
 
 
           // On passe le token en utilisé
-          Token.update({ id: token.id }, { usedAt: (new Date()), usedLocation: request.ip }).exec(function (err, token) {
+          Token.update({ id: token.id }, { usedAt: (new Date()), usedLocation: req.ip }).exec(function (err, token) {
             if (err) {
               sails.log.error(err)
             }
           })
 
           // On envoie la réponse
-          return response.json({
+          return res.json({
             status: true,
-            msg: request.__("Vous avez bien éditer votre mot de passe ! Vous pouvez maintenant vous connecter !"),
+            msg: req.__("Vous avez bien éditer votre mot de passe ! Vous pouvez maintenant vous connecter !"),
             inputs: {}
           })
 
@@ -591,41 +580,41 @@ module.exports = {
 		Authentification requise
 	*/
 
-  profile: function (request, response) {
-    response.locals.title = request.__("Profil")
+  profile: function (req, res) {
+    res.locals.title = req.__("Profil")
 
-    moment.locale(request.acceptedLanguages[0])
+    moment.locale(req.acceptedLanguages[0])
 
     async.parallel([
 
       // On cherche l'utilisateur avec plus d'infos
       function (callback) {
-        User.findOne({ id: request.session.userId }).populate(['paypalPayments', 'dedipassPayments']).exec(callback)
+        User.findOne({ id: req.session.userId }).populate(['paypalPayments', 'dedipassPayments']).exec(callback)
       },
 
       // on récupère ses paiements paypals
       function (callback) {
-        PayPalHistory.find({ user: request.session.userId }).populate(['purchase']).exec(callback)
+        PayPalHistory.find({ user: req.session.userId }).populate(['purchase']).exec(callback)
       },
 
       // on récupère ses paiements dédipass
       function (callback) {
-        DedipassHistory.find({ user: request.session.userId }).populate(['purchase']).exec(callback)
+        DedipassHistory.find({ user: req.session.userId }).populate(['purchase']).exec(callback)
       },
 
       // On cherche ses logs de connexions
       function (callback) {
-        Log.find({ data: '{"userId":' + request.session.userId + '}', action: 'LOGIN' }).limit(5).sort('createdAt DESC').exec(callback)
+        UserLog.find({ user: req.session.userId, action: 'LOGIN' }).limit(5).sort('createdAt DESC').exec(callback)
       },
 
       // on récupère ses achats
       function (callback) {
-        Purchase.findAllOfUser(request.session.userId, callback)
+        Purchase.findAllOfUser(req.session.userId, callback)
       },
 
       // get his licenses
       function (callback) {
-        License.find({user: request.session.userId}).populate(['hosting']).exec(function (err, licenses) {
+        License.find({user: req.session.userId}).populate(['hosting']).exec(function (err, licenses) {
           if (err)
             return callback(err)
 
@@ -649,21 +638,21 @@ module.exports = {
 
       if (err) {
         sails.log.error(err);
-        return response.serverError();
+        return res.serverError();
       }
 
-      response.locals.user = results[0]
-      response.locals.user.paypalPayments = results[1]
-      response.locals.user.dedipassPayments = results[2]
-      response.locals.user.purchases = results[4]
-      response.locals.user.createdAt = moment(response.locals.user.createdAt).format('LL')
-      response.locals.user.connectionLogs = results[3]
-      response.locals.user.licenses = results[5].licenses
-      response.locals.user.hostings = results[5].hostings
+      res.locals.user = results[0]
+      res.locals.user.paypalPayments = results[1]
+      res.locals.user.dedipassPayments = results[2]
+      res.locals.user.purchases = results[4]
+      res.locals.user.createdAt = moment(res.locals.user.createdAt).format('LL')
+      res.locals.user.connectionLogs = results[3]
+      res.locals.user.licenses = results[5].licenses
+      res.locals.user.hostings = results[5].hostings
 
-      response.locals.moment = moment
+      res.locals.moment = moment
 
-      response.render('./user/profile')
+      res.render('./user/profile')
     })
 
   },
@@ -674,9 +663,9 @@ module.exports = {
 		Authentification requise
 	*/
 
-  editEmail: function (request, response) {
+  editEmail: function (req, res) {
 
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['email', 'Vous devez spécifier un email'],
       ],
@@ -690,36 +679,36 @@ module.exports = {
     }, function () {
 
       // On vérifie que l'email n'est pas déjà utilisé
-      User.count({ email: request.body.email }).exec(function (err, count) {
+      User.count({ email: req.body.email }).exec(function (err, count) {
 
         if (err) {
           sails.log.error(err)
-          return response.serverError()
+          return res.serverError()
         }
 
         // L'email est déjà utilisé
         if (count > 0) {
-          return response.json({
+          return res.json({
             status: false,
-            msg: request.__("L'email est déjà utilisé par un autre utilisateur !"),
+            msg: req.__("L'email est déjà utilisé par un autre utilisateur !"),
             inputs: {
-              email: request.__("Vous devez choisir un email différent")
+              email: req.__("Vous devez choisir un email différent")
             }
           })
         }
 
         // On modifie l'email
-        User.update({ id: response.locals.user.id }, { email: request.body.email }).exec(function (err, user) {
+        User.update({ id: res.locals.user.id }, { email: req.body.email }).exec(function (err, user) {
 
           if (err) {
             sails.log.error(err)
-            return response.serverError()
+            return res.serverError()
           }
 
           // On envoie une réponse à l'utilisateur
-          return response.json({
+          return res.json({
             status: true,
-            msg: request.__("Votre email a bien été modifié !"),
+            msg: req.__("Votre email a bien été modifié !"),
             inputs: {}
           })
 
@@ -737,9 +726,9 @@ module.exports = {
 		Authentification requise
 	*/
 
-  editPassword: function (request, response) {
+  editPassword: function (req, res) {
 
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['password', 'Vous devez spécifier un mot de passe'],
         ['password_confirmation', 'Vous devez confirmer votre mot de passe']
@@ -747,24 +736,24 @@ module.exports = {
       "Les mots de passes ne sont pas identiques !": [
         {
           field: 'password_confirmation',
-          value: request.body.password,
+          value: req.body.password,
           error: 'Le mot de passe doit être identique à celui fourni ci-dessus.'
         }
       ]
     }, function () {
 
       // On modifie le password
-      User.update({ id: response.locals.user.id }, { password: request.body.password }).exec(function (err, user) {
+      User.update({ id: res.locals.user.id }, { password: req.body.password }).exec(function (err, user) {
 
         if (err) {
           sails.log.error(err)
-          return response.serverError()
+          return res.serverError()
         }
 
         // On envoie une réponse à l'utilisateur
-        return response.json({
+        return res.json({
           status: true,
-          msg: request.__("Votre mot de passe a bien été modifié !"),
+          msg: req.__("Votre mot de passe a bien été modifié !"),
           inputs: {}
         })
 
@@ -778,20 +767,20 @@ module.exports = {
 		Action passant la secret key de la double auth à null, redirigeant vers le profil
 	*/
 
-  disableTwoFactorAuthentification: function (request, response) {
+  disableTwoFactorAuthentification: function (req, res) {
     // On set la key à null
-    User.update({ id: response.locals.user.id }, { twoFactorAuthKey: null }).exec(function (err, user) {
+    User.update({ id: res.locals.user.id }, { twoFactorAuthKey: null }).exec(function (err, user) {
 
       if (err) {
         sails.log.error(err)
-        return response.serverError()
+        return res.serverError()
       }
 
       // On set une notification
-      NotificationService.success(request, request.__('Vous avez désactivé la double authentification !'))
+      NotificationService.success(req, req.__('Vous avez désactivé la double authentification !'))
 
       // On envoie l'utilisateur sur son profil
-      response.redirect('/user/profile')
+      res.redirect('/user/profile')
 
     })
 
@@ -801,23 +790,23 @@ module.exports = {
 		Action générant la secret key de la double auth, affichant le QRCode
 	*/
 
-  enableTwoFactorAuthentificationPage: function (request, response) {
+  enableTwoFactorAuthentificationPage: function (req, res) {
 
     // On génére la clé secrète
     var secret = twoFactor.generate.key();
 
     // On la met temporairement dans la session, pour la sauvegarder après
-    request.session.twoFactorAuthKey = secret
+    req.session.twoFactorAuthKey = secret
 
     // On génère le QRCode
-    var code = twoFactor.generate.qrcode(secret, 'MineWeb.org - ' + response.locals.user.username, {
+    var code = twoFactor.generate.qrcode(secret, 'MineWeb.org - ' + res.locals.user.username, {
       type: 'svg',
       sync: true
     });
 
     // On rend la view
-    response.view('user/enable-two-factor-auth', {
-      title: request.__('Activer la double authentification'),
+    res.view('user/enable-two-factor-auth', {
+      title: req.__('Activer la double authentification'),
       qrcode: code
     })
 
@@ -827,53 +816,53 @@ module.exports = {
 		Action vérifiant le premier code de vérification, sauvegadant la clé de double auth (redirection vers le profil ensuite)
 	*/
 
-  enableTwoFactorAuthentification: function (request, response) {
+  enableTwoFactorAuthentification: function (req, res) {
 
     // On vérifie que la double auth ne soit pas déjà config
-    if (response.locals.user.twoFactorAuthKey !== undefined && response.locals.user.twoFactorAuthKey !== null) {
-      return response.json({
+    if (res.locals.user.twoFactorAuthKey !== undefined && res.locals.user.twoFactorAuthKey !== null) {
+      return res.json({
         status: false,
-        msg: request.__("Vous avez déjà la double authentification d'activée !"),
+        msg: req.__("Vous avez déjà la double authentification d'activée !"),
         inputs: {}
       })
     }
 
     // On vérifie que le champ est rempli
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['code', "Vous devez rentrer le code de vérification"],
       ]
     }, function () {
 
       // On set le secret selon ce qui a été enregistré
-      var secret = request.session.twoFactorAuthKey
+      var secret = req.session.twoFactorAuthKey
 
       // On vérifie que le code est valide
-      if (!twoFactor.verify(request.body.code, secret)) {
-        return response.json({
+      if (!twoFactor.verify(req.body.code, secret)) {
+        return res.json({
           status: false,
-          msg: request.__("Le code entré est invalide"),
+          msg: req.__("Le code entré est invalide"),
           inputs: {
-            email: request.__("Veuillez entrer un code de vérification valide.")
+            email: req.__("Veuillez entrer un code de vérification valide.")
           }
         })
       }
 
       // On sauvegarde la clé dans la db
-      User.update({ id: request.session.userId }, { twoFactorAuthKey: secret }).exec(function (err, user) {
+      User.update({ id: req.session.userId }, { twoFactorAuthKey: secret }).exec(function (err, user) {
 
         if (err) {
           sails.log.error(err)
-          return response.serverError()
+          return res.serverError()
         }
 
         // On set la notification
-        NotificationService.success(request, request.__('Vous avez bien activé la double authentification !'))
+        NotificationService.success(req, req.__('Vous avez bien activé la double authentification !'))
 
         // On envoie le message de succès pour qu'il soit redirigé
-        return response.json({
+        return res.json({
           status: true,
-          msg: request.__('Vous avez bien activé la double authentification !'),
+          msg: req.__('Vous avez bien activé la double authentification !'),
           inputs: {}
         })
 
@@ -888,51 +877,51 @@ module.exports = {
 		Action statique, affichage de la page
 	*/
 
-  loginTwoFactorAuthVerificationPage: function (request, response) {
-    response.locals.title = 'Double authentification'
-    response.render('user/login-verification-two-factor-auth')
+  loginTwoFactorAuthVerificationPage: function (req, res) {
+    res.locals.title = 'Double authentification'
+    res.render('user/login-verification-two-factor-auth')
   },
 
 	/*
 		Action vérifiant le code de double authentification et connectant l'utilisateur si valide
 	*/
-  loginTwoFactorAuthVerification: function (request, response) {
+  loginTwoFactorAuthVerification: function (req, res) {
 
-    if (request.session.loginUser === undefined ||  request.session.loginUser.length === 0) {
-      return response.json({
+    if (req.session.loginUser === undefined ||  req.session.loginUser.length === 0) {
+      return res.json({
         status: false,
-        msg: request.__("Re-connectez-vous, votre session a expirée."),
+        msg: req.__("Re-connectez-vous, votre session a expirée."),
         inputs: {}
       })
     }
 
     // On vérifie que le champ est rempli
-    RequestManagerService.setRequest(request).setResponse(response).valid({
+    RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
         ['code', "Vous devez rentrer le code de vérification"],
       ]
     }, function () {
 
       // On set le secret selon ce qui a été enregistré
-      var secret = request.session.loginUser.twoFactorAuthKey
+      var secret = req.session.loginUser.twoFactorAuthKey
 
       // On vérifie que le code est valide
-      if (!twoFactor.verify(request.body.code, secret)) {
-        return response.json({
+      if (!twoFactor.verify(req.body.code, secret)) {
+        return res.json({
           status: false,
-          msg: request.__("Le code entré est invalide"),
+          msg: req.__("Le code entré est invalide"),
           inputs: {
-            email: request.__("Veuillez entrer un code de vérification valide.")
+            email: req.__("Veuillez entrer un code de vérification valide.")
           }
         })
       }
 
       // On supprime l'utilisation temporairement de la session
-      var user = request.session.loginUser
-      request.session.loginUser = undefined
+      var user = req.session.loginUser
+      req.session.loginUser = undefined
 
       // On sauvegarde la session/on le connecte, on gère le cookie de remember
-      request.session.userId = user.id
+      req.session.userId = user.id
 
       if (user.wantRemember) {
 
@@ -940,7 +929,7 @@ module.exports = {
         var expire = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
         RememberTokens.create({ user: user.id, expireAt: expire }).exec(function (err, token) {
 
-          response.cookie('remember_me', {
+          res.cookie('remember_me', {
             userId: token.user,
             token: token.token
           },
@@ -950,12 +939,12 @@ module.exports = {
             });
 
           // On set la notification toastr
-          NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+          NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
 
           // On lui envoie un message de succès
-          response.json({
+          res.json({
             status: true,
-            msg: request.__("Vous vous êtes bien connecté !"),
+            msg: req.__("Vous vous êtes bien connecté !"),
             inputs: {}
           })
 
@@ -964,23 +953,22 @@ module.exports = {
       else {
 
         // On set la notification toastr
-        NotificationService.success(request, request.__('Vous vous êtes bien connecté !'))
+        NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
 
         // On lui envoie un message de succès
-        response.json({
+        res.json({
           status: true,
-          msg: request.__("Vous vous êtes bien connecté !"),
+          msg: req.__("Vous vous êtes bien connecté !"),
           inputs: {}
         })
 
       }
 
       // On ajoute une connexion aux logs de connexions de l'utilisateur
-      Log.create({ action: 'LOGIN', ip: request.ip, data: { userId: user.id }, status: true, type: 'USER' }).exec(function (err, log) {
-
+      UserLog.create({ action: 'LOGIN', ip: req.ip, user: user.id, status: true}).exec(function (err, log) {
         if (err) {
           sails.log.error(err)
-          return response.serverError()
+          return res.serverError()
         }
 
       });

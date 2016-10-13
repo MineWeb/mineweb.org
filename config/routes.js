@@ -81,6 +81,7 @@ module.exports.routes = {
   'get /user/lost-password': 'UserController.lostPasswordPage',
   'post /user/lost-password': 'UserController.lostPassword',
   'get /user/profile': 'UserController.profile',
+  'get /user/logout': 'UserController.logout',
 
   'post /user/edit-email': 'UserController.editEmail',
   'post /user/edit-password': 'UserController.editPassword',
