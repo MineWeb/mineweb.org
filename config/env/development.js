@@ -203,7 +203,10 @@ module.exports = {
         controller: 'admin/api',
         action: 'editQuestion'
       }
-    ]
+    ],
+    'ADMIN-MANAGE_DEVELOPERS': {
+      controller: 'admin/developer'
+    }
   },
 
   permissionsAccess: {
@@ -236,6 +239,7 @@ module.exports = {
       // 'ADMIN-VIEW_PAYMENTS_LIST',
       // 'ADMIN-VIEW_API_LOGS',
       'ADMIN-MANAGE_FAQ'
+      // 'ADMIN-MANAGE_DEVELOPERS'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -263,6 +267,7 @@ module.exports = {
       'ADMIN-VIEW_PAYMENTS_LIST',
       'ADMIN-VIEW_API_LOGS',
       'ADMIN-MANAGE_FAQ'
+      // 'ADMIN-MANAGE_DEVELOPERS'
     ],
     'FOUNDER': ['*']
   },

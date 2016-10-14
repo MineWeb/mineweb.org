@@ -204,6 +204,19 @@ module.exports.routes = {
   '/admin/api/faq': 'Admin/ApiController.faq',
   'post /admin/api/faq/add': 'Admin/ApiController.addQuestion',
   '/admin/api/faq/remove/:id': 'Admin/ApiController.removeQuestion',
-  'post /admin/api/faq/edit/:id': 'Admin/ApiController.editQuestion'
+  'post /admin/api/faq/edit/:id': 'Admin/ApiController.editQuestion',
+
+  '/admin/developer/candidate': 'Admin/DeveloperController.viewCandidates',
+  '/admin/developer/candidate/view/:id': 'Admin/DeveloperController.viewCandidate',
+  '/admin/developer/candidate/accept/:id': 'Admin/DeveloperController.acceptCandidate',
+  '/admin/developer/candidate/refuse/:id': 'Admin/DeveloperController.refuseCandidate',
+  '/admin/developer/view/submitted': 'Admin/DeveloperController.viewPluginsAndThemesSubmitted',
+  '/admin/developer/view/online': 'Admin/DeveloperController.viewPluginsAndThemesOnline',
+  '/admin/developer/submitted/plugin/view/:id': 'Admin/DeveloperController.viewPluginSubmitted',
+  '/admin/developer/submitted/theme/view/:id': 'Admin/DeveloperController.viewThemeSubmitted',
+  '/admin/developer/submitted/plugin/accept/:id': 'Admin/DeveloperController.acceptPluginSubmitted',
+  'post /admin/developer/submitted/plugin/refuse/:id': 'Admin/DeveloperController.refusePluginSubmitted',
+  '/admin/developer/submitted/theme/accept/:id': 'Admin/DeveloperController.acceptThemeSubmitted',
+  'post /admin/developer/submitted/theme/refuse/:id': 'Admin/DeveloperController.refuseThemeSubmitted'
 
 }
