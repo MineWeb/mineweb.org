@@ -1,0 +1,48 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__('Candidature de %s', user.username)}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Développeur')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+
+        .ibox.float-e-margins
+          .ibox-content
+
+            .chat-discussion
+              .chat-message.left
+                img.message-avatar(src="http://www.gravatar.com/avatar/" + user.md5Email, alt='')
+                .message
+                  a.message-author(href='/admin/user/view/' + user.id) #{user.username}
+                  span.message-date #{__('Inscrit')}&nbsp;
+                    span.moment-date(fromNow) #{user.createdAt}
+                  span.message-content #{user.developerCandidacy}
+
+    .col-md-6
+      .ibox.float-e-margins
+        .ibox-content
+          a.btn.btn-primary.btn-block(href="/admin/developer/candidate/accept/" + user.id) #{__('Accepter la candidature')}
+    .col-md-6
+      .ibox.float-e-margins
+        .ibox-content
+          form.form-horizontal(method='post', action="/admin/developer/candidate/refuse/" + user.id, data-ajax, data-redirect-url="/admin/developer/candidate")
+
+            .form-group
+              label.col-sm-2.control-label #{__("Explication")}
+              .col-sm-10
+                textarea.form-control(type='text', name="explanation", data-form-no-display-error, rows="7")
+
+            .hr-line-dashed
+
+            .form-group
+              .col-md-12
+                button.btn.btn-danger.btn-block(type='submit')
+                  i.fa.fa-ban
+                  | &nbsp;#{__('Refuser la candidature')}

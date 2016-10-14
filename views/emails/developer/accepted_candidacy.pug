@@ -1,0 +1,17 @@
+extends ../../layouts/email
+block message
+  p #{sails.__('Bonjour')} <strong>#{username}</strong>,
+    br
+    br
+    | !{sails.__("Votre candidature sur")} <strong>mineweb.org</strong> #{sails.__("vient d'être acceptée par notre équipe il y a quelques instants")}.
+    br
+    | #{sails.__('Il vous suffit de cliquer sur le lien ci-dessous pour accéder directement à votre espace développeur :')}
+    br
+    a(style='text-align:center;color:#428bca;text-decoration:none;', href=locals.url) #{sails.__("Cliquez ici pour accéder à l'espace développeur")}
+
+  p
+    small(style='color:grey;') #{sails.__('Si vous ne pouvez pas cliquer sur le bouton ci-dessus, mettez cette URL dans votre navigateur :')} #{url}
+
+  p
+    small
+      em #{sails.__('Ceci est un message automatique, veuillez ne pas y répondre.')}

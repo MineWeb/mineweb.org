@@ -1,0 +1,34 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-sm-4
+      h2 #{__('Listes des candidatures')}
+      ol.breadcrumb
+        li
+          a(href="/admin/dashboard") #{__('Dashboard')}
+        li.active
+          strong #{__('Espace développeur')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des candidatures en attente')}
+          .ibox-content
+            .project-list
+              .table-responsive
+                table.table.table-hover
+                  tbody
+                    each user in users
+                      tr
+                        td.project-status
+                        td.project-title
+                          a(href='/admin/user/view/' + user.id) #{user.username}
+                        td.project-people
+                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=user.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(user).md5Email, alt="Gravatar de " + user.username)
+                        td.project-actions
+                          a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/candidate/view/" + user.id)
+                            i.fa.fa-reply
+                            | &nbsp;#{__('Voir')}
+                          | &nbsp;

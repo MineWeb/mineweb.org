@@ -9,22 +9,111 @@ module.exports = {
 
   // Display list of user's candidates (with view button only)
   viewCandidates: function (req, res) {
-
+    User.find({developerCandidacy: {'!': null}, developer: 'CANDIDATE'}).exec(function (err, users) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      // render
+      res.view('admin/developer/view_candidates', {
+        title: req.__('Listes des candidatures'),
+        users: users || []
+      })
+    })
   },
 
   // Display user's id candidate (with comment/accept/refuse buttons)
   viewCandidate: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    User.findOne({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}).exec(function (err, user) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      if (user === undefined) return res.notFound('User not found')
+      user = User.addMd5Email(user)
+
+      // render
+      res.view('admin/developer/view_candidate', {
+        title: req.__('Candidature de %s', user.username),
+        user: user
+      })
+    })
   },
 
   // Accept user's id candidate, send him an email + update developer's rank into db
   acceptCandidate: function (req, res) {
-
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+    // find user
+    User.findOne({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}).exec(function (err, user) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (user === undefined) return res.notFound('User not found')
+      // send email
+      MailService.send('developer/accepted_candidacy', {
+        url: RouteService.getBaseUrl() + '/developer/',
+        username: user.username
+      }, req.__('Acceptation de votre candidature de développeur'), user.email)
+      // update db
+      User.update({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}, {developer: 'CONFIRMED'}).exec(function (err) {
+        if (err) sails.log.error(err)
+      })
+      // send notification
+      NotificationService.success(req, req.__('La candidature a bien été acceptée !'))
+      // redirect
+      res.redirect('/admin/developer/candidate')
+    })
   },
 
   // Refuse user's id candidate, send him an email with an explanation + update developer's rank into db
   refuseCandidate: function (req, res) {
-
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+    
+    RequestManagerService.setRequest(req).setResponse(res).valid({
+			'Tous les champs ne sont pas remplis.': [
+				['explanation', '']
+			]
+		}, function () {
+      // find user
+      User.findOne({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}).exec(function (err, user) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+        if (user === undefined) return res.notFound('User not found')
+        // send email
+        MailService.send('developer/refused_candidacy', {
+          url: RouteService.getBaseUrl() + '/developer/',
+          username: user.username,
+          explanation: req.body.explanation
+        }, req.__('Refus de votre candidature de développeur'), user.email)
+        // update db
+        User.update({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}, {developer: 'NONE'}).exec(function (err) {
+          if (err) sails.log.error(err)
+        })
+        // send notification
+        NotificationService.success(req, req.__('La candidature a bien été refusée !'))
+        // response to redirect
+        res.json({
+          status: true,
+          msg: req.__('La candidature a bien été refusée !'),
+          inputs: {}
+        })
+      })
+    })
   },
 
   // Display list of plugins/themes new versions and first release (with view button only)

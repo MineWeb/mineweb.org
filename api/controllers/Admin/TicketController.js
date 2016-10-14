@@ -15,12 +15,11 @@ module.exports = {
 
       // find pendingTickets
       function (callback) {
-        Ticket.find({user: req.session.userId, state: {'!': 'CLOSED'}}).sort('id DESC').populate(['replies', 'user', 'supported']).exec(function (err, tickets) {
+        Ticket.find({state: {'!': 'CLOSED'}}).sort('id DESC').populate(['replies', 'user', 'supported']).exec(function (err, tickets) {
 					if (err) {
 						return callback(err, null)
 					}
 					else {
-
 						// handle last reply & category
 						if (tickets !== undefined) {
 							for (var i = 0; i < tickets.length; i++) {
@@ -100,7 +99,7 @@ module.exports = {
 
       // find ticket
       function (callback) {
-        Ticket.findOne({id: id}).sort('id DESC').populate(['user', 'hosting']).exec(function (err, ticket) {
+        Ticket.findOne({id: id}).sort('id DESC').populate(['user', 'license']).exec(function (err, ticket) {
           if (err) {
             return callback(err)
           }
@@ -175,7 +174,7 @@ module.exports = {
           return res.notFound()
 
         // add signature + hello
-        var content = TicketReply.addSignature(req.body.reply, {username: ticket.user.username, rolename:User.getRoleName(ticket.user)}, ticket.user.lang)
+        var content = TicketReply.addSignature(req.body.reply, {username: res.locals.user.username, rolename:User.getRoleName(res.locals.user)}, res.locals.user.lang)
 
         // Save
         TicketReply.create({user: req.session.userId, ticket:id, content: content}).exec(function (err, reply) {
