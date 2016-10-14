@@ -144,14 +144,16 @@ module.exports = {
       controller: 'admin/license',
       action: 'getDebug'
     },
-    'ADMIN-ACCESS_FIND_USER': {
-      controller: 'admin/user',
-      action: 'findPage'
-    },
-    'ADMIN-FIND_USER': {
-      controller: 'admin/user',
-      action: 'find'
-    },
+    'ADMIN-FIND_USER': [
+      {
+        controller: 'admin/user',
+        action: 'find'
+      },
+      {
+        controller: 'admin/user',
+        action: 'findPage'
+      }
+    ],
     'ADMIN-VIEW_USER': {
       controller: 'admin/user',
       action: 'view'
@@ -173,7 +175,35 @@ module.exports = {
     },
     'ADMIN-VIEW_PAYMENTS_LIST': {
       controller: 'admin/payment'
-    }
+    },
+    'ADMIN-VIEW_API_LOGS': [
+      {
+        controller: 'admin/api',
+        action: 'log'
+      },
+      {
+        controller: 'admin/api',
+        action: 'getLogs'
+      }
+    ],
+    'ADMIN-MANAGE_FAQ': [
+      {
+        controller: 'admin/api',
+        action: 'faq'
+      },
+      {
+        controller: 'admin/api',
+        action: 'addQuestion'
+      },
+      {
+        controller: 'admin/api',
+        action: 'removeQuestion'
+      },
+      {
+        controller: 'admin/api',
+        action: 'editQuestion'
+      }
+    ]
   },
 
   permissionsAccess: {
@@ -196,15 +226,16 @@ module.exports = {
       // 'ADMIN-UNSUSPEND_LICENSE',
       'ADMIN-GET_DEBUG_LICENSE',
       'ADMIN-VIEW_LICENSE',
-      'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
-      'ADMIN-VIEW_USER'
+      'ADMIN-VIEW_USER',
       // 'ADMIN-GET_SQL_DUMP_HOSTING',
       // 'ADMIN-UPDATE_INDEX',
       // 'ADMIN-UPDATE_ADD',
       // 'ADMIN-UPDATE_EDIT',
       // 'ADMIN-VIEW_STATS',
-      // 'ADMIN-VIEW_PAYMENTS_LIST'
+      // 'ADMIN-VIEW_PAYMENTS_LIST',
+      // 'ADMIN-VIEW_API_LOGS',
+      'ADMIN-MANAGE_FAQ'
     ],
     'ADMIN': [
       'ADMIN-ACCESS_DASHBOARD',
@@ -223,14 +254,15 @@ module.exports = {
       'ADMIN-UNSUSPEND_LICENSE',
       'ADMIN-GET_DEBUG_LICENSE',
       'ADMIN-VIEW_LICENSE',
-      'ADMIN-ACCESS_FIND_USER',
       'ADMIN-FIND_USER',
       'ADMIN-VIEW_USER',
       // 'ADMIN-UPDATE_INDEX',
       // 'ADMIN-UPDATE_ADD',
       // 'ADMIN-UPDATE_EDIT',
       'ADMIN-VIEW_STATS',
-      'ADMIN-VIEW_PAYMENTS_LIST'
+      'ADMIN-VIEW_PAYMENTS_LIST',
+      'ADMIN-VIEW_API_LOGS',
+      'ADMIN-MANAGE_FAQ'
     ],
     'FOUNDER': ['*']
   },

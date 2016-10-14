@@ -200,6 +200,10 @@ module.exports.routes = {
   '/admin/payments/get/dedipass': 'Admin/PaymentController.getDedipassPayements',
 
   '/admin/api/logs': 'Admin/ApiController.log',
-  '/admin/api/get/logs': 'Admin/ApiController.getLogs'
+  '/admin/api/get/logs': 'Admin/ApiController.getLogs',
+  '/admin/api/faq': 'Admin/ApiController.faq',
+  'post /admin/api/faq/add': 'Admin/ApiController.addQuestion',
+  '/admin/api/faq/remove/:id': 'Admin/ApiController.removeQuestion',
+  'post /admin/api/faq/edit/:id': 'Admin/ApiController.editQuestion'
 
 }

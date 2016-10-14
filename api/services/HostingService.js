@@ -237,7 +237,7 @@ module.exports = {
 
                 // Send mail
                 sails.config.i18n = license.user.lang.split('-')[0]
-                MailService.send('licensesHosted/disable', {
+                MailService.send('hostings/disable', {
                   host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + license.host + '.craftwb.fr' : 'http://' + license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
                   username: license.user.username
@@ -297,7 +297,7 @@ module.exports = {
                 var hosting = license.hosting
                 // Send mail
                 sails.config.i18n = license.user.lang.split('-')[0]
-                MailService.send('licensesHosted/lastDays', {
+                MailService.send('hostings/lastDays', {
                   host: (hosting.hostType === 'SUBDOMAIN') ? 'http://' + license.host + '.craftwb.fr' : 'http://' + license.host,
                   url: RouteService.getBaseUrl() + '/hosting/renew/' + hosting.id,
                   days: Math.floor(Math.abs( (new Date(license.expireAt) - Date.now()) / (24 * 60 * 60 * 1000) )),
@@ -368,7 +368,7 @@ module.exports = {
       }
 
       // Send stats mail
-      MailService.send('stats/licensesHosted', {
+      MailService.send('stats/hostings', {
         stats: stats
       }, sails.__('Statistiques des licences hébergées'), sails.config.stats.email)
 

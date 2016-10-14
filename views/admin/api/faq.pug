@@ -1,0 +1,114 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2 #{__('Gestion de la Foire Aux Questions')}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('API')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .row
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Ajouter une question')}
+              .ibox-content
+
+                form.form-horizontal(method='post', action="/admin/api/faq/add", data-ajax, data-redirect-url="/admin/api/faq")
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Question")}
+                    .col-sm-10
+                      input.form-control(type='text', name="question", data-form-no-display-error)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Réponse (HTML autorisé et conseillé)")}
+                    .col-sm-10
+                      textarea.form-control(type='text', name="answer", data-form-no-display-error, rows="10")
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Langue')}
+                    .col-sm-10
+                      select.form-control(name="lang", data-form-no-display-error)
+                        option(value='fr_FR') #{__('Français')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    .col-sm-4.col-sm-offset-2
+                      button.btn.btn-primary(type='submit')
+                        i.fa.fa-floppy-o
+                        | &nbsp;#{__('Enregistrer la question')}
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Liste des questions')}
+              .ibox-content
+
+                each question in faq
+
+                  form.form-horizontal(action="/admin/api/faq/edit/" + question.id, method="post", data-ajax)
+                    div.row
+                      div.col-sm-12.col-md-12
+
+                        .form-group
+                          label.col-sm-2.control-label #{__("Question")}
+                          .col-sm-10
+                            input.form-control(type='text', name="question", data-form-no-display-error, value=question.question)
+
+                        .hr-line-dashed
+
+                        .form-group
+                          label.col-sm-2.control-label #{__("Réponse (HTML autorisé et conseillé)")}
+                          .col-sm-10
+                            textarea.form-control(type='text', name="answer", data-form-no-display-error, rows="10") !{question.answer}
+
+                        .hr-line-dashed
+
+                        .form-group
+                          label.col-sm-2.control-label #{__('Langue')}
+                          .col-sm-10
+                            select.form-control(name="lang", data-form-no-display-error)
+                              option(value='fr_FR', selected=question.lang === 'fr_FR') #{__('Français')}
+
+                        .hr-line-dashed
+
+                        .form-group
+                          label.col-sm-2.control-label #{__('Dates')}
+                          .col-sm-10
+                            .row
+                              .col-md-6
+                                .form-group
+                                  label.col-sm-2.control-label #{__('Création')}
+                                  .col-sm-10
+                                    p.form-control-static.moment-date(data-format=__('Le %s à %s', '{L}', '{LT}')) #{question.createdAt}
+                              .col-md-6
+                                .form-group
+                                  label.col-sm-2.control-label #{__('Mise à jour')}
+                                  .col-sm-10
+                                    p.form-control-static.moment-date(fromNow) #{question.updatedAt}
+
+                        .hr-line-dashed
+
+                        .form-group
+                          .col-sm-4.col-sm-offset-2
+                            button.btn.btn-primary(type='submit')
+                              i.fa.fa-floppy-o
+                              | &nbsp;#{__('Éditer la question')}
+                            | &nbsp;
+                            a.btn.btn-danger(href='/admin/api/faq/remove/' + question.id)
+                              i.fa.fa-trash-o
+                              | &nbsp;#{__('Supprimer la question')}
+
+                  hr
