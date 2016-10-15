@@ -1,0 +1,144 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2
+          if plugin.state === 'UNCONFIRMED'
+            | #{__('Ajout du plugin "%s"', plugin.name)}
+          else
+            | #{__('Nouvelle version v%s du plugin "%s"', plugin.versions[0].version, plugin.name)}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Espace développeur')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .row
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Données du plugin')}
+              .ibox-content
+
+                form.form-horizontal(method='post', action="/admin/developer/submitted/plugin/accept/" + plugin.id, data-ajax, data-custom-callback="afterPluginAccepted")
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Nom du plugin")}
+                    .col-sm-10
+                      input.form-control(type='text', value=plugin.name, disabled)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Slug du plugin")}
+                    .col-sm-10
+                      input.form-control(type='text', name="slug", value=plugin.slug, data-form-no-display-error, disabled=plugin.state === 'CONFIRMED')
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label
+                    .col-sm-10
+                      a.btn.btn-outline.btn-info(href='/admin/view/user/'+plugin.author.id) #{__("Voir l'auteur (%s)", plugin.author.username)}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Description du plugin')}
+                    .col-sm-10
+                      textarea.form-control(rows="10", disabled) #{plugin.description}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Lien de l'image du plugin")}
+                    .col-sm-10
+                      input.form-control(type='text', value=plugin.img, disabled)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Le plugin est-il officiel ?')}
+                    .col-sm-10
+                      label
+                        input(type="checkbox", name="official", checked=plugin.official, disabled=plugin.state === 'CONFIRMED')
+                        | &nbsp;#{__('Oui')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Prix du plugin")}
+                    .col-sm-10
+                      div.input-group
+                        input.form-control(type='number', value=plugin.price, disabled)
+                        span.input-group-addon €
+
+                  .hr-line-dashed
+
+                  .form-group
+                    .col-sm-offset-2
+                      .row
+                        .col-md-6
+                          button.btn.btn-primary(type='submit')
+                            i.fa.fa-check
+                            if plugin.state === 'CONFIRMED'
+                              | &nbsp;#{__('Accepter la version du plugin')}
+                            else
+                              | &nbsp;#{__('Accepter le plugin')}
+                        .col-md-6
+                          textarea.form-control(rows="3", name="explanation", placeholder=__('Explication'))
+                          button.btn.btn-danger.pull-right#refuse(type='button', style="margin-top:10px;")
+                            i.fa.fa-times
+                            if plugin.state === 'CONFIRMED'
+                              | &nbsp;#{__('Refuser la version du plugin')}
+                            else
+                              | &nbsp;#{__('Refuser le plugin')}
+
+          if plugin.state === 'CONFIRMED'
+            .col-md-12
+              .ibox.float-e-margins
+                .ibox-title
+                    h5 #{__('Informations sur la version')}
+                .ibox-content
+                  .form-horizontal
+
+                    .form-group
+                      label.col-sm-2.control-label #{__("Nom de la version")}
+                      .col-sm-10
+                        input.form-control(type='text', value=plugin.versions[0].version, disabled)
+
+                    .hr-line-dashed
+
+                    .form-group
+                      label.col-sm-2.control-label #{__('Liste des changements')}
+                      .col-sm-10
+                        ul(style="list-style:none")
+                          each changelog in plugin.versions[0].changelog['fr_FR']
+                            li
+                              .input-group
+                                span.input-group-addon &nbsp;-&nbsp;
+                                input.form-control(type='text', value=changelog, disabled)
+
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Fichiers du plugin')}
+              .ibox-content
+                a.btn.btn-block.btn-info(href='/admin/developer/submitted/plugin/download/' + plugin.id) #{__('Télécharger les fichiers du plugin')}
+
+block custom
+  script(type='text/javascript').
+    function afterPluginAccepted(form, json) {
+      document.location = (json.plugin.state === 'DELETED') ? '/admin/developer/view/submitted' : '/market/plugin/' + json.plugin.slug
+      return false
+    }
+    $('#refuse').on('click', function (e) {
+      e.preventDefault()
+      $('form').attr('action', '/admin/developer/submitted/plugin/refuse/#{plugin.id}')
+      $('form').submit()
+    })

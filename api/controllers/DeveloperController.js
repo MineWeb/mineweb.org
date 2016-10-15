@@ -7,6 +7,7 @@
 
 var async = require('async')
 var path = require('path')
+var slugify = require('slugify')
 
 module.exports = {
 
@@ -635,9 +636,7 @@ module.exports = {
 	          }
 						else {
 	            // save
-							var d = new Date()
-							var date = d.getDate() + '-' + d.getMonth() + '-' + d.getFullYear() + '_' + d.getHours() + '-' + d.getMinutes()
-							var name = req.session.userId + '-' + req.body.name + '-' + date + '.zip'
+							var name = req.session.userId + '-' + slugify(req.body.name) + '.zip'
 	            cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.plugins, name))
 	          }
 
@@ -791,9 +790,7 @@ module.exports = {
 							}
 							else {
 								// save
-								var d = new Date()
-								var date = d.getDate() + '-' + d.getMonth() + '-' + d.getFullYear() + '_' + d.getHours() + '-' + d.getMinutes()
-								var name = req.session.userId + '-' + plugin.slug + '-v' + req.body.versionName + '-' + date + '.zip'
+								var name = req.session.userId + '-' + plugin.slug + '-v' + req.body.versionName + '.zip'
 								cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.plugins, name))
 							}
 

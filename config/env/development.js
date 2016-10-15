@@ -65,8 +65,10 @@ module.exports = {
 
   api: {
     endpoint: 'http://api.mineweb.org/v2/',
+    endpointWithoutVersion: 'http://api.mineweb.org/',
     storage: {
-      getCMS: 'storage/get_cms'
+      getCMS: 'storage/get_cms',
+      upload: 'api/storage/upload'
     }
   },
 

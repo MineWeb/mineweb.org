@@ -586,5 +586,10 @@
 	"vient d'être refusée par notre équipe il y a quelques instants pour la raison suivante :": "",
 	"Il vous suffit de cliquer sur le lien ci-dessous pour accéder directement à votre candidature pour l'éditer :": "",
 	"Cliquez ici pour accéder à la candidature": "",
-	"Refus de votre candidature de développeur": ""
+	"Refus de votre candidature de développeur": "",
+	"Votre plugin \"%s\" sur": "",
+	"vient d'être accepté par notre équipe il y a quelques instants": "",
+	"Acceptation de votre plugin": "",
+	"Refus de votre plugin": "",
+	"vient d'être refusé par notre équipe il y a quelques instants pour la raison suivante :": ""
 }

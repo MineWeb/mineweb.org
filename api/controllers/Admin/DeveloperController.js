@@ -6,6 +6,12 @@
  */
 
 var async = require('async')
+var path = require('path')
+var pump = require('pump')
+var fs = require('fs')
+var slugify = require('slugify')
+var moment = require('moment')
+var request = require('request')
 
 module.exports = {
 
@@ -155,7 +161,28 @@ module.exports = {
 
   // Display plugin release submitted (with only changelog + files unless is the 1st release) with accept/refuse/download buttons
   viewPluginSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Plugin.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).populate(['author']).exec(function (err, plugin) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (plugin === undefined) return res.notFound()
+
+      res.view('admin/developer/view_plugin_submitted', {
+        title: req.__('Plugin "' + plugin.name + '"'),
+        plugin: plugin
+      })
+    })
   },
 
   // Display theme release submitted (with only changelog + files unless is the 1st release) with accept/refuse/download buttons
@@ -163,14 +190,206 @@ module.exports = {
 
   },
 
-  // accept plugin release, send mail to developer, update version to public into 'versions', update 'version' column and send files to API
-  acceptPluginSubmitted: function (req, res) {
+  // Download plugin release submitted
+  downloadPluginSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Plugin.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).exec(function (err, plugin) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (plugin === undefined) return res.notFound()
+
+      var filename = (plugin.state === 'CONFIRMED') ? plugin.author + '-' + plugin.slug + '-v' + plugin.versions[0].version + '.zip' : plugin.author + '-' + slugify(plugin.name) + '.zip'
+      var pluginPath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.plugins, filename)
+
+      // write header
+      res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Length': fs.statSync(pluginPath).size,
+        'Content-Disposition': 'attachment; filename=' + slugify(plugin.name) + '-v' + plugin.version + '.zip'})
+
+      // stream the file to the response
+      pump(fs.createReadStream(pluginPath), res)
+    })
+  },
+
+  // Download theme release submitted
+  downloadThemeSubmitted: function (req, res) {
+
+  },
+
+  // accept plugin release, send mail to developer, update version to public + update releaseDate into 'versions', update 'version' column and send files to API
+  acceptPluginSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+
+    Plugin.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).populate(['author']).exec(function (err, plugin) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (plugin === undefined) return res.notFound()
+      // check slug
+      if (plugin.state === 'UNCONFIRMED' && (req.body.slug === undefined || req.body.slug.length === 0)) {
+        return res.json({
+          status: false,
+          msg: req.__('Vous devez spécifier un slug !'),
+          inputs: {}
+        })
+      }
+
+      // version update
+      var version = plugin.versions[0]
+      version.public = true // set public
+      version.releaseDate = moment((new Date())).format('YYYY-MM-DD HH:mm:ss') // set release date
+      plugin.versions[0] = version
+
+      // data to update
+      var data = {
+        version: version.version, // update current version
+        versions: plugin.versions
+      }
+      if (plugin.state === 'UNCONFIRMED') { // first release of a plugin
+        data.state = 'CONFIRMED'
+        data.slug = req.body.slug
+        if (req.body.official && req.body.official === 'on')
+          data.official = true
+      }
+
+      // send to API
+      var r = request.post(sails.config.api.endpointWithoutVersion + sails.config.api.storage.upload, form, function (err, httpResponse, body) {
+        if (err || httpResponse.statusCode !== 200) {
+          sails.log.error(err || httpResponse.statusCode)
+          return res.serverError(body)
+        }
+        // update plugin
+        Plugin.update({id: id}, data, function (err, plugins) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+          var pluginUpdated = plugins[0]
+
+          // remove file from server
+          fs.unlink(pluginPath, function (err) {
+            if (err) sails.log.error(err)
+          })
+          // send email
+          MailService.send('developer/accepted_plugin', {
+            url: RouteService.getBaseUrl() + '/developer/',
+            username: plugin.author.username,
+            pluginName: plugin.name
+          }, req.__('Acceptation de votre plugin'), plugin.author.email)
+          // send notification
+          NotificationService.success(req, req.__('Le plugin a bien été accepté !'))
+          // response to redirect
+          return res.json({
+            status: true,
+            msg: req.__('Le plugin a bien été accepté !'),
+            inputs: {},
+            plugin: pluginUpdated
+          })
+        })
+      })
+      // construct form
+      var form = r.form()
+      form.append('type', 'PLUGIN')
+      form.append('version', data.version)
+      form.append('slug', data.slug || plugin.slug)
+      var filename = (plugin.state === 'CONFIRMED') ? plugin.author.id + '-' + plugin.slug + '-v' + plugin.versions[0].version + '.zip' : plugin.author.id + '-' + slugify(plugin.name) + '.zip'
+      var pluginPath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.plugins, filename)
+      form.append('file', fs.createReadStream(pluginPath))
+    })
   },
 
   // refuse plugin release, send mail to developer with explanation, remove version into 'versions', remove files from server
   refusePluginSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Plugin.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).populate(['author']).exec(function (err, plugin) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (plugin === undefined) return res.notFound()
+      // check explanation
+      if (req.body.explanation === undefined || req.body.explanation.length === 0) {
+        return res.json({
+          status: false,
+          msg: req.__('Vous devez spécifier une raison !'),
+          inputs: {}
+        })
+      }
+
+      // version update
+      var version = plugin.versions[0].version
+      if (plugin.state === 'CONFIRMED')
+        plugin.versions[0].shift() // remove version
+
+      // data to update
+      var data = {
+        versions: plugin.versions
+      }
+      if (plugin.state === 'UNCONFIRMED') // first release of a plugin
+        data.state = 'DELETED'
+
+      // update plugin
+      Plugin.update({id: id}, data, function (err, plugins) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+        var pluginUpdated = plugins[0]
+
+        // remove file from server
+        var filename = (plugin.state === 'CONFIRMED') ? plugin.author.id + '-' + plugin.slug + '-v' + version + '.zip' : plugin.author.id + '-' + slugify(plugin.name) + '.zip'
+        var pluginPath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.plugins, filename)
+        fs.unlink(pluginPath, function (err) {
+          if (err) sails.log.error(err)
+        })
+        // send email
+        MailService.send('developer/refused_plugin', {
+          url: RouteService.getBaseUrl() + '/developer/',
+          username: plugin.author.username,
+          pluginName: plugin.name,
+          explanation: req.body.explanation
+        }, req.__('Refus de votre plugin'), plugin.author.email)
+        // send notification
+        NotificationService.success(req, req.__('Le plugin a bien été refusé !'))
+        // response to redirect
+        return res.json({
+          status: true,
+          msg: req.__('Le plugin a bien été refusé !'),
+          inputs: {},
+          plugin: pluginUpdated
+        })
+      })
+    })
   },
 
   // accept theme release, send mail to developer, update version to public into 'versions', update 'version' column and send files to API

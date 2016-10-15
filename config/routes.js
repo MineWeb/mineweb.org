@@ -214,9 +214,11 @@ module.exports.routes = {
   '/admin/developer/view/online': 'Admin/DeveloperController.viewPluginsAndThemesOnline',
   '/admin/developer/submitted/plugin/view/:id': 'Admin/DeveloperController.viewPluginSubmitted',
   '/admin/developer/submitted/theme/view/:id': 'Admin/DeveloperController.viewThemeSubmitted',
-  '/admin/developer/submitted/plugin/accept/:id': 'Admin/DeveloperController.acceptPluginSubmitted',
+  'post /admin/developer/submitted/plugin/accept/:id': 'Admin/DeveloperController.acceptPluginSubmitted',
   'post /admin/developer/submitted/plugin/refuse/:id': 'Admin/DeveloperController.refusePluginSubmitted',
-  '/admin/developer/submitted/theme/accept/:id': 'Admin/DeveloperController.acceptThemeSubmitted',
-  'post /admin/developer/submitted/theme/refuse/:id': 'Admin/DeveloperController.refuseThemeSubmitted'
+  'post /admin/developer/submitted/theme/accept/:id': 'Admin/DeveloperController.acceptThemeSubmitted',
+  'post /admin/developer/submitted/theme/refuse/:id': 'Admin/DeveloperController.refuseThemeSubmitted',
+  '/admin/developer/submitted/plugin/download/:id': 'Admin/DeveloperController.downloadPluginSubmitted',
+  '/admin/developer/submitted/theme/download/:id': 'Admin/DeveloperController.downloadThemeSubmitted'
 
 }
