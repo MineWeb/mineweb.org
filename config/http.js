@@ -9,9 +9,22 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.http.html
  */
 
+var pmx         = require('pmx');
 var expressLog = require('express-winston');
 var ESTransport = require('winston-elasticsearch');
-var transconf  = require('./transports.js')
+
+var TRANSPORTS = [];
+if (process.env.NODE_ENV === 'production') {
+  var elasticTransport = new ESTransport({ level: 'info', index: 'main-express', clientOpts: { host: sails.config.elasticsearch_uri } });
+
+  elasticTransport.emitErrs = true;
+  elasticTransport.on('error', function (err) {
+    pmx.notify(err);
+  });
+  TRANSPORTS.push(elasticTransport)
+}
+else
+  TRANSPORTS.push(new winston.transports.Console({ json: false, colorize: true }))
 
 module.exports.http = {
 
@@ -58,7 +71,7 @@ module.exports.http = {
     ****************************************************************************/
 
     expressLogger: expressLog.logger({
-      transports: transconf.transports,
+      transports: TRANSPORTS,
       meta: true,
       expressFormat: true,
       colorize: true,
@@ -72,7 +85,7 @@ module.exports.http = {
     }),
 
     errorLogger: expressLog.errorLogger({
-      transports: transconf.transports,
+      transports: TRANSPORTS,
       meta: true,
       expressFormat: true,
       colorize: true,
