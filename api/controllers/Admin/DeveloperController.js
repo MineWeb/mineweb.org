@@ -5,6 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+var async = require('async')
+
 module.exports = {
 
   // Display list of user's candidates (with view button only)
@@ -81,7 +83,7 @@ module.exports = {
       return res.notFound('Id is missing')
     }
     var id = req.param('id')
-    
+
     RequestManagerService.setRequest(req).setResponse(res).valid({
 			'Tous les champs ne sont pas remplis.': [
 				['explanation', '']
@@ -118,7 +120,37 @@ module.exports = {
 
   // Display list of plugins/themes new versions and first release (with view button only)
   viewPluginsAndThemesSubmitted: function (req, res) {
+    async.parallel([
+      // find Plugins
+      function (callback) {
+        Plugin.find({versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'}).populate(['author']).exec(callback)
+      },
+      // find themes
+      function (callback) {
+        Theme.find({versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'}).populate(['author']).exec(callback)
+      },
+      // find new Plugins
+      function (callback) {
+        Plugin.find({state: 'UNCONFIRMED'}).populate(['author']).exec(callback)
+      },
+      // find new themes
+      function (callback) {
+        Theme.find({state: 'UNCONFIRMED'}).populate(['author']).exec(callback)
+      }
+    ], function (err, results) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
 
+      res.view('admin/developer/view_submitted', {
+        title: req.__('Listes des plugins/thèmes soumis'),
+        pluginsUpdated: results[0] || [],
+        themesUpdated: results[1] || [],
+        pluginsAdded: results[2] || [],
+        themesAdded: results[3] || []
+      })
+    })
   },
 
   // Display plugin release submitted (with only changelog + files unless is the 1st release) with accept/refuse/download buttons
@@ -153,7 +185,27 @@ module.exports = {
 
   // display list of plugins and themes released with mini stats (and buttons linked to market plugin/theme's page)
   viewPluginsAndThemesOnline: function (req, res) {
+    async.parallel([
+      // find Plugins
+      function (callback) {
+        Plugin.find({state: 'CONFIRMED'}).populate(['author']).exec(callback)
+      },
+      // find themes
+      function (callback) {
+        Theme.find({state: 'CONFIRMED'}).populate(['author']).exec(callback)
+      }
+    ], function (err, results) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
 
+      res.view('admin/developer/view_online', {
+        title: req.__('Listes des plugins/thèmes en ligne'),
+        plugins: results[0] || [],
+        themes: results[1] || []
+      })
+    })
   }
 
 }

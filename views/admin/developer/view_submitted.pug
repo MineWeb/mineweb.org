@@ -1,0 +1,145 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-sm-4
+      h2 #{__('Listes des plugins/thèmes soumis')}
+      ol.breadcrumb
+        li
+          a(href="/admin/dashboard") #{__('Dashboard')}
+        li.active
+          strong #{__('Espace développeur')}
+  .row
+    .col-lg-6
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des nouveaux plugins en attente')}
+          .ibox-content
+            if pluginsAdded && pluginsAdded.length > 0
+              .project-list
+                .table-responsive
+                  table.table.table-hover
+                    tbody
+                      each plugin in pluginsAdded
+                        tr
+                          td.project-title
+                            a(href='/admin/developer/submitted/plugin/view/' + plugin.id) #{plugin.name}
+                            br
+                            small.moment-date(fromNow) #{plugin.createdAt}
+                          td.project-people
+                            span.pull-left
+                              img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=plugin.author.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(plugin.author).md5Email, alt="Gravatar de " + plugin.author.username)
+                              | &nbsp;#{plugin.author.username}
+                          td.project-actions
+                            a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/submitted/plugin/view/" + plugin.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__('Voir')}
+                            | &nbsp;
+                            a.btn.btn-outline.btn-success.btn-sm(href="/admin/user/view/" + plugin.author.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__("Voir l'auteur")}
+                            | &nbsp;
+            else
+              .alert.alert-danger #{__("Aucun nouveau plugin n'a été soumis")}
+    .col-lg-6
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des nouveaux thèmes en attente')}
+          .ibox-content
+            if themesAdded && themesAdded.length > 0
+              .project-list
+                .table-responsive
+                  table.table.table-hover
+                    tbody
+                      each theme in themesAdded
+                        tr
+                          td.project-title
+                            a(href='/admin/developer/submitted/theme/view/' + theme.id) #{theme.name}
+                            br
+                            small.moment-date(fromNow) #{theme.createdAt}
+                          td.project-people
+                            span.pull-left
+                              img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=theme.author.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(theme.author).md5Email, alt="Gravatar de " + theme.author.username)
+                              | &nbsp;#{theme.author.username}
+                          td.project-actions
+                            a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/submitted/theme/view/" + theme.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__('Voir')}
+                            | &nbsp;
+                            a.btn.btn-outline.btn-success.btn-sm(href="/admin/user/view/" + theme.author.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__("Voir l'auteur")}
+                            | &nbsp;
+            else
+              .alert.alert-danger #{__("Aucun nouveau thème n'a été soumis")}
+  .row
+    .col-lg-6
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des nouvelles versions de plugins en attente')}
+          .ibox-content
+            if pluginsUpdated && pluginsUpdated.length > 0
+              .project-list
+                .table-responsive
+                  table.table.table-hover
+                    tbody
+                      each plugin in pluginsUpdated
+                        tr
+                          td.project-status
+                            span.label.label-info(style='border-radius: 10') #{plugin.versions[0].version}
+                          td.project-title
+                            a(href='/admin/developer/submitted/plugin/view/' + plugin.id) #{plugin.name}
+                            br
+                            small.moment-date(fromNow) #{plugin.updatedAt}
+                          td.project-people
+                            span.pull-left
+                              img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=plugin.author.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(plugin.author).md5Email, alt="Gravatar de " + plugin.author.username)
+                              | &nbsp;#{plugin.author.username}
+                          td.project-actions
+                            a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/submitted/plugin/view/" + plugin.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__('Voir')}
+                            | &nbsp;
+                            a.btn.btn-outline.btn-success.btn-sm(href="/admin/user/view/" + plugin.author.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__("Voir l'auteur")}
+                            | &nbsp;
+            else
+              .alert.alert-danger #{__("Aucune nouvelle version de plugin n'a été soumise")}
+    .col-lg-6
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des nouvelles versions de thèmes en attente')}
+          .ibox-content
+            if themesUpdated && themesUpdated.length > 0
+              .project-list
+                .table-responsive
+                  table.table.table-hover
+                    tbody
+                      each theme in themesUpdated
+                        tr
+                          td.project-status
+                            span.label.label-info(style='border-radius: 10') #{theme.versions[0].version}
+                          td.project-title
+                            a(href='/admin/developer/submitted/theme/view/' + theme.id) #{theme.name}
+                            br
+                            small.moment-date(fromNow) #{theme.createdAt}
+                          td.project-people
+                            span.pull-left
+                              img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=theme.author.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(theme.author).md5Email, alt="Gravatar de " + theme.author.username)
+                              | &nbsp;#{theme.author.username}
+                          td.project-actions
+                            a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/submitted/theme/view/" + theme.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__('Voir')}
+                            | &nbsp;
+                            a.btn.btn-outline.btn-success.btn-sm(href="/admin/user/view/" + theme.author.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__("Voir l'auteur")}
+                            | &nbsp;
+            else
+              .alert.alert-danger #{__("Aucune nouvelle version de thème n'a été soumise")}
