@@ -15,7 +15,7 @@ var ESTransport = require('winston-elasticsearch');
 
 var TRANSPORTS = [];
 if (process.env.NODE_ENV === 'production') {
-  var elasticTransport = new ESTransport({ level: 'info', index: 'main-express', clientOpts: { host: sails.config.elasticsearch_uri } });
+  var elasticTransport = new ESTransport({ level: 'info', index: 'main-express', clientOpts: { host: '51.255.36.38:9200' } });
 
   elasticTransport.emitErrs = true;
   elasticTransport.on('error', function (err) {

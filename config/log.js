@@ -16,7 +16,7 @@ var ESTransport = require('winston-elasticsearch');
 
 var TRANSPORTS = [];
 if (process.env.NODE_ENV === 'production') {
-  var elasticTransport = new ESTransport({ level: 'info', index: 'main-log', clientOpts: { host: sails.config.elasticsearch_uri } });
+  var elasticTransport = new ESTransport({ level: 'info', index: 'main-log', clientOpts: { host: '51.255.36.38:9200' } });
 
   elasticTransport.emitErrs = true;
   elasticTransport.on('error', function (err) {
@@ -29,7 +29,7 @@ else
 
 // define winston logger as global
 var logger = new (winston.Logger)({
-  transports: transconf.transports,
+  transports: TRANSPORTS,
   exitOnError: false
 });
 
