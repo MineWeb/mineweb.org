@@ -10,6 +10,8 @@
  */
 
 module.exports.bootstrap = function(cb) {
+  // inject pmx to get custom http var
+  var pmx         = require('pmx');
 
 	// register background jobs
 	const schedule = require('node-schedule');

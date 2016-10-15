@@ -1,0 +1,17 @@
+{
+  "apps" : [
+    {
+      "name"      : "mineweb_org",
+      "script"    : "app.js",
+      "exec_mode": "cluster",
+      "instances": 1,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production" : {
+        "PORT": 80,
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
