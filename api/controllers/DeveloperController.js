@@ -704,7 +704,7 @@ module.exports = {
 			if (plugin === undefined)
 				return res.notFound()
 
-			if (plugin.author !== req.session.userId)
+			if (plugin.author !== req.session.userId || !plugin.versions[0].public)
 				return res.forbidden()
 
 			// render
@@ -760,7 +760,7 @@ module.exports = {
 					return res.notFound()
 
 				// not author
-				if (plugin.author !== req.session.userId)
+				if (plugin.author !== req.session.userId || !plugin.versions[0].public)
 					return res.forbidden()
 
 				// add version
@@ -1252,7 +1252,7 @@ module.exports = {
 			if (theme === undefined)
 				return res.notFound()
 
-			if (theme.author !== req.session.userId)
+			if (theme.author !== req.session.userId || !theme.versions[0].public)
 				return res.forbidden()
 
 			// render
@@ -1308,7 +1308,7 @@ module.exports = {
 					return res.notFound()
 
 				// not author
-				if (theme.author !== req.session.userId)
+				if (theme.author !== req.session.userId || !theme.versions[0].public)
 					return res.forbidden()
 
 				// add version
