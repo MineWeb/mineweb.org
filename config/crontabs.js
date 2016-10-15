@@ -16,7 +16,7 @@ module.exports.crontabs = [
     }
 	},
 	{
-		interval : '*/1 * * * *',
+		interval : '0 * * * *',
 		task : function () {
 			sails.log.info('Check support tickets...')
 			// Clear tickets supports under 1 week without user response

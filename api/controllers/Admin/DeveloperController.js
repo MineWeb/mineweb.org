@@ -179,7 +179,7 @@ module.exports = {
       if (plugin === undefined) return res.notFound()
 
       res.view('admin/developer/view_plugin_submitted', {
-        title: req.__('Plugin "' + plugin.name + '"'),
+        title: req.__('Plugin "%s"', plugin.name),
         plugin: plugin
       })
     })
@@ -187,7 +187,28 @@ module.exports = {
 
   // Display theme release submitted (with only changelog + files unless is the 1st release) with accept/refuse/download buttons
   viewThemeSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Theme.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).populate(['author']).exec(function (err, theme) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (theme === undefined) return res.notFound()
+
+      res.view('admin/developer/view_theme_submitted', {
+        title: req.__('Thème "%s"', theme.name),
+        theme: theme
+      })
+    })
   },
 
   // Download plugin release submitted
@@ -225,7 +246,35 @@ module.exports = {
 
   // Download theme release submitted
   downloadThemeSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Theme.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).exec(function (err, theme) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (theme === undefined) return res.notFound()
+
+      var filename = (theme.state === 'CONFIRMED') ? theme.author + '-' + theme.slug + '-v' + theme.versions[0].version + '.zip' : theme.author + '-' + slugify(theme.name) + '.zip'
+      var themePath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.themes, filename)
+
+      // write header
+      res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Length': fs.statSync(themePath).size,
+        'Content-Disposition': 'attachment; filename=' + slugify(theme.name) + '-v' + theme.version + '.zip'})
+
+      // stream the file to the response
+      pump(fs.createReadStream(themePath), res)
+    })
   },
 
   // accept plugin release, send mail to developer, update version to public + update releaseDate into 'versions', update 'version' column and send files to API
@@ -349,7 +398,7 @@ module.exports = {
       // version update
       var version = plugin.versions[0].version
       if (plugin.state === 'CONFIRMED')
-        plugin.versions[0].shift() // remove version
+        plugin.versions.shift() // remove version
 
       // data to update
       var data = {
@@ -394,12 +443,166 @@ module.exports = {
 
   // accept theme release, send mail to developer, update version to public into 'versions', update 'version' column and send files to API
   acceptThemeSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Theme.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).populate(['author']).exec(function (err, theme) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (theme === undefined) return res.notFound()
+      // check slug
+      if (theme.state === 'UNCONFIRMED' && (req.body.slug === undefined || req.body.slug.length === 0)) {
+        return res.json({
+          status: false,
+          msg: req.__('Vous devez spécifier un slug !'),
+          inputs: {}
+        })
+      }
+
+      // version update
+      var version = theme.versions[0]
+      version.public = true // set public
+      version.releaseDate = moment((new Date())).format('YYYY-MM-DD HH:mm:ss') // set release date
+      theme.versions[0] = version
+
+      // data to update
+      var data = {
+        version: version.version, // update current version
+        versions: theme.versions
+      }
+      if (theme.state === 'UNCONFIRMED') { // first release of a theme
+        data.state = 'CONFIRMED'
+        data.slug = req.body.slug
+        if (req.body.official && req.body.official === 'on')
+          data.official = true
+      }
+
+      // send to API
+      var r = request.post(sails.config.api.endpointWithoutVersion + sails.config.api.storage.upload, form, function (err, httpResponse, body) {
+        if (err || httpResponse.statusCode !== 200) {
+          sails.log.error(err || httpResponse.statusCode)
+          return res.serverError(body)
+        }
+        // update theme
+        Theme.update({id: id}, data, function (err, themes) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+          var themeUpdated = themes[0]
+
+          // remove file from server
+          fs.unlink(themePath, function (err) {
+            if (err) sails.log.error(err)
+          })
+          // send email
+          MailService.send('developer/accepted_theme', {
+            url: RouteService.getBaseUrl() + '/developer/',
+            username: theme.author.username,
+            themeName: theme.name
+          }, req.__('Acceptation de votre thème'), theme.author.email)
+          // send notification
+          NotificationService.success(req, req.__('Le thème a bien été accepté !'))
+          // response to redirect
+          return res.json({
+            status: true,
+            msg: req.__('Le thème a bien été accepté !'),
+            inputs: {},
+            theme: themeUpdated
+          })
+        })
+      })
+      // construct form
+      var form = r.form()
+      form.append('type', 'THEME')
+      form.append('version', data.version)
+      form.append('slug', data.slug || theme.slug)
+      var filename = (theme.state === 'CONFIRMED') ? theme.author.id + '-' + theme.slug + '-v' + theme.versions[0].version + '.zip' : theme.author.id + '-' + slugify(theme.name) + '.zip'
+      var themePath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.themes, filename)
+      form.append('file', fs.createReadStream(themePath))
+    })
   },
 
   // refuse theme release, send mail to developer with explanation, remove version into 'versions', remove files from server
   refuseThemeSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
 
+    Theme.findOne({
+      or: [
+        {id: id, versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'},
+        {id: id, state: 'UNCONFIRMED'}
+      ]
+    }).populate(['author']).exec(function (err, theme) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (theme === undefined) return res.notFound()
+      // check explanation
+      if (req.body.explanation === undefined || req.body.explanation.length === 0) {
+        return res.json({
+          status: false,
+          msg: req.__('Vous devez spécifier une raison !'),
+          inputs: {}
+        })
+      }
+
+      // version update
+      var version = theme.versions[0].version
+      if (theme.state === 'CONFIRMED')
+        theme.versions.shift() // remove version
+
+      // data to update
+      var data = {
+        versions: theme.versions
+      }
+      if (theme.state === 'UNCONFIRMED') // first release of a theme
+        data.state = 'DELETED'
+
+      // update theme
+      Theme.update({id: id}, data, function (err, themes) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+        var themeUpdated = themes[0]
+
+        // remove file from server
+        var filename = (theme.state === 'CONFIRMED') ? theme.author.id + '-' + theme.slug + '-v' + version + '.zip' : theme.author.id + '-' + slugify(theme.name) + '.zip'
+        var themePath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.themes, filename)
+        fs.unlink(themePath, function (err) {
+          if (err) sails.log.error(err)
+        })
+        // send email
+        MailService.send('developer/refused_theme', {
+          url: RouteService.getBaseUrl() + '/developer/',
+          username: theme.author.username,
+          themeName: theme.name,
+          explanation: req.body.explanation
+        }, req.__('Refus de votre thème'), theme.author.email)
+        // send notification
+        NotificationService.success(req, req.__('Le thème a bien été refusé !'))
+        // response to redirect
+        return res.json({
+          status: true,
+          msg: req.__('Le thème a bien été refusé !'),
+          inputs: {},
+          theme: themeUpdated
+        })
+      })
+    })
   },
 
   // display list of plugins and themes released with mini stats (and buttons linked to market plugin/theme's page)

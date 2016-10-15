@@ -1,0 +1,144 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+        h2
+          if theme.state === 'UNCONFIRMED'
+            | #{__('Ajout du thème "%s"', theme.name)}
+          else
+            | #{__('Nouvelle version v%s du thème "%s"', theme.versions[0].version, theme.name)}
+        ol.breadcrumb
+          li
+            a(href="/admin/dashboard") #{__('Dashboard')}
+          li.active
+            strong #{__('Espace développeur')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .row
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Données du thème')}
+              .ibox-content
+
+                form.form-horizontal(method='post', action="/admin/developer/submitted/theme/accept/" + theme.id, data-ajax, data-custom-callback="afterThemeAccepted")
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Nom du thème")}
+                    .col-sm-10
+                      input.form-control(type='text', value=theme.name, disabled)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Slug du thème")}
+                    .col-sm-10
+                      input.form-control(type='text', name="slug", value=theme.slug, data-form-no-display-error, disabled=theme.state === 'CONFIRMED')
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label
+                    .col-sm-10
+                      a.btn.btn-outline.btn-info(href='/admin/view/user/'+theme.author.id) #{__("Voir l'auteur (%s)", theme.author.username)}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Description du thème')}
+                    .col-sm-10
+                      textarea.form-control(rows="10", disabled) #{theme.description}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Lien de l'image du thème")}
+                    .col-sm-10
+                      input.form-control(type='text', value=theme.img, disabled)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__('Le thème est-il officiel ?')}
+                    .col-sm-10
+                      label
+                        input(type="checkbox", name="official", checked=theme.official, disabled=theme.state === 'CONFIRMED')
+                        | &nbsp;#{__('Oui')}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Prix du thème")}
+                    .col-sm-10
+                      div.input-group
+                        input.form-control(type='number', value=theme.price, disabled)
+                        span.input-group-addon €
+
+                  .hr-line-dashed
+
+                  .form-group
+                    .col-sm-offset-2
+                      .row
+                        .col-md-6
+                          button.btn.btn-primary(type='submit')
+                            i.fa.fa-check
+                            if theme.state === 'CONFIRMED'
+                              | &nbsp;#{__('Accepter la version du thème')}
+                            else
+                              | &nbsp;#{__('Accepter le thème')}
+                        .col-md-6
+                          textarea.form-control(rows="3", name="explanation", placeholder=__('Explication'))
+                          button.btn.btn-danger.pull-right#refuse(type='button', style="margin-top:10px;")
+                            i.fa.fa-times
+                            if theme.state === 'CONFIRMED'
+                              | &nbsp;#{__('Refuser la version du thème')}
+                            else
+                              | &nbsp;#{__('Refuser le thème')}
+
+          if theme.state === 'CONFIRMED'
+            .col-md-12
+              .ibox.float-e-margins
+                .ibox-title
+                    h5 #{__('Informations sur la version')}
+                .ibox-content
+                  .form-horizontal
+
+                    .form-group
+                      label.col-sm-2.control-label #{__("Nom de la version")}
+                      .col-sm-10
+                        input.form-control(type='text', value=theme.versions[0].version, disabled)
+
+                    .hr-line-dashed
+
+                    .form-group
+                      label.col-sm-2.control-label #{__('Liste des changements')}
+                      .col-sm-10
+                        ul(style="list-style:none")
+                          each changelog in theme.versions[0].changelog['fr_FR']
+                            li
+                              .input-group
+                                span.input-group-addon &nbsp;-&nbsp;
+                                input.form-control(type='text', value=changelog, disabled)
+
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                  h5 #{__('Fichiers du thème')}
+              .ibox-content
+                a.btn.btn-block.btn-info(href='/admin/developer/submitted/theme/download/' + theme.id) #{__('Télécharger les fichiers du thème')}
+
+block custom
+  script(type='text/javascript').
+    function afterThemeAccepted(form, json) {
+      document.location = (json.theme.state === 'DELETED') ? '/admin/developer/view/submitted' : '/market/theme/' + json.theme.slug
+      return false
+    }
+    $('#refuse').on('click', function (e) {
+      e.preventDefault()
+      $('form').attr('action', '/admin/developer/submitted/theme/refuse/#{theme.id}')
+      $('form').submit()
+    })
