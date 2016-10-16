@@ -74,7 +74,7 @@ module.exports.http = {
       transports: TRANSPORTS,
       meta: true,
       expressFormat: true,
-      colorize: true,
+      colorize: false,
       ignoredRoutes: ['/favicon.ico', '/favicon.png'],
       requestFilter: function (req, propName) {
         var data = req[propName];
@@ -88,7 +88,7 @@ module.exports.http = {
       transports: TRANSPORTS,
       meta: true,
       expressFormat: true,
-      colorize: true,
+      colorize: false,
       ignoredRoutes: ['/favicon.ico', '/favicon.png']
     })
 
