@@ -78,7 +78,7 @@ module.exports = {
 
       // find user
       function (callback) {
-        User.findOne({ id: id }).populate(['paypalPayments', 'dedipassPayments', , 'plugins', 'themes']).exec(callback)
+        User.findOne({ id: id }).populate(['plugins', 'themes']).exec(callback)
       },
 
       // find purchases
@@ -122,6 +122,16 @@ module.exports = {
           callback(null, results)
 
         })
+      },
+
+      // find paypal payments
+      function (callback) {
+        PayPalHistory.find({user: id}).populate(['purchase']).exec(callback)
+      },
+
+      // find dedipass payments
+      function (callback) {
+        DedipassHistory.find({user: id}).populate(['purchase']).exec(callback)
       }
 
     ], function (err, results) {
@@ -138,6 +148,8 @@ module.exports = {
 
       user.licenses = results[4].licenses
       user.hostings = results[4].hostings
+      user.paypalPayments = results[5]
+      user.dedipassPayments = results[6]
 
       user.purchases = results[1]
       res.view('admin/user/view', {

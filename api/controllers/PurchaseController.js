@@ -14,7 +14,6 @@ module.exports = {
 		Called by AJAX with voucherCode (arg)
 	*/
 	checkVoucher: function (req, res) {
-
 		if (req.param('voucherCode') === undefined) {
 			return res.notFound('Voucher code is missing')
 		}
@@ -26,10 +25,9 @@ module.exports = {
 		var price = parseFloat(req.param('price'))
 
 		Voucher.findOne({code: voucherCode, usedAt: null, usedLocation: null}).exec(function (err, voucher) {
-
 			if (err) {
 				sails.log.error(err)
-        return res.serverError('An error occured on voucher select')
+				return res.serverError('An error occured on voucher select')
 			}
 
 			if (voucher === undefined)
@@ -866,4 +864,4 @@ module.exports = {
 
 	}
 
-};
+}

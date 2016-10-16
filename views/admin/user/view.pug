@@ -90,7 +90,7 @@ block content
                 table.table.table-hover.no-margins(style="font-size: 13px;")
                   thead
                     tr
-                      th #{__("ID de l'achat")}
+                      th #{__("Détail de l'achat")}
                       th #{__("ID du paiement")}
                       th #{__('ID de la transaction PayPal')}
                       th #{__("Montant payé par l'utilisateur")}
@@ -106,7 +106,20 @@ block content
                   tbody
                     each payment in userFinded.paypalPayments
                       tr
-                        td #{payment.purchase}
+                        td
+                          if payment.purchase !== undefined && typeof payment.purchase == 'object'
+                            if payment.purchase.type === 'LICENSE'
+                              a(href='/admin/license/view/' + payment.purchase.itemId) #{__('Licence')}##{payment.purchase.itemId}
+                            else if payment.purchase.type === 'HOSTING'
+                              a(href='/admin/hosting/view/' + payment.purchase.itemId) #{__('Licence hébergée')}##{payment.purchase.itemId}
+                            else if payment.purchase.type === 'RENEW_LICENSE_HOSTED'
+                              a(href='/admin/hosting/view/' + payment.purchase.itemId) #{__('Renouvelement de licence hébergée')}##{payment.purchase.itemId}
+                            else if payment.purchase.type === 'PLUGIN'
+                              a(href='/market/plugin/' + payment.purchase.itemId) #{__('Plugin')}
+                            else if payment.purchase.type === 'THEME'
+                              a(href='/market/theme/' + payment.purchase.itemId) #{__('Thème')}
+                          else
+                            | N/A
                         td #{payment.id}
                         td
                           a(href='https://www.paypal.com/fr/cgi-bin/webscr?cmd=_view-a-trans&id='+payment.paymentId, target='_blank') #{payment.paymentId}
@@ -157,7 +170,7 @@ block content
                 table.table.table-hover.no-margins(style="font-size: 13px;")
                   thead
                     tr
-                      th #{__("ID de l'achat")}
+                      th #{__("Détail de l'achat")}
                       th #{__("ID du paiement")}
                       th #{__('Montant reçu')}
                       th #{__("Code utilisé par l'utilisateur")}
@@ -167,7 +180,20 @@ block content
                   tbody
                     each payment in userFinded.dedipassPayments
                       tr
-                        td #{payment.purchase}
+                        td
+                          if payment.purchase !== undefined && typeof payment.purchase == 'object'
+                            if payment.purchase.type === 'LICENSE'
+                              a(href='/admin/license/view/' + payment.purchase.itemId) #{__('Licence')}##{payment.purchase.itemId}
+                            else if payment.purchase.type === 'HOSTING'
+                              a(href='/admin/hosting/view/' + payment.purchase.itemId) #{__('Licence hébergée')}##{payment.purchase.itemId}
+                            else if payment.purchase.type === 'RENEW_LICENSE_HOSTED'
+                              a(href='/admin/hosting/view/' + payment.purchase.itemId) #{__('Renouvelement de licence hébergée')}##{payment.purchase.itemId}
+                            else if payment.purchase.type === 'PLUGIN'
+                              a(href='/market/plugin/' + payment.purchase.itemId) #{__('Plugin')}
+                            else if payment.purchase.type === 'THEME'
+                              a(href='/market/theme/' + payment.purchase.itemId) #{__('Thème')}
+                          else
+                            | N/A
                         td #{payment.id}
                         td.text-success #{payment.payout} €
                         td #{payment.code}

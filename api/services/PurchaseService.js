@@ -223,7 +223,7 @@ module.exports = {
                   */
 
                   // find expireAt
-                  Hosting.findOne({id: purchase.hostRenew}).exec(function (err, hosting) {
+                  Hosting.findOne({id: purchase.hostRenew}).populate(['license']).exec(function (err, hosting) {
                     if (err) {
                       sails.log.error(err)
                       return next(false)
@@ -233,11 +233,11 @@ module.exports = {
                     }
 
                     // add +1month
-                    var expireAt = new Date(hosting.expireAt);
+                    var expireAt = new Date(hosting.license.expireAt);
                     expireAt.setMonth(expireAt.getMonth() + 1)
 
                     // reactive in db + add 1 month to end
-                    Hosting.update({id: hosting.id}, {state: 1, expireAt: expireAt}).exec(function (err, hostingUpdated) {
+                    License.update({id: hosting.license.id}, {state: 1, expireAt: expireAt}).exec(function (err, licenseUpdated) {
 
                       if (err) {
                         sails.log.error(err)
@@ -245,7 +245,7 @@ module.exports = {
                       }
 
                       // reactive on server
-                      if (hostingUpdated !== undefined) {
+                      if (licenseUpdated !== undefined) {
                         HostingService.enable(hosting)
                       }
 
@@ -253,13 +253,13 @@ module.exports = {
                         Save
                       */
 
-                      self.saveVoucher(voucher, purchase.userId, purchase.offerType, hosting.id, function (success) {
+                      self.saveVoucher(voucher, purchase.userId, 'RENEW_LICENSE_HOSTED', hosting.id, function (success) {
 
                         if (!success)
                           return next(false)
 
                         // Save & Return purchase ID
-                          var save = self.save(purchase.userId, purchase.offerType, hosting.id, purchase.paymentType, function(success, purchaseId) {
+                          var save = self.save(purchase.userId, 'RENEW_LICENSE_HOSTED', hosting.id, purchase.paymentType, function(success, purchaseId) {
 
                             if (!success)
                               return next(false)

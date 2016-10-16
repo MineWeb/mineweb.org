@@ -96,8 +96,11 @@ module.exports = {
             history.purchase.type = 'N/A'
             history.purchase.itemId = 'N/A'
           }
-          else if (history.purchase.type === 'LICENSE' || history.purchase.type === 'LICENSE_HOSTED') {
+          else if (history.purchase.type === 'LICENSE' || history.purchase.type === 'HOSTING') {
             history.purchase.itemId = '<a href="/admin/license/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
+          }
+          else if (history.purchase.type === 'RENEW_LICENSE_HOSTED') {
+            history.purchase.itemId = '<a href="/admin/hosting/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
           }
           else if (history.purchase.type === 'PLUGIN' || history.purchase.type === 'THEME') {
             history.purchase.itemId = '<em>' + lists[history.purchase.type][history.purchase.itemId].name + '</em>'
@@ -208,8 +211,11 @@ module.exports = {
             history.purchase.type = 'N/A'
             history.purchase.itemId = 'N/A'
           }
-          else if (history.purchase.type === 'LICENSE' || history.purchase.type === 'LICENSE_HOSTED') {
+          else if (history.purchase.type === 'LICENSE' || history.purchase.type === 'HOSTING') {
             history.purchase.itemId = '<a href="/admin/license/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
+          }
+          else if (history.purchase.type === 'RENEW_LICENSE_HOSTED') {
+            history.purchase.itemId = '<a href="/admin/hosting/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
           }
           else if (history.purchase.type === 'PLUGIN' || history.purchase.type === 'THEME') {
             history.purchase.itemId = '<em>' + lists[history.purchase.type][history.purchase.itemId].name + '</em>'

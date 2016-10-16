@@ -15,10 +15,11 @@ module.exports = {
     var port = sails.config.proxyPort || sails.config.port
     var localAppURL =
       (usingSSL ? 'https' : 'http') + '://' +
-      (sails.getHost() || 'localhost') +
-      (port == 80 || port == 443 ? '' : ':' + port)
+      (process.env.NODE_ENV === 'development' ? 'localhost' : 'mineweb.org') +
+      (port === 80 || port === 443 ? '' : ':' + port)
 
     return localAppURL
-	}
-  
-};
+    //return 'http://192.168.1.24:1337'
+  }
+
+}

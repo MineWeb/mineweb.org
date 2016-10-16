@@ -26,19 +26,21 @@ module.exports = {
       if (permission.controller === undefined || permission.action === undefined)
         return false // Params missing
 
+      var permissionWithoutAction = {controller: permission.controller}
+
       // Find permission in permissionsList
       for (var permissionKey in permissionsList) {
         if (_.isArray(permissionsList[permissionKey])) { // multiple path for this permission
           // so, for each of it, check if path === permission.path
           for (var i = 0; i < permissionsList[permissionKey].length; i++) {
-            if (_.isEqual(permissionsList[permissionKey][i], permission)) {
+            if (_.isEqual(permissionsList[permissionKey][i], permission) || (_.isEqual(permissionsList[permissionKey][i], permissionWithoutAction) && permissionsList[permissionKey][i].action === undefined)) { // find permission with this full path OR with controller path if permission doens't have an action configured
               var permission = permissionKey // permission found
               break
             }
           }
         }
         else { // only 1 path for this permissin
-          if (_.isEqual(permissionsList[permissionKey], permission)) {
+          if (_.isEqual(permissionsList[permissionKey], permission) || (_.isEqual(permissionsList[permissionKey], permissionWithoutAction) && permissionsList[permissionKey].action === undefined)) { // find permission with this full path OR with controller path if permission doens't have an action configured
             var permission = permissionKey
             break
           }

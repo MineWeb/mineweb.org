@@ -178,6 +178,7 @@ module.exports.routes = {
   'post /admin/support/reply/:id': 'Admin/TicketController.reply',
 
   '/admin/license/view/:id': 'Admin/LicenseController.view',
+  '/admin/hosting/view/:id': 'Admin/LicenseController.switchToLicenseId',
   '/admin/license/suspend/:id/:reason': 'Admin/LicenseController.suspend',
   '/admin/license/unsuspend/:id': 'Admin/LicenseController.unsuspend',
   '/admin/license/get-debug/:id': 'Admin/LicenseController.getDebug',

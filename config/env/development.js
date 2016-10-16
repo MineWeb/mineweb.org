@@ -100,11 +100,11 @@ module.exports = {
     },
     'ADMIN-EDIT_CATEGORY_TICKET': {
       controller: 'admin/ticket',
-      action: 'editCategory'
+      action: 'editcategory'
     },
     'ADMIN-EDIT_STATE_TICKET': {
       controller: 'admin/ticket',
-      action: 'editState'
+      action: 'editstate'
     },
     'ADMIN-TAKE_TICKET': {
       controller: 'admin/ticket',
@@ -120,16 +120,22 @@ module.exports = {
     },
     'ADMIN-UPDATE_SETTINGS': {
       controller: 'admin/dashboard',
-      action: 'updateSettings'
+      action: 'updatesettings'
     },
-    'ADMIN-FIND_LICENSE_OR_HOSTING': {
-      controller: 'admin/license',
-      action: 'findPage'
-    },
-    'ADMIN-FIND_LICENSE': {
-      controller: 'admin/license',
-      action: 'find'
-    },
+    'ADMIN-FIND_LICENSE': [
+      {
+        controller: 'admin/license',
+        action: 'find'
+      },
+      {
+        controller: 'admin/license',
+        action: 'switchtolicenseid'
+      },
+      {
+        controller: 'admin/license',
+        action: 'findpage'
+      }
+    ],
     'ADMIN-VIEW_LICENSE': {
       controller: 'admin/license',
       action: 'view'
@@ -144,7 +150,7 @@ module.exports = {
     },
     'ADMIN-GET_DEBUG_LICENSE': {
       controller: 'admin/license',
-      action: 'getDebug'
+      action: 'getdebug'
     },
     'ADMIN-FIND_USER': [
       {
@@ -185,7 +191,7 @@ module.exports = {
       },
       {
         controller: 'admin/api',
-        action: 'getLogs'
+        action: 'getlogs'
       }
     ],
     'ADMIN-MANAGE_FAQ': [
@@ -195,15 +201,15 @@ module.exports = {
       },
       {
         controller: 'admin/api',
-        action: 'addQuestion'
+        action: 'addquestion'
       },
       {
         controller: 'admin/api',
-        action: 'removeQuestion'
+        action: 'removequestion'
       },
       {
         controller: 'admin/api',
-        action: 'editQuestion'
+        action: 'editquestion'
       }
     ],
     'ADMIN-MANAGE_DEVELOPERS': {
@@ -218,14 +224,13 @@ module.exports = {
       // 'ADMIN-ACCESS_DASHBOARD',
       'ADMIN-VIEW_TICKETS',
       'ADMIN-CLOSE_TICKET',
-      'ADMIN-VIEW',
+      'ADMIN-VIEW_TICKET',
       'ADMIN-EDIT_CATEGORY_TICKET',
       'ADMIN-EDIT_STATE_TICKET',
       'ADMIN-TAKE_TICKET',
       'ADMIN-REPLY_TICKET',
       'ADMIN-VIEW_SETTINGS',
       'ADMIN-UPDATE_SETTINGS',
-      'ADMIN-FIND_LICENSE_OR_HOSTING',
       'ADMIN-FIND_LICENSE',
       // 'ADMIN-SUSPEND_LICENSE',
       // 'ADMIN-UNSUSPEND_LICENSE',
@@ -247,14 +252,13 @@ module.exports = {
       'ADMIN-ACCESS_DASHBOARD',
       'ADMIN-VIEW_TICKETS',
       'ADMIN-CLOSE_TICKET',
-      'ADMIN-VIEW',
+      'ADMIN-VIEW_TICKET',
       'ADMIN-EDIT_CATEGORY_TICKET',
       'ADMIN-EDIT_STATE_TICKET',
       'ADMIN-TAKE_TICKET',
       'ADMIN-REPLY_TICKET',
       'ADMIN-VIEW_SETTINGS',
       'ADMIN-UPDATE_SETTINGS',
-      'ADMIN-FIND_LICENSE_OR_HOSTING',
       'ADMIN-FIND_LICENSE',
       'ADMIN-SUSPEND_LICENSE',
       'ADMIN-UNSUSPEND_LICENSE',

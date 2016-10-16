@@ -10,6 +10,27 @@ var request = require('request')
 
 module.exports = {
 
+  switchToLicenseId: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+
+    Hosting.findOne({id: id}).populate(['license']).exec(function (err, hosting) {
+      // error
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      // not found
+      if (hosting === undefined)
+        return res.notFound()
+
+      res.redirect('/admin/license/view/' + hosting.license.id)
+    })
+  },
+
   getHost: function (license) {
     if (!license.hosting)
       return license.host
@@ -104,10 +125,10 @@ module.exports = {
 
   view: function (req, res) {
     // Get id
-		if (req.param('id') === undefined) {
-			return res.notFound('Id is missing')
-		}
-		var id = req.param('id')
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
     var self = this
 
     // find

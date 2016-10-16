@@ -146,9 +146,9 @@ block content
 
             div.tab-pane.fade(id="hostings" role="tabpanel")
 
-              // ===================================
+              // =========================================
                  ====== Liste des licences hébergées =====
-                 ===================================
+                 =========================================
 
 
               if user.hostings !== undefined && user.hostings.length > 0
@@ -166,7 +166,7 @@ block content
                     tbody
                       each hosting, index in user.hostings
                         tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
-                          td #{hosting.id}
+                          td #{hosting.hosting.id}
                           td.hostingHost(data-host-id=hosting.hosting.id)
                             if hosting.hosting.hostType === 'SUBDOMAIN'
                                a(href='http://'+hosting.host+'.craftwb.fr', target='_blank')
@@ -231,6 +231,8 @@ block content
                                 | #{__('Licence')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'HOSTING'
                                 | #{__('Licence hébergée')}##{payment.purchase.itemId}
+                              else if payment.purchase.type === 'RENEW_LICENSE_HOSTED'
+                                | #{__('Renouvelement de licence hébergée')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'PLUGIN'
                                 | #{__('Plugin')}
                               else if payment.purchase.type === 'THEME'
@@ -279,6 +281,8 @@ block content
                                 | #{__('Licence')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'HOSTING'
                                 | #{__('Licence hébergée')}##{payment.purchase.itemId}
+                              else if payment.purchase.type === 'RENEW_LICENSE_HOSTED'
+                                | #{__('Renouvelement de licence hébergée')}##{payment.purchase.itemId}
                               else if payment.purchase.type === 'PLUGIN'
                                 | #{__('Plugin')}
                               else if payment.purchase.type === 'THEME'
