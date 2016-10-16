@@ -12,6 +12,7 @@
 var pmx         = require('pmx');
 var expressLog = require('express-winston');
 var ESTransport = require('winston-elasticsearch');
+var winston     = require('winston')
 
 var TRANSPORTS = [];
 if (process.env.NODE_ENV === 'production') {
