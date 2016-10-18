@@ -58,7 +58,7 @@ module.exports = {
         }
 
         // On vérifie qu'un utilisateur existe avec cet combinaison d'identifiants
-        User.findOne({username: req.body.username, password: User.hashPassword(req.body.password) }).populate('tokens', { where: { type: 'VALIDATION' }, limit: 1 }).exec(function (err, user) {
+        User.findOne({username: req.body.username, password: User.hashPassword(req.body.password) }).populate('tokens').exec(function (err, user) {
           if (err) {
             sails.log.error(err)
             return res.serverError()
@@ -81,66 +81,51 @@ module.exports = {
               msg: req.__("Aucun utilisateur ne correspond à ces identifiants."),
               inputs: {}
             })
+          }
 
+          // On vérifie que l'email de l'account est bien confirmé
+          var validationToken = _.where(user.tokens, {type: 'VALIDATION'})
+          if (user.tokens.length > 0 && validationToken.length > 0 && validationToken[0].usedAt === null) {
+            return res.json({
+              status: false,
+              msg: req.__("Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte."),
+              inputs: {}
+            })
+          }
 
-          } else {
+          // On vérifie si la double auth est active
+          if (user.twoFactorAuthKey !== undefined && user.twoFactorAuthKey !== null) {
+            // On stocke l'user dans la session temporairement pour la vérification
+            user.wantRemember = (req.body.remember_me !== undefined && req.body.remember_me)
+            req.session.loginUser = user
 
+            // On répond à l'user pour qu'il soit redirigé
+            return res.json({
+              status: true,
+              msg: req.__("Vous vous êtes bien connecté !"),
+              inputs: {},
+              twoFactorAuth: true
+            })
+          }
 
-            // On vérifie que l'email de l'account est bien confirmé
-            if (user.tokens.length > 0 && user.tokens[0].usedAt === null) {
-              return res.json({
-                status: false,
-                msg: req.__("Vous devez avoir validé votre adresse email avant de pouvoir vous connecter à votre compte."),
-                inputs: {}
-              })
-            }
+          // On sauvegarde la session/on le connecte, on gère le cookie de remember
+          req.session.userId = user.id
 
-            // On vérifie si la double auth est active
-            if (user.twoFactorAuthKey !== undefined && user.twoFactorAuthKey !== null) {
-              // On stocke l'user dans la session temporairement pour la vérification
-              user.wantRemember = (req.body.remember_me !== undefined && req.body.remember_me)
-              req.session.loginUser = user
-
-              // On répond à l'user pour qu'il soit redirigé
-              return res.json({
-                status: true,
-                msg: req.__("Vous vous êtes bien connecté !"),
-                inputs: {},
-                twoFactorAuth: true
-              })
-            }
-
-            // On sauvegarde la session/on le connecte, on gère le cookie de remember
-            req.session.userId = user.id
-
-            if (req.body.remember_me !== undefined && req.body.remember_me) {
-
-              // On créé l'entrée dans la table de remember
-              var expire = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              RememberTokens.create({ user: user.id, expireAt: expire }).exec(function (err, token) {
-
-                res.cookie('remember_me', {
+          if (req.body.remember_me !== undefined && req.body.remember_me) {
+            // On créé l'entrée dans la table de remember
+            var expire = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+            RememberTokens.create({ user: user.id, expireAt: expire }).exec(function (err, token) {
+              if (err) sails.log.error(err)
+              res.cookie('remember_me',
+                {
                   userId: token.user,
                   token: token.token
                 },
-                  {
-                    expires: expire, // +1 week
-                    signed: true
-                  });
-
-                // On set la notification toastr
-                NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
-
-                // On lui envoie un message de succès
-                res.json({
-                  status: true,
-                  msg: req.__("Vous vous êtes bien connecté !"),
-                  inputs: {}
-                })
-
-              })
-            }
-            else { // Pas de cookie de remember
+                {
+                  expires: expire, // +1 week
+                  signed: true
+                }
+              )
 
               // On set la notification toastr
               NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
@@ -151,27 +136,30 @@ module.exports = {
                 msg: req.__("Vous vous êtes bien connecté !"),
                 inputs: {}
               })
+            })
+          }
+          else { // Pas de cookie de remember
+            // On set la notification toastr
+            NotificationService.success(req, req.__('Vous vous êtes bien connecté !'))
 
-            }
-
-            // On ajoute une connexion aux logs de connexions de l'utilisateur
-            UserLog.create({ action: 'LOGIN', ip: req.ip, user: user.id, status: true}).exec(function (err, log) {
-              if (err) {
-                sails.log.error(err)
-                return res.serverError()
-              }
-
-            });
-
+            // On lui envoie un message de succès
+            res.json({
+              status: true,
+              msg: req.__("Vous vous êtes bien connecté !"),
+              inputs: {}
+            })
           }
 
+          // On ajoute une connexion aux logs de connexions de l'utilisateur
+          UserLog.create({ action: 'LOGIN', ip: req.ip, user: user.id, status: true}).exec(function (err, log) {
+            if (err) {
+              sails.log.error(err)
+              return res.serverError()
+            }
+          })
         })
-
-
       })
-
     })
-
   },
 
 
@@ -799,7 +787,7 @@ module.exports = {
     req.session.twoFactorAuthKey = secret
 
     // On génère le QRCode
-    var code = twoFactor.generate.qrcode(secret, 'MineWeb.org - ' + res.locals.user.username, {
+    var code = twoFactor.generate.qrcode(secret, 'MineWeb', 'MineWeb.org - ' + res.locals.user.username, {
       type: 'svg',
       sync: true
     });
