@@ -131,6 +131,8 @@ module.exports.routes = {
   '/license/enable/:id': 'LicenseController.enable',
   '/license/disable/:id': 'LicenseController.disable',
 
+  '/license/download/:id': 'LicenseController.download',
+
     /*
       DEVELOPER
     */
