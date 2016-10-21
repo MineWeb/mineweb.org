@@ -1,5 +1,9 @@
 // List of all permissions
 module.exports.list = {
+  'ADMIN-ACCESS': {
+    controller: 'admin/dashboard',
+    action: 'admin'
+  },
   'ADMIN-ACCESS_DASHBOARD': {
     controller: 'admin/dashboard',
     action: 'index'
@@ -32,14 +36,16 @@ module.exports.list = {
     controller: 'admin/ticket',
     action: 'reply'
   },
-  'ADMIN-VIEW_SETTINGS': {
-    controller: 'admin/dashboard',
-    action: 'settings'
-  },
-  'ADMIN-UPDATE_SETTINGS': {
-    controller: 'admin/dashboard',
-    action: 'updatesettings'
-  },
+  'ADMIN-MANAGE_SETTINGS': [
+    {
+      controller: 'admin/dashboard',
+      action: 'settings'
+    },
+    {
+      controller: 'admin/dashboard',
+      action: 'updatesettings'
+    }
+  ],
   'ADMIN-FIND_LICENSE': [
     {
       controller: 'admin/license',
@@ -148,8 +154,7 @@ module.exports.access = {
     'ADMIN-EDIT_STATE_TICKET',
     'ADMIN-TAKE_TICKET',
     'ADMIN-REPLY_TICKET',
-    'ADMIN-VIEW_SETTINGS',
-    'ADMIN-UPDATE_SETTINGS',
+    'ADMIN-MANAGE_SETTINGS',
     'ADMIN-FIND_LICENSE',
     // 'ADMIN-SUSPEND_LICENSE',
     // 'ADMIN-UNSUSPEND_LICENSE',
@@ -163,9 +168,10 @@ module.exports.access = {
     // 'ADMIN-UPDATE_EDIT',
     // 'ADMIN-VIEW_STATS',
     // 'ADMIN-VIEW_PAYMENTS_LIST',
-    // 'ADMIN-VIEW_API_LOGS',
-    'ADMIN-MANAGE_FAQ'
-    // 'ADMIN-MANAGE_DEVELOPERS'
+    'ADMIN-VIEW_API_LOGS',
+    'ADMIN-MANAGE_FAQ',
+    // 'ADMIN-MANAGE_DEVELOPERS',
+    'ADMIN-ACCESS'
   ],
   'ADMIN': [
     'ADMIN-ACCESS_DASHBOARD',
@@ -176,8 +182,7 @@ module.exports.access = {
     'ADMIN-EDIT_STATE_TICKET',
     'ADMIN-TAKE_TICKET',
     'ADMIN-REPLY_TICKET',
-    'ADMIN-VIEW_SETTINGS',
-    'ADMIN-UPDATE_SETTINGS',
+    'ADMIN-MANAGE_SETTINGS',
     'ADMIN-FIND_LICENSE',
     'ADMIN-SUSPEND_LICENSE',
     'ADMIN-UNSUSPEND_LICENSE',
@@ -191,8 +196,9 @@ module.exports.access = {
     'ADMIN-VIEW_STATS',
     'ADMIN-VIEW_PAYMENTS_LIST',
     'ADMIN-VIEW_API_LOGS',
-    'ADMIN-MANAGE_FAQ'
-    // 'ADMIN-MANAGE_DEVELOPERS'
+    'ADMIN-MANAGE_FAQ',
+    // 'ADMIN-MANAGE_DEVELOPERS',
+    'ADMIN-ACCESS'
   ],
   'FOUNDER': ['*']
 }

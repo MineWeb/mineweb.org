@@ -9,8 +9,31 @@ var async = require('async')
 
 module.exports = {
 
-  index: function (req, res) {
+  admin: function (req, res) {
+    var userRole = res.locals.user.role
+    var firstPermission = sails.config.permissionsAccess[userRole][0]
 
+    if (firstPermission === '*')
+      return res.redirect('/admin/dashboard')
+
+    var permission = sails.config.permissionsList[firstPermission]
+    var routes = sails.config.routes
+
+    // search perm into routes
+    for (var route in routes) {
+      if (typeof routes[route] !== 'string' || route === '/admin')
+        continue
+      if (permission.action)
+        if (routes[route].toLowerCase() === permission.controller.toLowerCase() + 'controller.' + permission.action.toLowerCase())
+          return res.redirect(route)
+      else
+        if (routes[route].toLowerCase().indexOf(permission.controller.toLowerCase() + 'controller.') !== -1)
+          return res.redirect(route)
+    }
+    res.notFound()
+  },
+
+  index: function (req, res) {
     async.parallel([
 
       // Count users
@@ -36,7 +59,6 @@ module.exports = {
 
       // Count total money
       function (callback) {
-
         async.parallel([
           // Find with PayPal
           function (next) {
@@ -57,16 +79,14 @@ module.exports = {
         ], function (err, results) {
           if (err)
             return callback(err)
-          callback(null, results[0]+results[1])
+          callback(null, (results[0] + results[1]))
         })
-
       },
 
       // Find profit this month
       function (callback) {
-
         var date = new Date()
-        month = date.getMonth() + 1
+        var month = date.getMonth() + 1
         if (month.toString().length === 1)
           month = '0' + month
         date = date.getFullYear() + '-' + month + '-'
@@ -91,14 +111,12 @@ module.exports = {
         ], function (err, results) {
           if (err)
             return callback(err)
-          callback(null, results[0]+results[1])
+          callback(null, (results[0] + results[1]))
         })
-
       },
 
       // Licenses sales
       function (callback) {
-
         // vars
         var sales = []
 
@@ -128,7 +146,6 @@ module.exports = {
               sales.push(count)
             next()
           })
-
         }, function () {
           callback(undefined, sales)
         })
@@ -136,7 +153,6 @@ module.exports = {
 
       // Hostings sales
       function (callback) {
-
         // vars
         var sales = []
 
@@ -166,7 +182,6 @@ module.exports = {
               sales.push(count)
             next()
           })
-
         }, function () {
           callback(undefined, sales)
         })
@@ -222,7 +237,6 @@ module.exports = {
               }
 
               next(undefined, data)
-
             })
           },
           // dedipass
@@ -242,7 +256,6 @@ module.exports = {
               }
 
               next(undefined, data)
-
             })
           }
         ], function (err, results) {
@@ -251,7 +264,6 @@ module.exports = {
       }
 
     ], function (err, results) {
-
       if (err) {
         sails.log.error(err)
         return res.serverError()
@@ -277,13 +289,10 @@ module.exports = {
         }).slice(0, 10), // keep only 10 first
         title: req.__('Dashboard')
       })
-
     })
-
   },
 
   settings: function (req, res) {
-
     // get user role name by default
     if (res.locals.user.role === 'DEVELOPER')
       var defaultRoleName = req.__('Développeur')
@@ -309,10 +318,8 @@ module.exports = {
 				}
 			],
     }, function () {
-
       // save
       User.update({id: req.session.userId}, {pushbulletEmail: req.body.pushbulletEmail, customRoleName: req.body.customRoleName}).exec(function (err, userUpdated) {
-
         if (err) {
           sails.log.error(err)
           return res.serverError()
@@ -324,9 +331,7 @@ module.exports = {
           msg: req.__('Vous avez bien modifié vos paramètres !'),
           inputs: {}
         })
-
       })
-
     })
   }
 

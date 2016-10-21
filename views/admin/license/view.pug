@@ -69,9 +69,10 @@ block content
                           p.form-control-static
                             span.label.label-info.moment-date(style='font-size: 12px;', fromNow) #{new Date(lastCheckDate)}
                   .col-md-6.text-center
-                    unless license.suspended
-                      a.btn.btn-outline.btn-warning#suspend(href='/admin/license/suspend/' + license.id) #{__('Je veux suspendre cette licence')}
-                      | &nbsp;
+                    if PermissionsService.can('ADMIN-SUSPEND_LICENSE', user)
+                      unless license.suspended
+                        a.btn.btn-outline.btn-warning#suspend(href='/admin/license/suspend/' + license.id) #{__('Je veux suspendre cette licence')}
+                        | &nbsp;
                     a.btn.btn-outline.btn-info#getDebug(href='/admin/license/get-debug/' + license.id) #{__('Récupérer des informations sur la licence')}
 
 
@@ -93,7 +94,8 @@ block content
                       strong #{__('Cette licence est désactivée !')}
                       | &nbsp;"<em>#{license.suspended}</em>"
                   div.col-md-2.text-center
-                    a.btn.btn-outline.btn-primary(href='/admin/license/unsuspend/' + license.id) #{__('Je veux réactiver cette licence')}
+                    if PermissionsService.can('ADMIN-UNSUSPEND_LICENSE', user)
+                      a.btn.btn-outline.btn-primary(href='/admin/license/unsuspend/' + license.id) #{__('Je veux réactiver cette licence')}
 
         if license.hosting
           .col-md-12

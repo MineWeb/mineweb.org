@@ -46,6 +46,8 @@ module.exports.routes = {
   '/legal/conditions': { view: 'legal/conditions', locals: {title: 'CGV'} },
   '/legal/cgu': { view: 'legal/cgu', locals: {title: 'CGU'} },
 
+  '/api/v1/plugin_version': 'StaticController.plugin_version',
+
   /*
     PURCHASE
   */
@@ -163,6 +165,8 @@ module.exports.routes = {
   *                           ADMIN ROUTES                                   *
   *                                                                          *
   ************************************************************************** */
+
+  '/admin': 'Admin/DashboardController.admin',
 
   '/admin/dashboard': 'Admin/DashboardController.index',
   'get /admin/settings': 'Admin/DashboardController.settings',
