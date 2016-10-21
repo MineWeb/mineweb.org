@@ -52,7 +52,7 @@ module.exports = {
 
       // Count licenses
       function (callback) {
-        License.count().exec(function (err, count) {
+        License.count({hosting: null}).exec(function (err, count) {
           callback(err, count)
         })
       },
@@ -137,9 +137,9 @@ module.exports = {
 
           if (month.toString().length === 1)
             month = '0' + month
-          date = year + '-' + month + '-' // setup date LIKE
+          var date = year + '-' + month + '-' // setup date LIKE
 
-          License.count({createdAt: {'like': date + '%'}}).exec(function (err, count) {
+          License.count({createdAt: {'like': date + '%'}, hosting: null}).exec(function (err, count) {
             if (err)
               sales.push(0)
             else

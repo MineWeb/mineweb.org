@@ -64,7 +64,7 @@ module.exports = {
 
       // Get licences purchases last 7 months
       function (callback) {
-        License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license GROUP BY month LIMIT 7', function (err, data) {
+        License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license WHERE hosting IS NULL GROUP BY month LIMIT 7', function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataMonths = _.clone(dataMonthsList)
