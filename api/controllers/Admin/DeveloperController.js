@@ -362,6 +362,7 @@ module.exports = {
       form.append('type', 'PLUGIN')
       form.append('version', data.version)
       form.append('slug', data.slug || plugin.slug)
+      form.append('id', plugin.id)
       var filename = (plugin.state === 'CONFIRMED') ? plugin.author.id + '-' + plugin.slug + '-v' + plugin.versions[0].version + '.zip' : plugin.author.id + '-' + slugify(plugin.name) + '.zip'
       var pluginPath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.plugins, filename)
       form.append('file', fs.createReadStream(pluginPath))
@@ -526,6 +527,7 @@ module.exports = {
       form.append('type', 'THEME')
       form.append('version', data.version)
       form.append('slug', data.slug || theme.slug)
+      form.append('id', theme.id)
       var filename = (theme.state === 'CONFIRMED') ? theme.author.id + '-' + theme.slug + '-v' + theme.versions[0].version + '.zip' : theme.author.id + '-' + slugify(theme.name) + '.zip'
       var themePath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.themes, filename)
       form.append('file', fs.createReadStream(themePath))
