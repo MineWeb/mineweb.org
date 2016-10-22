@@ -175,7 +175,7 @@ module.exports = {
 					return res.notFound()
 
 				// Read zip file
-				request.post({url: sails.config.api.endpoint + 'cms/latest', data: {'license_id': license.id}}).pipe(res)
+				request.post(sails.config.api.endpoint + 'cms/latest?license_id=' + license.id).pipe(res)
 			})
 		})
 
