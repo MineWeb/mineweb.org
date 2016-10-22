@@ -16,7 +16,21 @@ var ESTransport = require('winston-elasticsearch');
 
 var TRANSPORTS = [];
 if (process.env.NODE_ENV === 'production') {
-  var elasticTransport = new ESTransport({ level: 'info', index: 'main-log', clientOpts: { host: '51.255.36.38:9200' } });
+  var elasticTransport =  new ESTransport({
+    level: 'info',
+    indexPrefix: 'main-log',
+    mappingTemplate: require('./es_log_mapping.json'),
+    clientOpts: { host: '51.255.36.38:9200', apiVersion: 'master' },
+    transformer: function (logData) {
+      const transformed = {};
+      transformed['@timestamp'] = new Date().toISOString();
+      transformed['@level'] = logData.level;
+      transformed['@version'] = 1;
+      transformed.message = logData.message;
+      transformed.fields = logData.meta;
+      return transformed;
+    }
+  });
 
   elasticTransport.emitErrs = true;
   elasticTransport.on('error', function (err) {

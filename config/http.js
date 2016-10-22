@@ -9,14 +9,27 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.http.html
  */
 
-var pmx         = require('pmx');
+var pmx = require('pmx');
 var expressLog = require('express-winston');
 var ESTransport = require('winston-elasticsearch');
-var winston     = require('winston')
+var winston = require('winston')
 
 var TRANSPORTS = [];
 if (process.env.NODE_ENV === 'production') {
-  var elasticTransport = new ESTransport({ level: 'info', index: 'main-express', clientOpts: { host: '51.255.36.38:9200' } });
+  var elasticTransport = new ESTransport({
+    level: 'info',
+    indexPrefix: 'main-express',
+    mappingTemplate: require('./es_log_mapping.json'),
+    clientOpts: { host: '51.255.36.38:9200', apiVersion: 'master' },
+    transformer: function (logData) {
+      const transformed = {};
+      transformed['@timestamp'] = new Date().toISOString();
+      transformed['@level'] = logData.level;
+      transformed['@version'] = 1;
+      transformed.fields = logData.meta;
+      return transformed;
+    }
+  });
 
   elasticTransport.emitErrs = true;
   elasticTransport.on('error', function (err) {
@@ -74,24 +87,20 @@ module.exports.http = {
     expressLogger: expressLog.logger({
       transports: TRANSPORTS,
       meta: true,
-      expressFormat: true,
-      colorize: false,
       ignoredRoutes: ['/favicon.ico', '/favicon.png'],
       requestFilter: function (req, propName) {
         var data = req[propName];
-        // filter headers to only get lang / user-agent
-        if (propName === 'headers') return { "user-agent": data["user-agent"], "accept-language": data["accept-language"] }
+        if (propName === 'headers')
+          return { agent: data["user-agent"], language: data["accept-language"], origin: data.origin, host: data.host }
+        if (propName === 'session')
+          return data && data.userId ? data.userId.toString() : undefined;
         return req[propName];
-      }
+      },
+      requestWhitelist: ['url', 'headers', 'method', 'originalUrl', 'session', 'ip'],
+      responseWhitelist: ['statusCode']
     }),
 
-    errorLogger: expressLog.errorLogger({
-      transports: TRANSPORTS,
-      meta: true,
-      expressFormat: true,
-      colorize: false,
-      ignoredRoutes: ['/favicon.ico', '/favicon.png']
-    })
+    errorLogger: pmx.expressErrorHandler()
 
 
     /***************************************************************************

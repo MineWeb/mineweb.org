@@ -11,7 +11,13 @@
 
 module.exports.bootstrap = function(cb) {
   // inject pmx to get custom http var
-  var pmx         = require('pmx');
+  var pmx = require('pmx').init({
+    http          : true,
+    errors        : true,
+    custom_probes : true,
+    network       : true,
+    ports         : false
+  });
 
 	// register background jobs
 	const schedule = require('node-schedule');
