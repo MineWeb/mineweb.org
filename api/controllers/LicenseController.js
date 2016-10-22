@@ -6,7 +6,6 @@
  */
 
 var request = require("request")
-var pump = require("pump")
 
 module.exports = {
 
@@ -176,20 +175,7 @@ module.exports = {
 					return res.notFound()
 
 				// Read zip file
-				request.post({url: sails.config.api.endpoint + 'cms/latest', data: {'license_id': license.id}}, function (err, httpResponse, body) { // Call API
-          if (err) {
-            sails.log.error(err)
-						return res.serverError()
-          }
-				  if (httpResponse.statusCode !== 200) { // If error
-            sails.log.error('Download from api error. HTTP CODE : ' + httpResponse.statusCode)
-						return res.serverError()
-				  }
-
-          // pump result
-          pump(body)
-
-				})
+				request.post({url: sails.config.api.endpoint + 'cms/latest', data: {'license_id': license.id}}).pipe(res)
 			})
 		})
 
