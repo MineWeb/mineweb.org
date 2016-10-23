@@ -92,6 +92,13 @@ module.exports = {
         night: 'Bonsoir,'
       },
       signature: 'Cordialement,<br>{USERNAME}.<br>{ROLENAME}'
+    },
+    'en-us': {
+      hello: {
+        day: 'Hello,',
+        night: 'Hello,'
+      },
+      signature: 'Best regards,<br>{USERNAME}.<br>{ROLENAME}'
     }
   }
 
