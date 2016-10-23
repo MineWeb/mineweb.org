@@ -39,7 +39,7 @@ block content
                         | (#{license.host})
                 optgroup(label=__('Licences hébergées'))
                   each hosting in hostings
-                    option(value='HOSTING:' + hosting.id) ID##{hosting.id}
+                    option(value='HOSTING:' + hosting.license.id) ID##{hosting.license.id}
                       if hosting.hostType === 'SUBDOMAIN'
                         | (http://#{hosting.license.host}.craftwb.fr)
                       else

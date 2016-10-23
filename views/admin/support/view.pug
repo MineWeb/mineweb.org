@@ -48,14 +48,15 @@ block content
                     option(value="OTHER", selected=ticket.category === 'OTHER') #{__('Autre')}
               div.col-md-4
                 h3
-                  if ticket.license
+                  - console.log(ticket.license !== undefined)
+                  if ticket.license !== undefined && ticket.license.hosting === null
                     p
                       b #{__('Licence associée')}
-                    a.btn.btn-outline.btn-info.text-muted(href='/admin/license/view/' + ticket.license) #{__("Voir la licence associée")} ID##{ticket.license}
-                  else if ticket.hosting
+                    a.btn.btn-outline.btn-info.text-muted(href='/admin/license/view/' + ticket.license.id) #{__("Voir la licence associée")} ID##{ticket.license.id}
+                  else if ticket.license !== undefined && ticket.license.hosting !== null
                     p
                       b #{__('Licence hébergée associée')}
-                    a.btn.btn-outline.btn-info.text-muted(href='/admin/license/view/' + ticket.hosting.license) #{__("Voir la licence associée")} ID##{ticket.hosting.license}
+                    a.btn.btn-outline.btn-info.text-muted(href='/admin/license/view/' + ticket.license.id) #{__("Voir la licence associée")} ID##{ticket.license.id}
                   else
                     .text-muted
                       em #{__('Aucun(e) licence/licence hébergée associée')}

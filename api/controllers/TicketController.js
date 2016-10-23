@@ -208,7 +208,7 @@ module.exports = {
 					if (splited[0] === 'LICENSE')
 						data.license = splited[1]
 					else if (splited[0] === 'HOSTING')
-						data.hosting = splited[1]
+						data.license = splited[1]
 				}
 
 				// Save
