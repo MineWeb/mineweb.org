@@ -164,7 +164,7 @@ module.exports = {
 
         // find lastCheckDate
         function (callback) {
-          ApiLog.findOne({license: license.id, action: 'KEY_VERIFY'}).sort('id DESC').exec(callback)
+          ApiLog.findOne({license: license.id, action: '/key_verif'}).sort('id DESC').exec(callback)
         }
 
       ], function (err, results) {
