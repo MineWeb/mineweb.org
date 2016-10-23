@@ -115,9 +115,9 @@ module.exports.routes = {
     /*
       DOCS
     */
-  '/wiki/*': 'http://docs.mineweb.org',
-  '/wiki': 'http://docs.mineweb.org',
-  '/documentation': 'http://docs.mineweb.org',
+  '/wiki/*': 'https://docs.mineweb.org',
+  '/wiki': 'https://docs.mineweb.org',
+  '/documentation': 'https://docs.mineweb.org',
 
     /*
       HOSTING
@@ -161,6 +161,11 @@ module.exports.routes = {
   'post /developer/update/theme/:id': 'DeveloperController.updateTheme',
 
   '/developer/delete/theme/:id': 'DeveloperController.deleteTheme',
+
+  /*
+    REVERSE PROXY FOR API
+   */
+  '/api/**': 'ApiController.forward',
 
   /* **************************************************************************
   *                                                                          *
