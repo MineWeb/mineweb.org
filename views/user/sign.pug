@@ -61,7 +61,6 @@ block content
 block custom
   script(type='text/javascript').
     function afterLogin(inputs, json) {
-      console.log(json.twoFactorAuth)
       // Connexion normale
       if (json.twoFactorAuth === undefined) {
         if (QueryString.from === undefined) {

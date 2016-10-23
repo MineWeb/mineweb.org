@@ -48,7 +48,6 @@ block content
                     option(value="OTHER", selected=ticket.category === 'OTHER') #{__('Autre')}
               div.col-md-4
                 h3
-                  - console.log(ticket.license !== undefined)
                   if ticket.license !== undefined && ticket.license.hosting === null
                     p
                       b #{__('Licence associée')}
