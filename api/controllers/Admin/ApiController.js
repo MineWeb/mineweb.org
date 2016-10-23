@@ -18,7 +18,7 @@ module.exports = {
   getLogs: function (req, res) {
     req.query.order = [{ column: 0, dir: 'desc'}]
 
-    DataTablesService.datatable(Log, req.query, function (err, logs) {
+    DataTablesService.datatable(ApiLog, req.query, function (err, logs) {
       if (err) {
         sails.log.error(err)
         return res.serverError()

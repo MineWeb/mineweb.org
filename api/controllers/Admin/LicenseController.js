@@ -159,12 +159,12 @@ module.exports = {
 
         // find apiLogs
         function (callback) {
-          Log.find({license: license.id}).sort('id DESC').exec(callback)
+          ApiLog.find({license: license.id}).sort('id DESC').exec(callback)
         },
 
         // find lastCheckDate
         function (callback) {
-          Log.findOne({license: license.id, action: 'KEY_VERIFY'}).sort('id DESC').exec(callback)
+          ApiLog.findOne({license: license.id, action: 'KEY_VERIFY'}).sort('id DESC').exec(callback)
         }
 
       ], function (err, results) {
