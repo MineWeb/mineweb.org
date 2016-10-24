@@ -110,8 +110,7 @@ block content
                             option(selected=supportedEntry.type == 'CMS', value='CMS', data-supported-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
                           optgroup(label=__('Plugins'))
                             each pluginOption in pluginsList
-                              if pluginOption.dbId !== theme.id
-                                option(selected=supportedEntry.type == 'plugin--' + pluginOption.id, value='thème--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
+                              option(selected=supportedEntry.type == 'plugin--' + pluginOption.id, value='thème--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
                       td
                         select.form-control(name='supported['+i+'][operator]')
                           option(value='>=', selected=supportedEntry.operator == '>=') #{__('>=')}
@@ -124,7 +123,7 @@ block content
                         button.btn.btn-danger.deleteSupported(data-supported-id=i, type="button")
                           span.fa.fa-times
                     - i++
-                  tr(data-supported-id=i, data-supported-empty)
+                  tr(data-supported-id=i, data-supported-empty, style="display:none;")
                     td
                       select.form-control.supportedType(name='supported['+i+'][type]', data-supported-id=i)
                         option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
@@ -132,8 +131,7 @@ block content
                           option(value='CMS', data-supported-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
                         optgroup(label=__('Plugins'))
                           each pluginOption in pluginsList
-                            if pluginOption.dbId !== theme.id
-                              option(value='plugin--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
+                            option(value='plugin--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
                     td
                       select.form-control(name='supported['+i+'][operator]')
                         option(value='>=') #{__('>=')}
@@ -326,7 +324,7 @@ block custom
         var btnTr = btn.parent().parent()
         var supportedId = parseInt(btn.attr('data-supported-id'))
 
-        supported = supportedEntry.replaceAll('REQUIREMENTS_ID', supportedId)
+        supported = supported.replaceAll('REQUIREMENTS_ID', supportedId)
 
         // set HTML
         $('<tr data-supported-id="'+supportedId+'">'+supported+'</tr>').insertBefore(btnTr)

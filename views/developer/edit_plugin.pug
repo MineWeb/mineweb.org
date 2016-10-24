@@ -127,7 +127,7 @@ block content
                         button.btn.btn-danger.deleteRequirement(data-requirements-id=i, type="button")
                           span.fa.fa-times
                     - i++
-                  tr(data-requirements-id=i, data-requirement-empty)
+                  tr(data-requirements-id=i, data-requirement-empty, style="display:none;")
                     td
                       select.form-control.requirementType(name='requirements['+i+'][type]', data-requirements-id=i)
                         option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
