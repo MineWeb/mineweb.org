@@ -411,7 +411,7 @@ module.exports = {
 
     RequestManagerService.setRequest(req).setResponse(res).valid({
       "Tous les champs ne sont pas remplis.": [
-        ['email', 'Vous devez spécifier un nom email'],
+        ['email', 'Vous devez spécifier un email'],
       ]
     }, function () {
 

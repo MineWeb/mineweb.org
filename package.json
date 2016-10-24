@@ -38,6 +38,7 @@
     "sails-disk": "~0.10.9",
     "sails-mongo": "^0.12.1",
     "sails-mysql": "^0.11.5",
+    "sendgrid": "^2.0.0",
     "slugify": "^1.0.2",
     "ssh-exec": "^2.0.0",
     "two-factor": "git+https://github.com/Eywek/two-factor.git",

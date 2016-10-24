@@ -5,7 +5,10 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Services
  */
 
-var mailgun = require('mailgun-js')({apiKey: sails.config.mailgun.apiKey, domain: sails.config.mailgun.domain});
+if (sails.config.mail.api === 'mailgun')
+  var mailgun = require('mailgun-js')({apiKey: sails.config.mail.mailgun.apiKey, domain: sails.config.mail.mailgun.domain})
+else
+  var sendgrid  = require('sendgrid')(sails.config.mail.sendgrid.apiKey)
 var pug			= require('pug');
 var path    = require('path');
 
@@ -26,18 +29,29 @@ module.exports = {
     vars.sails = sails
 		var html = pug.renderFile(template_path + template + '.pug', vars)
 
-		var data = {
-			from: 'MineWeb <no-reply@mineweb.org>',
-			to: target,
-			subject: title + ' | MineWeb',
-			html: html
-		}
-
-		mailgun.messages().send(data, function (error, body) {
-			if (error)
-				sails.log.error(error);
-			else
-				sails.log.info("Successfuly sended a mail from template " + template + " to " + target)
-		});
-	}
-};
+    if (sails.config.mail.api === 'sendgrid')
+      sendgrid.send({
+        to:       target,
+        from:     'no-reply@mineweb.org',
+        fromname: 'MineWeb',
+        subject:  title + ' | MineWeb',
+        html:     html
+      }, function(err, json) {
+        if (err) return sails.log.error(err)
+        sails.log.info("Successfuly sended a mail from template " + template + " to " + target)
+      })
+    else
+      mailgun.messages().send(
+      {
+        from: 'MineWeb <no-reply@mineweb.org>',
+        to: target,
+        subject: title + ' | MineWeb',
+        html: html
+      }, function (error, body) {
+        if (error)
+          sails.log.error(error);
+        else
+          sails.log.info("Successfuly sended a mail from template " + template + " to " + target)
+      })
+  }
+}
