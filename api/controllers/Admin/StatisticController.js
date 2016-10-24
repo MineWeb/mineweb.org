@@ -244,7 +244,7 @@ module.exports = {
         ],
         stats: {
           usersCount: Utils.numberWithSpaces(results[0]),
-          usersMonthlyAverageRegister: results[1][0].avg,
+          usersMonthlyAverageRegister: Math.round(results[1][0].avg),
           usersRegisterCountThisMonth: results[2],
           averageMonthlyProfit: Utils.numberWithSpaces(results[3][0].averageMonthlyProfit),
           totalProfit: Utils.numberWithSpaces(results[4][0].totalProfit),
