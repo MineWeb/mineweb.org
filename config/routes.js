@@ -46,7 +46,7 @@ module.exports.routes = {
   '/legal/conditions': { view: 'legal/conditions', locals: {title: 'CGV'} },
   '/legal/cgu': { view: 'legal/cgu', locals: {title: 'CGU'} },
 
-  '/api/v1/plugin_version': 'StaticController.plugin_version',
+  '/api/v1/plugin_version/*': 'StaticController.plugin_version',
 
   /*
     PURCHASE
