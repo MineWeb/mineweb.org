@@ -54,6 +54,19 @@ module.exports.http = {
 
   middleware: {
 
+    rawBody: function (req, res, next) {
+      req.rawBody = ''
+      req.setEncoding('utf8')
+
+      req.on('data', function (chunk) {
+        req.rawBody += chunk
+      })
+
+      req.on('end', function () {
+        next()
+      })
+    },
+
     /***************************************************************************
     *                                                                          *
     * The order in which middleware should be run for HTTP request. (the Sails *
@@ -66,6 +79,7 @@ module.exports.http = {
       'cookieParser',
       'session',
       'expressLogger',
+      'rawBody',
       'bodyParser',
       'handleBodyParserError',
       'compress',
