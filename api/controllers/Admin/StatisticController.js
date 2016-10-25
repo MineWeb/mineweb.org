@@ -102,7 +102,7 @@ module.exports = {
 
       // Get plugins purchases last months
       function (callback) {
-        Plugin.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM plugin GROUP BY month LIMIT 7', function (err, data) {
+        Purchase.query("SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM purchase WHERE type = 'PLUGIN' GROUP BY month LIMIT 7", function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataMonths = _.clone(dataMonthsList)
@@ -121,7 +121,7 @@ module.exports = {
 
       // Get themes purchases last months
       function (callback) {
-        Theme.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM theme GROUP BY month LIMIT 7', function (err, data) {
+        Purchase.query("SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM purchase WHERE type = 'THEME' GROUP BY month LIMIT 7", function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataMonths = _.clone(dataMonthsList)

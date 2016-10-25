@@ -79,11 +79,11 @@ module.exports.list = {
   'ADMIN-FIND_USER': [
     {
       controller: 'admin/user',
-      action: 'find'
+      action: 'findPage'
     },
     {
       controller: 'admin/user',
-      action: 'findPage'
+      action: 'find'
     }
   ],
   'ADMIN-VIEW_USER': {
