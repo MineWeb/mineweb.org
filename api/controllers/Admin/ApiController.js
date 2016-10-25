@@ -29,6 +29,8 @@ module.exports = {
       async.each(logs.data, function (log, callback) {
         if (log.license)
           log.license = '<a href="/admin/license/view/' + log.license + '"> ' + log.license + '</a>'
+        else
+          log.license = 'N/A'
 
         if (log.error)
           log.error = '<code>' + log.error + '</code>'
