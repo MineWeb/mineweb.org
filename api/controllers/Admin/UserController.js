@@ -90,7 +90,7 @@ module.exports = {
 
       // find connectionLogs
       function (callback) {
-        UserLog.find({user: id, action: 'LOGIN'}).limit(5).sort('createdAt DESC').exec(function (err, logs) {
+        UserLog.find({user: parseInt(id), action: 'LOGIN'}).limit(30).sort('createdAt DESC').exec(function (err, logs) {
           callback(err, logs)
         })
       },
