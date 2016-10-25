@@ -110,7 +110,6 @@ module.exports = {
             next()
           })
         }, function () {
-          console.log(sales)
           callback(undefined, sales)
         })
       },
@@ -163,7 +162,6 @@ module.exports = {
             next()
           })
         }, function () {
-          console.log(sales)
           callback(undefined, sales)
         })
       },

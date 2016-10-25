@@ -220,6 +220,7 @@ module.exports = {
 					}
 
 					req.body.content = htmlentities.encode(req.body.content)
+          req.body.content = req.body.content.replace(/(?:\r\n|\r|\n)/g, '<br />')
 
 					// Save reply
 					TicketReply.create({user: data.user, ticket: ticket.id, content: req.body.content}).exec(function (err, reply) {
@@ -338,6 +339,7 @@ module.exports = {
 				if (req.session.userId === ticket.user && ticket.state !== 'CLOSED') {
 
 					req.body.content = htmlentities.encode(req.body.content)
+          req.body.content = req.body.content.replace(/(?:\r\n|\r|\n)/g, '<br />')
 
 					// save
 					async.parallel([

@@ -1,4 +1,4 @@
 module.exports = function (req, res, next) {
-  req.ip = req.headers['HTTP_CF_CONNECTING_IP'] || req.ip
+  req.ip = req.headers['cf-connecting-ip'] || req.ip
   next()
 }
