@@ -174,7 +174,7 @@ module.exports = {
           return res.notFound()
 
         // add signature + hello
-        var content = TicketReply.addSignature(req.body.reply, {username: res.locals.user.username, rolename:User.getRoleName(res.locals.user)}, res.locals.user.lang)
+        var content = TicketReply.addSignature(req.body.reply, {username: res.locals.user.username, rolename:User.getRoleName(res.locals.user)}, ticket.user.lang)
 
         // Save
         TicketReply.create({user: req.session.userId, ticket:id, content: content}).exec(function (err, reply) {

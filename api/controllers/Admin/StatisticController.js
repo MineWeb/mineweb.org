@@ -64,7 +64,7 @@ module.exports = {
 
       // Get licences purchases last 7 months
       function (callback) {
-        License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license WHERE hosting IS NULL GROUP BY month LIMIT 7', function (err, data) {
+        /*License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license WHERE hosting IS NULL GROUP BY month LIMIT 7', function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataMonths = _.clone(dataMonthsList)
@@ -78,12 +78,46 @@ module.exports = {
           }
           // return data
           callback(null, dataFormatted)
+        })*/
+        // vars
+        var sales = []
+
+        var d = new Date()
+        var year = d.getFullYear()
+
+        var months = [
+          (d.getMonth() - 5),
+          (d.getMonth() - 4), // 6 months ago
+          (d.getMonth() - 3), // 5 months ago
+          (d.getMonth() - 2), // ...
+          (d.getMonth() - 1),
+          (d.getMonth()),
+          (d.getMonth() + 1) // actual month
+        ]
+
+        // sql
+        async.forEach(months, function (month, next) { // for each months
+
+          if (month.toString().length === 1)
+            month = '0' + month
+          var date = year + '-' + month + '-' // setup date LIKE
+
+          License.count({createdAt: {'like': date + '%'}, hosting: null}).exec(function (err, count) {
+            if (err)
+              sales.push(0)
+            else
+              sales.push(count)
+            next()
+          })
+        }, function () {
+          console.log(sales)
+          callback(undefined, sales)
         })
       },
 
       // Get hostings purchases last 7 months
       function (callback) {
-        Hosting.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM hosting GROUP BY month LIMIT 7', function (err, data) {
+        /*Hosting.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM hosting GROUP BY month LIMIT 7', function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataMonths = _.clone(dataMonthsList)
@@ -97,6 +131,40 @@ module.exports = {
           }
           // return data
           callback(null, dataFormatted)
+        })*/
+        // vars
+        var sales = []
+
+        var d = new Date()
+        var year = d.getFullYear()
+
+        var months = [
+          (d.getMonth() - 5),
+          (d.getMonth() - 4), // 6 months ago
+          (d.getMonth() - 3), // 5 months ago
+          (d.getMonth() - 2), // ...
+          (d.getMonth() - 1),
+          (d.getMonth()),
+          (d.getMonth() + 1) // actual month
+        ]
+
+        // sql
+        async.forEach(months, function (month, next) { // for each months
+
+          if (month.toString().length === 1)
+            month = '0' + month
+          date = year + '-' + month + '-' // setup date LIKE
+
+          Hosting.count({createdAt: {'like': date + '%'}}).exec(function (err, count) {
+            if (err)
+              sales.push(0)
+            else
+              sales.push(count)
+            next()
+          })
+        }, function () {
+          console.log(sales)
+          callback(undefined, sales)
         })
       },
 
