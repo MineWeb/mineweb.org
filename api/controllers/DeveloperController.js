@@ -8,6 +8,8 @@
 var async = require('async')
 var path = require('path')
 var slugify = require('slugify')
+var Entities = require('html-entities').AllHtmlEntities
+var htmlentities = new Entities()
 
 module.exports = {
 
@@ -245,6 +247,9 @@ module.exports = {
 					inputs: {}
 				})
 			}
+
+      req.body.content = htmlentities.encode(req.body.content)
+      req.body.content = req.body.content.replace(/(?:\r\n|\r|\n)/g, '<br />')
 
 			// Update user developer status & save candidate
 			User.update({id: req.session.userId}, {developer: 'CANDIDATE', developerCandidacy: req.body.content}).exec(function (err, userUpdated) {

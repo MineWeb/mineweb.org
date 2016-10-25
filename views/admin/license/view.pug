@@ -245,7 +245,7 @@ block content
                             span.label.label-danger #{__('Erreur')}
                         td
                           unless log.status
-                            code #{log.errorMessage}
+                            code #{log.error}
                         td
                           code #{JSON.stringify(log.data)}
 

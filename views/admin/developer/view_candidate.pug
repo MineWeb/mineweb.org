@@ -23,7 +23,7 @@ block content
                   a.message-author(href='/admin/user/view/' + user.id) #{user.username}
                   span.message-date #{__('Inscrit')}&nbsp;
                     span.moment-date(fromNow) #{user.createdAt}
-                  span.message-content #{user.developerCandidacy}
+                  span.message-content !{user.developerCandidacy}
 
     .col-md-6
       .ibox.float-e-margins
