@@ -748,7 +748,7 @@ module.exports = {
 
       function saveAndRender (itemType, itemId) {
         // set voucher at used
-        Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: req.ip, itemType: itemType, itemId: itemId}).exec(function (err, voucher) {
+        Voucher.update({id: voucher.id}, {usedBy: req.session.userId, usedAt: (new Date()), usedLocation: CloudflareService.getIP(req), itemType: itemType, itemId: itemId}).exec(function (err, voucher) {
           if (err) {
             sails.log.error(err)
             return res.serverError('An error occured on voucher update')

@@ -38,7 +38,7 @@ module.exports = {
       // On vérifie que l'ip n'est pas bloquée à cause de l'anti-bruteforce
       UserLog.count({
         action: 'TRY_LOGIN',
-        ip: req.ip,
+        ip: CloudflareService.getIP(req),
         createdAt: {
           '>=': (new Date(Date.now() - (60 * 60 * 1000)))
         }
@@ -68,7 +68,7 @@ module.exports = {
             // Utilisateur inconnu
 
             // on stocke dans les logs
-            UserLog.create({ action: 'TRY_LOGIN', ip: req.ip, status: false, error: 'Invalid credentials'}).exec(function (err, log) {
+            UserLog.create({ action: 'TRY_LOGIN', ip: CloudflareService.getIP(req), status: false, error: 'Invalid credentials'}).exec(function (err, log) {
               if (err) {
                 sails.log.error(err)
                 return res.serverError()
@@ -151,7 +151,7 @@ module.exports = {
           }
 
           // On ajoute une connexion aux logs de connexions de l'utilisateur
-          UserLog.create({ action: 'LOGIN', ip: req.ip, user: user.id, status: true}).exec(function (err, log) {
+          UserLog.create({ action: 'LOGIN', ip: CloudflareService.getIP(req), user: user.id, status: true}).exec(function (err, log) {
             if (err) {
               sails.log.error(err)
               return res.serverError()
@@ -280,7 +280,7 @@ module.exports = {
             }
 
             // Sauvegarde de l'user
-            User.create({ username: req.body.username, password: req.body.password, email: req.body.email, lang: req.acceptedLanguages[0], ip: req.ip }).exec(function (err, user) {
+            User.create({ username: req.body.username, password: req.body.password, email: req.body.email, lang: req.acceptedLanguages[0], ip: CloudflareService.getIP(req) }).exec(function (err, user) {
 
               if (err) {
                 sails.log.error(err)
@@ -361,7 +361,7 @@ module.exports = {
       }
 
       // On passe le token en validé
-      Token.update({ id: data.id }, { usedAt: (new Date()), usedLocation: req.ip }).exec(function (err, data) {
+      Token.update({ id: data.id }, { usedAt: (new Date()), usedLocation: CloudflareService.getIP(req) }).exec(function (err, data) {
 
         if (err) {
           sails.log.error(err)
@@ -541,7 +541,7 @@ module.exports = {
 
 
           // On passe le token en utilisé
-          Token.update({ id: token.id }, { usedAt: (new Date()), usedLocation: req.ip }).exec(function (err, token) {
+          Token.update({ id: token.id }, { usedAt: (new Date()), usedLocation: CloudflareService.getIP(req) }).exec(function (err, token) {
             if (err) {
               sails.log.error(err)
             }
@@ -953,7 +953,7 @@ module.exports = {
       }
 
       // On ajoute une connexion aux logs de connexions de l'utilisateur
-      UserLog.create({ action: 'LOGIN', ip: req.ip, user: user.id, status: true}).exec(function (err, log) {
+      UserLog.create({ action: 'LOGIN', ip: CloudflareService.getIP(req), user: user.id, status: true}).exec(function (err, log) {
         if (err) {
           sails.log.error(err)
           return res.serverError()

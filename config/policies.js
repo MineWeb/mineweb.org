@@ -25,7 +25,7 @@ module.exports.policies = {
   *                                                                          *
   ***************************************************************************/
 
-  '*': ['isAuthenticated', 'flash', 'notification', 'cloudflare'],
+  '*': ['isAuthenticated', 'flash', 'notification'],
   // '*': true,
 
   /* **************************************************************************
@@ -36,81 +36,81 @@ module.exports.policies = {
   ***************************************************************************/
 
   UserController: {
-    '*': ['isAuthenticated', 'flash', 'notification', 'cloudflare'],
-    profile: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    editEmail: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    disableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    enableTwoFactorAuthentificationPage: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    enableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'flash', 'notification'],
+    profile: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    editEmail: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    editPassword: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    disableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    enableTwoFactorAuthentificationPage: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    enableTwoFactorAuthentification: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   StaticController: {
-    '*': ['isAuthenticated', 'flash', 'notification', 'cloudflare'],
-    buyLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    rentHosting: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'flash', 'notification'],
+    buyLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    rentHosting: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   PurchaseController: {
-    '*': ['isAuthenticated', 'flash', 'notification', 'cloudflare'],
-    paypal: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'flash', 'notification'],
+    paypal: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   TicketController: {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   HostingController: {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   LicenseController: {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   DeveloperController: {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'developer', 'cloudflare'],
-    'index': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare'],
-    'candidate': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'developer'],
+    'index': ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    'candidate': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   'Admin/DashboardController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/TicketController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/LicenseController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/UserController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/UpdateController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/StatisticController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/PaymentController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/ApiController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   },
 
   'Admin/DeveloperController': {
-    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin', 'cloudflare']
+    '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'admin']
   }
 
 }

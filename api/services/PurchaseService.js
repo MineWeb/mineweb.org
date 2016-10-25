@@ -356,7 +356,7 @@ module.exports = {
     if (voucher === undefined) // no voucher
       return next(true)
 
-    Voucher.update({id: voucher.id}, {usedBy: userId, usedAt: (new Date()), usedLocation: this.req.ip, itemType: offerType, itemId: offerId}).exec(function (err, voucher) {
+    Voucher.update({id: voucher.id}, {usedBy: userId, usedAt: (new Date()), usedLocation: CloudflareService.getIP(this.req), itemType: offerType, itemId: offerId}).exec(function (err, voucher) {
 
       if (err) {
         sails.log.error(err)
