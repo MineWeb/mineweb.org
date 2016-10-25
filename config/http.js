@@ -55,7 +55,7 @@ module.exports.http = {
   middleware: {
 
     rawBody: function (req, res, next) {
-      if (req.options.controller === 'api') {
+      if (req.url.indexOf('/api/') !== -1) {
         req.rawBody = ''
         req.setEncoding('utf8')
 
