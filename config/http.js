@@ -55,16 +55,21 @@ module.exports.http = {
   middleware: {
 
     rawBody: function (req, res, next) {
-      req.rawBody = ''
-      req.setEncoding('utf8')
+      if (req.options.controller === 'api') {
+        req.rawBody = ''
+        req.setEncoding('utf8')
 
-      req.on('data', function (chunk) {
-        req.rawBody += chunk
-      })
+        req.on('data', function (chunk) {
+          req.rawBody += chunk
+        })
 
-      req.on('end', function () {
+        req.on('end', function () {
+          next()
+        })
+      }
+      else {
         next()
-      })
+      }
     },
 
     /***************************************************************************
