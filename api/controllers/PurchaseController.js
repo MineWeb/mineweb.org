@@ -289,7 +289,7 @@ module.exports = {
     paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
       if (err) {
         sails.log.error(err)
-        return res.serverError()
+        return res.serverError(err)
       }
       else {
         // Set vars
@@ -312,7 +312,7 @@ module.exports = {
           PayPalHistory.count({paymentId: params.txn_id, state: ['COMPLETED', 'FAILED', 'REFUNDED', 'REVERSED']}).exec(function (err, count) {
             if (err) {
               sails.log.error(err)
-              return res.serverError()
+              return res.serverError(err)
             }
 
             if (count > 0)
@@ -336,7 +336,7 @@ module.exports = {
                 PayPalHistory.findOne({paymentId: params.txn_id, state: 'PENDING'}).exec(function (err, history) {
                   if (err) {
                     sails.log.error(err)
-                    return res.serverError()
+                    return res.serverError(err)
                   }
 
                   if (history === undefined) { // no payment pending
@@ -359,14 +359,14 @@ module.exports = {
                       Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
                         if (err) {
                           sails.log.error(err)
-                          return res.serverError()
+                          return res.serverError(err)
                         }
 
                         // update paypal history with purchase id
                         PayPalHistory.update({id: history.id}, {purchase: purchaseId}).exec(function (err, history) {
                           if (err) {
                             sails.log.error(err)
-                            return res.serverError()
+                            return res.serverError(err)
                           }
 
                           // Send 200 response for PayPal
@@ -381,21 +381,21 @@ module.exports = {
                     }).exec(function (err, history) {
                       if (err) {
                         sails.log.error(err)
-                        return res.serverError()
+                        return res.serverError(err)
                       }
 
                       // set payment id of purchase
                       Purchase.update({id: purchaseId}, {paymentId: history.id}).exec(function (err, purchase) {
                         if (err) {
                           sails.log.error(err)
-                          return res.serverError()
+                          return res.serverError(err)
                         }
 
                         // update paypal history with purchase id
                         PayPalHistory.update({id: history.id}, {purchase: purchase.id}).exec(function (err, history) {
                           if (err) {
                             sails.log.error(err)
-                            return res.serverError()
+                            return res.serverError(err)
                           }
 
                           // Send 200 response for PayPal
@@ -428,7 +428,7 @@ module.exports = {
           }).exec(function (err, history) {
             if (err) {
               sails.log.error(err)
-              return res.serverError()
+              return res.serverError(err)
             }
 
             return res.send()
@@ -455,7 +455,7 @@ module.exports = {
           }).exec(function (err, history) {
             if (err) {
               sails.log.error(err)
-              return res.serverError()
+              return res.serverError(err)
             }
 
             // get purchase data
@@ -495,7 +495,7 @@ module.exports = {
             Purchase.findOne({id: history[0].purchase}).exec(function (err, purchase) {
               if (err) {
                 sails.log.error(err)
-                return res.serverError()
+                return res.serverError(err)
               }
 
               // Update suspended reason if license/hosting
@@ -517,7 +517,7 @@ module.exports = {
           }).exec(function (err, history) {
             if (err) {
               sails.log.error(err)
-              return res.serverError()
+              return res.serverError(err)
             }
 
             // get purchase data
