@@ -16,10 +16,10 @@ module.exports = {
     var localAppURL =
       (usingSSL ? 'https' : 'http') + '://' +
       (process.env.NODE_ENV === 'development' ? 'localhost' : 'mineweb.org') +
-      (port === 80 || port === 443 ? '' : ':' + port)
+      (/* port === 80 || port === 443*/process.env.NODE_ENV !== 'development' ? '' : ':' + port)
 
     return localAppURL
-    //return 'http://192.168.1.24:1337'
+    // return 'http://192.168.1.24:1337'
   }
 
 }
