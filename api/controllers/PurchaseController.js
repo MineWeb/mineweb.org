@@ -600,7 +600,7 @@ module.exports = {
               user: req.session.userId,
               code: code,
               rate: rate,
-              payout: body.payout,
+              payout: req.body.payout,
               purchase: purchaseId
             }).exec(function (err, history) {
               if (err) {
