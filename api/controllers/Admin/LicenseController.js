@@ -159,7 +159,7 @@ module.exports = {
 
         // find apiLogs
         function (callback) {
-          ApiLog.find({license: license.id}).sort('id DESC').exec(callback)
+          ApiLog.find({license: license.id}).sort('id DESC').limit(30).exec(callback)
         },
 
         // find lastCheckDate
