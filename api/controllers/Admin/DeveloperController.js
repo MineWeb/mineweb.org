@@ -49,7 +49,7 @@ module.exports = {
       // render
       res.view('admin/developer/view_candidate', {
         title: req.__('Candidature de %s', user.username),
-        user: user
+        candidate: user
       })
     })
   },

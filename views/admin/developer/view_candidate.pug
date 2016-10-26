@@ -3,7 +3,7 @@ extends ../layouts/default
 block content
   .row.wrapper.border-bottom.white-bg.page-heading
     .col-md-12
-        h2 #{__('Candidature de %s', user.username)}
+        h2 #{__('Candidature de %s', candidate.username)}
         ol.breadcrumb
           li
             a(href="/admin/dashboard") #{__('Dashboard')}
@@ -18,21 +18,21 @@ block content
 
             .chat-discussion
               .chat-message.left
-                img.message-avatar(src="http://www.gravatar.com/avatar/" + user.md5Email, alt='')
+                img.message-avatar(src="http://www.gravatar.com/avatar/" + candidate.md5Email, alt='')
                 .message
-                  a.message-author(href='/admin/user/view/' + user.id) #{user.username}
+                  a.message-author(href='/admin/user/view/' + candidate.id) #{candidate.username}
                   span.message-date #{__('Inscrit')}&nbsp;
-                    span.moment-date(fromNow) #{user.createdAt}
-                  span.message-content !{user.developerCandidacy}
+                    span.moment-date(fromNow) #{candidate.createdAt}
+                  span.message-content !{candidate.developerCandidacy}
 
     .col-md-6
       .ibox.float-e-margins
         .ibox-content
-          a.btn.btn-primary.btn-block(href="/admin/developer/candidate/accept/" + user.id) #{__('Accepter la candidature')}
+          a.btn.btn-primary.btn-block(href="/admin/developer/candidate/accept/" + candidate.id) #{__('Accepter la candidature')}
     .col-md-6
       .ibox.float-e-margins
         .ibox-content
-          form.form-horizontal(method='post', action="/admin/developer/candidate/refuse/" + user.id, data-ajax, data-redirect-url="/admin/developer/candidate")
+          form.form-horizontal(method='post', action="/admin/developer/candidate/refuse/" + candidate.id, data-ajax, data-redirect-url="/admin/developer/candidate")
 
             .form-group
               label.col-sm-2.control-label #{__("Explication")}
