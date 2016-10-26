@@ -207,7 +207,7 @@ module.exports = {
 
           // tickets
           function (next) {
-            Ticket.find({state: {'!': 'CLOSED'}}).populate(['supported', 'replies']).exec(function (err, tickets) {
+            Ticket.find({state: {'!': 'CLOSED'}}).populate(['supported']).sort('id DESC').limit(5).exec(function (err, tickets) {
               next(err, tickets)
             })
           }
