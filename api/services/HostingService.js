@@ -5,11 +5,11 @@ var uuid = require('node-uuid')
 
 module.exports = {
 
-  create: function (hosting, host, next) {
+  create: function (hosting, license_id, host, next) {
     var id = (sails.config.environment === 'production') ? hosting.id : ('dev-' + hosting.id)
     var host = (sails.config.environment === 'production') ? host : ('dev-' + host)
 
-    exec('/home/mineweb.sh creation ' + id + ' ' + host + ' sdomain', {
+    exec('/home/mineweb.sh creation ' + id + ' ' + host + ' sdomain ' + license_id, {
       user: sails.config.servers.hosting.user,
       host: sails.config.servers.hosting.host,
       port: sails.config.servers.hosting.port,

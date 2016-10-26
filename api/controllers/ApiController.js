@@ -17,7 +17,6 @@ module.exports = {
       path: req.url,
       headers: req.headers
     }, function (proxy_res) {
-      proxy_res.setEncoding('utf8')
       proxy_res.on('data', function (chunk) {
         res.write(chunk)
       })
