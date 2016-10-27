@@ -7,11 +7,6 @@
 
 module.exports = {
 
-  // DEPRECATED
-  plugin_version: function (req, res) {
-    return res.json({last_release:"1.0.3",time:1453999599,date:"2016-01-28 17:46:39"})
-  },
-
   /*
     Affiche la page d'accueil (/)
     En passant comme variable la dernière version disponible au public du CMS et le titre

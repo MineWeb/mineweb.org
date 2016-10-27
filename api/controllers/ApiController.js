@@ -9,6 +9,12 @@ var http = require('http')
 
 module.exports = {
 
+  // DEPRECATED
+  plugin_version: function (req, res) {
+    return res.json({last_release: '1.1', time: 1453999599, date: '2016-01-28 17:46:39'})
+  },
+
+  // proxy for v1
   forward: function (req, res) {
     var proxy_req = http.request({
       hostname: '51.255.36.8',
