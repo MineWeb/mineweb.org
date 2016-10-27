@@ -25,7 +25,7 @@
     "mailgun-js": "^0.7.11",
     "moment": "^2.14.1",
     "node-schedule": "^1.1.1",
-    "paypal-ipn": "^3.0.0",
+    "paypal-ipn": "git+https://github.com/Eywek/paypal-ipn.git",
     "pmx": "^0.6.8",
     "pug": "^2.0.0-beta4",
     "pump": "^1.0.1",

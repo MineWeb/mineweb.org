@@ -283,8 +283,6 @@ module.exports = {
   paypalIPN: function (req, res) {
     if (sails.config.paypal.sandbox)
       req.body.test_ipn = true
-    else
-      req.body.test_ipn = false
 
     paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
       if (err) {
@@ -499,7 +497,12 @@ module.exports = {
               }
 
               // Update suspended reason if license/hosting
-              if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
+              if (purchase.type == 'LICENSE') {
+                License.update({id: purchase.itemId}, {suspended: req.__('Litige PayPal')}).exec(function (err, item) {
+                  return res.send()
+                })
+              }
+              else if (purchase.type == 'HOSTING') {
                 License.update({hosting: purchase.itemId}, {suspended: req.__('Litige PayPal')}).exec(function (err, item) {
                   return res.send()
                 })
