@@ -314,7 +314,7 @@ module.exports = {
             }
 
             if (count > 0)
-              return res.serverError('Payment already handled')
+              return res.send('Payment already handled')
 
             // save purchase
             PurchaseService.req = req
