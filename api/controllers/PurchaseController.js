@@ -132,9 +132,9 @@ module.exports = {
 
           var data = { // Form PayPal values
             tax: fees,
-            return_url: RouteService.getBaseUrl() + '/buy/paypal/success',
-            cancel_return: RouteService.getBaseUrl() + '/purchase/' + offer,
-            notify_url: RouteService.getBaseUrl() + '/api/paypal-ipn',
+            return_url: /*RouteService.getBaseUrl()*/'http://51.255.36.20' + '/buy/paypal/success',
+            cancel_return: /*RouteService.getBaseUrl()*/'http://51.255.36.20' + '/purchase/' + offer,
+            notify_url: /*RouteService.getBaseUrl()*/'http://51.255.36.20' + '/api/paypal-ipn',
             business: sails.config.paypal.merchantEmail,
             item_name: item_name,
             custom: querystring.stringify({
