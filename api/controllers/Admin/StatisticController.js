@@ -49,36 +49,21 @@ module.exports = {
 
       // Get profit average per month
       function (callback) {
-        User.query('SELECT AVG(b.profit) AS averageMonthlyProfit FROM (SELECT SUM(a.profit) AS profit, a.mnth FROM (SELECT SUM(paymentAmount - taxAmount) AS profit, MONTH(createdAt) as mnth FROM paypalhistory GROUP BY mnth UNION SELECT SUM(payout) AS profit, MONTH(createdAt) as mnth FROM dedipasshistory GROUP BY mnth) AS a GROUP BY a.mnth) AS b', callback)
+        User.query("SELECT AVG(b.profit) AS averageMonthlyProfit FROM (SELECT SUM(a.profit) AS profit, a.mnth FROM (SELECT SUM(paymentAmount - taxAmount) AS profit, MONTH(createdAt) as mnth FROM paypalhistory WHERE state = 'COMPLETED' GROUP BY mnth UNION SELECT SUM(payout) AS profit, MONTH(createdAt) as mnth FROM dedipasshistory GROUP BY mnth) AS a GROUP BY a.mnth) AS b", callback)
       },
 
       // Get total profit
       function (callback) {
-        User.query('SELECT SUM(a.profit) AS totalProfit FROM (SELECT SUM(paymentAmount - taxAmount) AS profit FROM paypalhistory UNION SELECT SUM(payout) AS profit FROM dedipasshistory) AS a', callback)
+        User.query("SELECT SUM(a.profit) AS totalProfit FROM (SELECT SUM(paymentAmount - taxAmount) AS profit FROM paypalhistory WHERE state = 'COMPLETED' UNION SELECT SUM(payout) AS profit FROM dedipasshistory) AS a", callback)
       },
 
       // Get month profit
       function (callback) {
-        User.query('SELECT SUM(a.profit) AS monthProfit FROM (SELECT SUM(paymentAmount - taxAmount) AS profit FROM paypalhistory WHERE MONTH(createdAt) = \'' + ((new Date()).getMonth() +1) + '\' UNION SELECT SUM(payout) AS profit FROM dedipasshistory WHERE MONTH(createdAt) = \'' + ((new Date()).getMonth() +1) + '\') AS a', callback)
+        User.query('SELECT SUM(a.profit) AS monthProfit FROM (SELECT SUM(paymentAmount - taxAmount) AS profit FROM paypalhistory WHERE MONTH(createdAt) = \'' + ((new Date()).getMonth() +1) + '\' AND state = \'COMPLETED\' UNION SELECT SUM(payout) AS profit FROM dedipasshistory WHERE MONTH(createdAt) = \'' + ((new Date()).getMonth() +1) + '\') AS a', callback)
       },
 
       // Get licences purchases last 7 months
       function (callback) {
-        /*License.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM license WHERE hosting IS NULL GROUP BY month LIMIT 7', function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataMonths = _.clone(dataMonthsList)
-          for (var i = 0; i < data.length; i++) {
-            dataMonths[data[i].month] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var month in dataMonths) {
-            dataFormatted.push(dataMonths[month])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })*/
         // vars
         var sales = []
 
@@ -116,21 +101,6 @@ module.exports = {
 
       // Get hostings purchases last 7 months
       function (callback) {
-        /*Hosting.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM hosting GROUP BY month LIMIT 7', function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataMonths = _.clone(dataMonthsList)
-          for (var i = 0; i < data.length; i++) {
-            dataMonths[data[i].month] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var month in dataMonths) {
-            dataFormatted.push(dataMonths[month])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })*/
         // vars
         var sales = []
 
@@ -206,7 +176,7 @@ module.exports = {
 
       // Get paypal purchases last months
       function (callback) {
-        PayPalHistory.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM paypalhistory GROUP BY month LIMIT 7', function (err, data) {
+        PayPalHistory.query("SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM paypalhistory WHERE state = 'COMPLETED' GROUP BY month LIMIT 7", function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataMonths = _.clone(dataMonthsList)
@@ -244,7 +214,7 @@ module.exports = {
 
       // Get paypal purchases last week
       function (callback) {
-        PayPalHistory.query('SELECT COUNT(*) AS count, DAY(createdAt) AS day FROM paypalhistory WHERE createdAt > DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY day LIMIT 7', function (err, data) {
+        PayPalHistory.query("SELECT COUNT(*) AS count, DAY(createdAt) AS day FROM paypalhistory WHERE createdAt > DATE_SUB(NOW(), INTERVAL 7 DAY) AND state = 'COMPLETED' GROUP BY day LIMIT 7", function (err, data) {
           if (err) return callback(err)
           // add results to defaults results
           var dataDays = _.clone(dataDaysList)

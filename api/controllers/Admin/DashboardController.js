@@ -62,7 +62,7 @@ module.exports = {
         async.parallel([
           // Find with PayPal
           function (next) {
-            PayPalHistory.query('SELECT SUM(paymentAmount - taxAmount) AS amount FROM paypalhistory WHERE 1', function (err, profit) {
+            PayPalHistory.query("SELECT SUM(paymentAmount - taxAmount) AS amount FROM paypalhistory WHERE state = 'COMPLETED'", function (err, profit) {
               if (err)
                 return next(err)
               next(null, profit[0].amount)
@@ -94,7 +94,7 @@ module.exports = {
         async.parallel([
           // Find with PayPal
           function (next) {
-            PayPalHistory.query("SELECT SUM(paymentAmount - taxAmount) AS amount FROM paypalhistory WHERE paymentDate LIKE '" + date + "%'", function (err, profit) {
+            PayPalHistory.query("SELECT SUM(paymentAmount - taxAmount) AS amount FROM paypalhistory WHERE paymentDate LIKE '" + date + "%' AND state = 'COMPLETED'", function (err, profit) {
               if (err)
                 return next(err)
               next(null, profit[0].amount)
