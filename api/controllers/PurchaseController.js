@@ -459,7 +459,12 @@ module.exports = {
             // get purchase data
             Purchase.findOne({id: history[0].purchase}).exec(function (err, purchase) {
               // Update suspended reason if license/hosting
-              if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
+              if (purchase.type == 'LICENSE') {
+                License.update({id: purchase.itemId}, {suspended: req.__('Paiement PayPal remboursé')}).exec(function (err, item) {
+                  return res.send()
+                })
+              }
+              else if (purchase.type == 'HOSTING') {
                 License.update({hosting: purchase.itemId}, {suspended: req.__('Paiement PayPal remboursé')}).exec(function (err, item) {
                   return res.send()
                 })
@@ -529,7 +534,12 @@ module.exports = {
                 res.send()
 
               // Update suspended reason if license/hosting
-              if (purchase.type == 'LICENSE' || purchase.type == 'HOSTING') {
+              if (purchase.type == 'LICENSE') {
+                License.update({id: purchase.itemId}, {suspended: null}).exec(function (err, item) {
+                  return res.send()
+                })
+              }
+              else if (purchase.type == 'HOSTING') {
                 License.update({hosting: purchase.itemId}, {suspended: null}).exec(function (err, item) {
                   return res.send()
                 })
