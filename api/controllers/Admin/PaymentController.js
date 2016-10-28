@@ -96,10 +96,10 @@ module.exports = {
             history.purchase.type = 'N/A'
             history.purchase.itemId = 'N/A'
           }
-          else if (history.purchase.type === 'LICENSE' || history.purchase.type === 'HOSTING') {
+          else if (history.purchase.type === 'LICENSE') {
             history.purchase.itemId = '<a href="/admin/license/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
           }
-          else if (history.purchase.type === 'RENEW_LICENSE_HOSTED') {
+          else if (history.purchase.type === 'RENEW_LICENSE_HOSTED' || history.purchase.type === 'HOSTING') {
             history.purchase.itemId = '<a href="/admin/hosting/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
           }
           else if (history.purchase.type === 'PLUGIN' || history.purchase.type === 'THEME') {
@@ -211,10 +211,10 @@ module.exports = {
             history.purchase.type = 'N/A'
             history.purchase.itemId = 'N/A'
           }
-          else if (history.purchase.type === 'LICENSE' || history.purchase.type === 'HOSTING') {
+          else if (history.purchase.type === 'LICENSE') {
             history.purchase.itemId = '<a href="/admin/license/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
           }
-          else if (history.purchase.type === 'RENEW_LICENSE_HOSTED') {
+          else if (history.purchase.type === 'RENEW_LICENSE_HOSTED' || history.purchase.type === 'HOSTING') {
             history.purchase.itemId = '<a href="/admin/hosting/view/' + history.purchase.itemId + '"> ' + req.__('Voir') + '</a>'
           }
           else if (history.purchase.type === 'PLUGIN' || history.purchase.type === 'THEME') {

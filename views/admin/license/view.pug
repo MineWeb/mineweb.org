@@ -44,7 +44,10 @@ block content
                     .form-group
                       label.col-sm-2.control-label #{__('URL de la licence')}
                       .col-sm-10
-                        input.form-control(type='text', value=license.host, disabled)
+                        .input-group
+                          input.form-control(type='text', value=license.host, disabled)
+                          .input-group-btn
+                            a.btn.btn-info(href=license.host, target='_blank') #{__("Voir")}
                   .col-md-6
                     div.row
                       div.col-md-4.text-center
