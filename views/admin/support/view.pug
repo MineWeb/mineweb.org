@@ -67,7 +67,7 @@ block content
             .chat-message(class=reply.user.id === ticket.user.id ? 'left' : 'right')
               img.message-avatar(src="http://www.gravatar.com/avatar/" + reply.user.md5Email, alt='')
               .message
-                a.message-author(href='#') #{reply.user.username}
+                a.message-author(href='/admin/user/view/' + reply.user.id) #{reply.user.username}
                 span.message-date.moment-date(fromNow) #{reply.createdAt}
                 span.message-content !{reply.content}
 
