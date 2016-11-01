@@ -25,19 +25,19 @@ block content
                     .form-group
                       label.col-sm-2.control-label #{__('ID de la licence')}
                       .col-sm-10
-                        input.form-control(type='text', value=license.id, disabled)
+                        input.form-control(type='text', value=license.id, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__("Clé d'activation")}
                       .col-sm-10
-                        input.form-control(type='text', value=license.key, disabled)
+                        input.form-control(type='text', value=license.key, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Propriétaire')}
                       .col-sm-10
                         .input-group
                           span.input-group-addon ID: #{license.user.id}
-                          input.form-control(type='text', value=license.user.username, disabled)
+                          input.form-control(type='text', value=license.user.username, readonly)
                           .input-group-btn
                             a.btn.btn-info(href='/admin/user/view/' + license.user.id) #{__("Voir l'utilisateur")}
                   .col-md-6
@@ -45,7 +45,7 @@ block content
                       label.col-sm-2.control-label #{__('URL de la licence')}
                       .col-sm-10
                         .input-group
-                          input.form-control(type='text', value=license.host, disabled)
+                          input.form-control(type='text', value=license.host, readonly)
                           .input-group-btn
                             a.btn.btn-info(href=license.host, target='_blank') #{__("Voir")}
                   .col-md-6
@@ -299,7 +299,7 @@ block custom
       var btn = $(this)
       var btnContent = btn.html()
 
-      btn.attr('disabled', true).addClass('active disabled').html('En cours...')
+      btn.attr('readonly', true).addClass('active readonly').html('En cours...')
 
       $.ajax({
         url: btn.attr('href'),
@@ -312,17 +312,17 @@ block custom
             $('#debugResponseContent').JSONView(data.data.debug, {collapsed: true})
             $('#debugResponse').slideDown(150)
 
-            btn.attr('disabled', true).addClass('active disabled').html('Récupéré')
+            btn.attr('readonly', true).addClass('active readonly').html('Récupéré')
 
           } else {
             alert('Erreur ! ' + data.msg)
-            btn.attr('disabled', false).removeClass('active disabled').html(btnContent)
+            btn.attr('readonly', false).removeClass('active readonly').html(btnContent)
           }
         },
         error: function(data, textStatus, xhr) {
           console.log(data, textStatus, xhr)
           alert('Une erreur est survenue !')
-          btn.attr('disabled', false).removeClass('active disabled').html(btnContent)
+          btn.attr('readonly', false).removeClass('active readonly').html(btnContent)
         }
       })
 

@@ -25,32 +25,32 @@ block content
                     .form-group
                       label.col-sm-2.control-label #{__('Pseudo')}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.username, disabled)
+                        input.form-control(type='text', value=userFinded.username, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__("Email")}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.email, disabled)
+                        input.form-control(type='text', value=userFinded.email, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Email PayPal (développeur)')}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.paypalDeveloperEmail, disabled)
+                        input.form-control(type='text', value=userFinded.paypalDeveloperEmail, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Email Pusbullet (staff)')}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.pushbulletEmail, disabled)
+                        input.form-control(type='text', value=userFinded.pushbulletEmail, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Rôle')}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.role, disabled)
+                        input.form-control(type='text', value=userFinded.role, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Nom de rôle customisé (staff)')}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.customRoleName, disabled)
+                        input.form-control(type='text', value=userFinded.customRoleName, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Développeur')}
@@ -65,7 +65,7 @@ block content
                     .form-group
                       label.col-sm-2.control-label #{__('IP')}
                       .col-sm-10
-                        input.form-control(type='text', value=userFinded.ip, disabled)
+                        input.form-control(type='text', value=userFinded.ip, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Langue')}
@@ -223,7 +223,7 @@ block content
                       th #{__("Date d'achat")}
                   tbody
                     each license in userFinded.licenses
-                      tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
+                      tr(class=license.suspended !== null ? 'readonly' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
                         td
                           a(href="/admin/license/view/" + license.id) #{license.id}
                         td #{license.purchase}
@@ -264,7 +264,7 @@ block content
                       th #{__("Date d'achat")}
                   tbody
                     each hosting in userFinded.hostings
-                      tr(class=hosting.suspended !== null ? 'disabled' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
+                      tr(class=hosting.suspended !== null ? 'readonly' : '', style=hosting.suspended !== null ? 'opacity:0.5;' : '')
                         td #{hosting.hosting.id}
                         td #{hosting.purchase}
                         td
