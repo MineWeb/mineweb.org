@@ -581,7 +581,7 @@ module.exports = {
     var rate = req.body.rate
 
     // Create endpoint
-    var endpoint = 'http://api.dedipass.com/v1/pay/?key=' + sails.config.dedipass.publicKeys[offer] + '&rate=' + rate + '&code=' + code
+    var endpoint = 'http://api.dedipass.com/v1/pay/?public_key=' + sails.config.dedipass.publicKeys[offer] + '&private_key=' + sails.config.dedipass.privateKeys[offer] + '&rate=' + rate + '&code=' + code
 
     // Request
     request.get({

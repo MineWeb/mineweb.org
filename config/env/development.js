@@ -35,6 +35,10 @@ module.exports = {
     publicKeys: {
       license: 'a4e7b35c40c18f69431cd8e29f4d9bba',
       hosting: '45fd9efcda58b6d009ce44cdc7dc73e8'
+    },
+    privateKeys: {
+      license: '7d23e949115b0d7007b2965e7249338e8577ca88',
+      hosting: 'c6721e5db7e4f047201f16f7e7f13f4db8341453'
     }
   },
 
