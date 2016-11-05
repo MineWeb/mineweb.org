@@ -320,6 +320,7 @@ module.exports = {
         data.slug = req.body.slug
         if (req.body.official && req.body.official === 'on')
           data.official = true
+        data.downloads = 0
       }
 
       // send to API
@@ -485,6 +486,7 @@ module.exports = {
         data.slug = req.body.slug
         if (req.body.official && req.body.official === 'on')
           data.official = true
+        data.downloads = 0
       }
 
       // send to API

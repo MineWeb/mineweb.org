@@ -631,7 +631,7 @@ module.exports = {
 	          var extension = file.filename.split('.').pop()
 
 	          // seperate allowed and disallowed file types
-	          if (file.headers['content-type'] !== 'application/zip' || extension != 'zip') {
+	          if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed') || extension != 'zip') {
 	            // don't save
 							return res.json({
 								status: false,
@@ -785,7 +785,7 @@ module.exports = {
 							var extension = file.filename.split('.').pop()
 
 							// seperate allowed and disallowed file types
-							if (file.headers['content-type'] !== 'application/zip' || extension != 'zip') {
+							if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed') || extension != 'zip') {
 								// don't save
 								return res.json({
 									status: false,
@@ -1180,7 +1180,7 @@ module.exports = {
 	          var extension = file.filename.split('.').pop()
 
 	          // seperate allowed and disallowed file types
-	          if (file.headers['content-type'] !== 'application/zip' || extension != 'zip') {
+	          if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed') || extension != 'zip') {
 	            // don't save
 							return res.json({
 								status: false,
@@ -1333,7 +1333,7 @@ module.exports = {
 							var extension = file.filename.split('.').pop()
 
 							// seperate allowed and disallowed file types
-							if (file.headers['content-type'] !== 'application/zip' || extension != 'zip') {
+							if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed') || extension != 'zip') {
 								// don't save
 								return res.json({
 									status: false,
