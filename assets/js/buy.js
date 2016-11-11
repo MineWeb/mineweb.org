@@ -225,7 +225,7 @@ $('#pay').on('click', function(e) {
     document.location = '/purchase/' + offer + '/free/' + voucher + '/' + custom
   }
   else {
-    $('<form method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="custom" value="'+custom+'"><input name="offer" value="'+offer+'"></form>').submit()
+    $('<form style="display:none;" method="post" action="'+url+'"><input name="voucher" value="'+voucher+'"><input name="custom" value="'+custom+'"><input name="offer" value="'+offer+'"></form>').appendTo('body').submit()
   }
 
 })

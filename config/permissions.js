@@ -28,10 +28,16 @@ module.exports.list = {
     controller: 'admin/ticket',
     action: 'editstate'
   },
-  'ADMIN-TAKE_TICKET': {
-    controller: 'admin/ticket',
-    action: 'take'
-  },
+  'ADMIN-TAKE_TICKET': [
+    {
+      controller: 'admin/ticket',
+      action: 'take'
+    },
+    {
+      controller: 'admin/ticket',
+      action: 'untake'
+    }
+  ],
   'ADMIN-REPLY_TICKET': {
     controller: 'admin/ticket',
     action: 'reply'

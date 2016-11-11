@@ -173,41 +173,51 @@ module.exports = {
         if (ticket === undefined)
           return res.notFound()
 
-        // add signature + hello
-        var content = TicketReply.addSignature(req.body.reply, {username: res.locals.user.username, rolename:User.getRoleName(res.locals.user)}, ticket.user.lang)
-
-        // Save
-        TicketReply.create({user: req.session.userId, ticket:id, content: content}).exec(function (err, reply) {
+        // Check if no has replies
+        TicketReply.findOne({ticket: ticket.id}).sort('id DESC').exec(function (err, lastReply) {
           if (err) {
             sails.log.error(err)
             return res.serverError()
           }
 
-          // Update state
-          Ticket.update({id: ticket.id}, {state: 'WAITING_USER_RESPONSE'}).exec(function (err, ticketUpdated) {
-
-            res.json({
-              status: true,
-              msg: req.__('Votre réponse a bien été ajoutée !'),
+          if (lastReply !== undefined && lastReply.id != req.body.last_reply_id)
+            return res.json({
+              status: false,
+              msg: req.__('Une nouvelle réponse a été ajoutée depuis que vous avez chargé la page. Rechargez-la, lisez la réponse et réessayez.'),
               inputs: {}
             })
 
-            // remove pusbullet notification
-            PushbulletService.delete('Ticket', ticket.id)
+          // add signature + hello
+          var content = TicketReply.addSignature(req.body.reply, {username: res.locals.user.username, rolename:User.getRoleName(res.locals.user)}, ticket.user.lang)
 
-            // send notification to user
-            MailService.send('support_new_staff_response', {
-              url: RouteService.getBaseUrl() + '/support/view/' + ticket.id,
-              username: ticket.user.username,
-              ticketTitle: ticket.title,
-            }, req.__('Réponse à votre ticket support'), ticket.user.email);
+          // Save
+          TicketReply.create({user: req.session.userId, ticket: id, content: content}).exec(function (err, reply) {
+            if (err) {
+              sails.log.error(err)
+              return res.serverError()
+            }
 
+            // Update state
+            Ticket.update({id: ticket.id}, {state: 'WAITING_USER_RESPONSE'}).exec(function (err, ticketUpdated) {
+              res.json({
+                status: true,
+                msg: req.__('Votre réponse a bien été ajoutée !'),
+                inputs: {}
+              })
+
+              // remove pusbullet notification
+              PushbulletService.delete('Ticket', ticket.id)
+
+              // send notification to user
+              MailService.send('support_new_staff_response', {
+                url: RouteService.getBaseUrl() + '/support/view/' + ticket.id,
+                username: ticket.user.username,
+                ticketTitle: ticket.title,
+              }, req.__('Réponse à votre ticket support'), ticket.user.email);
+            })
           })
-
         })
-
       })
-
     })
   },
 
@@ -272,6 +282,32 @@ module.exports = {
 
       // send notification toastr
       NotificationService.success(req, req.__('Vous avez bien pris en charge le ticket !'))
+
+      // redirect
+      res.redirect('/admin/support/' + ticketUpdated[0].id)
+
+      // remove pusbullet notification
+      PushbulletService.delete('Ticket', ticketUpdated[0].id)
+
+    })
+  },
+
+  untake: function (req, res) {
+    // Get id
+		if (req.param('id') === undefined) {
+			return res.notFound('Id is missing')
+		}
+		var id = req.param('id')
+
+    Ticket.update({id: id}, {supported: null}).exec(function (err, ticketUpdated) {
+
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+
+      // send notification toastr
+      NotificationService.success(req, req.__('Vous ne prennez plus en charge le ticket !'))
 
       // redirect
       res.redirect('/admin/support/' + ticketUpdated[0].id)

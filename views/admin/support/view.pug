@@ -23,7 +23,7 @@ block content
         .ibox.float-e-margins
           .ibox-content.text-center.p-md
             div.row
-              div.col-md-4
+              div.col-md-3
                 h3
                   b #{__('Statut')}
                   br
@@ -34,7 +34,7 @@ block content
                     select.form-control(name='state')
                       option(value="WAITING_STAFF_RESPONSE", selected=ticket.state === 'WAITING_STAFF_RESPONSE') #{__('En attente de la réponse du staff')}
                       option(value="WAITING_USER_RESPONSE", selected=ticket.state === 'WAITING_USER_RESPONSE') #{__("En attente de la réponse de l'utilisateur")}
-              div.col-md-4
+              div.col-md-3
                 h3
                   b #{__('Catégorie')}
                   br
@@ -46,7 +46,7 @@ block content
                     option(value="SUGGESTION", selected=ticket.category === 'SUGGESTION') #{__('Suggestion')}
                     option(value="QUESTION", selected=ticket.category === 'QUESTION') #{__('Question')}
                     option(value="OTHER", selected=ticket.category === 'OTHER') #{__('Autre')}
-              div.col-md-4
+              div.col-md-3
                 h3
                   if ticket.license !== undefined && ticket.license.hosting === null
                     p
@@ -59,6 +59,11 @@ block content
                   else
                     .text-muted
                       em #{__('Aucun(e) licence/licence hébergée associée')}
+              div.col-md-3
+                h3
+                  if ticket.supported === user.id
+                    p &nbsp;
+                    a.btn.btn-outline.btn-danger.text-muted(href='/admin/support/untake/' + ticket.id) #{__("Ne plus prendre en charge")}
 
 
         .chat-discussion
@@ -74,9 +79,13 @@ block content
   if ticket.state !== 'CLOSED'
     .row(style="margin-bottom:100px;")
       .col-lg-12
+        if ticket.supported !== user.id
+          .alert.alert-warning #{__("Ce ticket n'a pas été pris en charge ou il a été pris en charge par un autre membre de l'équipe. Évitez de vous occuper de son ticket si il n'est pas au courant.")}
         .chat-message-form
 
           form(action="/admin/support/reply/" + ticket.id, method="post", data-ajax, data-redirect-url='?')
+
+            input(type='hidden', name='last_reply_id', value=ticket.replies[ticket.replies.length-1].id)
 
             .form-group
               textarea#editor(name='reply', data-form-no-display-error)

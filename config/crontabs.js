@@ -32,7 +32,7 @@ module.exports.crontabs = [
 						if (lastReply !== undefined) {
 							// check if date < 1 week
 							var date = (new Date(lastReply.createdAt)).getTime()
-							var oneWeekAgo = moment().subtract(1, 'week').format('x')
+							var oneWeekAgo = moment().subtract(4, 'day').format('x')
 
 							if (date < oneWeekAgo) { // if reply date is more old than 1 week
 								// close

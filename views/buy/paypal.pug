@@ -23,7 +23,7 @@ block custom
 
     $(window).ready(function() {
       var formContent = '';
-      formContent += '<form action="https://#{sails.config.paypal.sandbox ? 'sandbox' : 'www'}.paypal.com/cgi-bin/webscr" method="post">';
+      formContent += '<form style="display:none;" action="https://#{sails.config.paypal.sandbox ? 'sandbox' : 'www'}.paypal.com/cgi-bin/webscr" method="post">';
         formContent += '<input name="currency_code" type="hidden" value="EUR" />';
         formContent += '<input name="shipping" type="hidden" value="0.00" />';
         formContent += '<input name="tax" type="hidden" value="#{tax}" />';
@@ -43,5 +43,5 @@ block custom
         //formContent += '<input type="hidden" name="image_url" value="http://mineweb.org/img/paypal-logo.png">';
       formContent += '</form>';
 
-      $(formContent).submit();
+      $(formContent).appendTo('body').submit();
     })
