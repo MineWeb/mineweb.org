@@ -55,7 +55,11 @@ module.exports = {
       next()
     }
     else if (req.body.user !== undefined & req.body.user.length > 0) { // find user
-      User.findOne({or: {username: req.body.user, email: req.body.user}}).exec(function (err, userFinded) {
+      User.findOne({or:
+        [
+          {username: req.body.user},
+          {email: req.body.user}
+        ]}).exec(function (err, userFinded) {
         if (err) {
           sails.log.error(err)
           return res.serverError()
