@@ -57,7 +57,7 @@ module.exports.session = {
 
   host: '51.255.36.38',
   port: 6379,
-  ttl: 24 * 60 * 60 * 1000,
+  ttl: 60 * 60 * 24 * 7,
   db: 0,
   pass: undefined,
   prefix: process.env.NODE_ENV === 'production' ? 'sess:' : 'dev-sess:',
