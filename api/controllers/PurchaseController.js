@@ -375,7 +375,8 @@ module.exports = {
                   }
                   else { // payment was pending
                     PayPalHistory.update({id: history.id}, {
-                      state: 'COMPLETED'
+                      state: 'COMPLETED',
+                      taxAmount: params.mc_fee
                     }).exec(function (err, history) {
                       if (err) {
                         sails.log.error(err)
@@ -419,7 +420,7 @@ module.exports = {
             user: data.userId,
             paymentId: params.txn_id,
             paymentAmount: params.mc_gross,
-            taxAmount: params.mc_fee,
+            taxAmount: null,
             buyerEmail: params.payer_email,
             paymentDate: (new Date(params.payment_date)),
             state: 'PENDING'
