@@ -130,64 +130,79 @@ module.exports = {
           else if (offer == "theme")
             var item_name = req.__("Achat d'un theme MineWeb")
 
-          var data = { // Form PayPal values
-            tax: fees,
-            return_url: /*RouteService.getBaseUrl()*/'http://mineweb.org' + '/buy/paypal/success',
-            cancel_return: /*RouteService.getBaseUrl()*/'http://mineweb.org' + '/purchase/' + offer,
-            notify_url: /*RouteService.getBaseUrl()*/'http://51.255.36.20' + '/api/paypal-ipn',
-            business: sails.config.paypal.merchantEmail,
-            item_name: item_name,
-            custom: querystring.stringify({
-              offer: offer,
-              voucher: voucherCode,
-              userId: req.session.userId,
-              other: req.body.custom
-            }),
-            amount: price,
-            cbt: req.__('Retourner sur mineweb.org')
+          if (offer == "plugin" || offer == "theme") {
+            var model = (offer === 'plugin') ? Plugin : Theme
+            model.findOne({id: req.body.custom}).populate(['author']).exec(function (err, offer) {
+              if (err) {
+                sails.log.error(err)
+                return res.serverError()
+              }
+              next(offer.author.paypalDeveloperEmail)
+            })
           }
-
-          // Render view
-          res.locals.title = req.__('Redirection vers PayPal')
-
-          // Check host (for hosting)
-            if (offer == 'hosting') {
-              if (req.body.custom === undefined || req.body.custom.length == 0) {
-                NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
-                return res.redirect('/purchase/hosting')
-              }
-
-              // If not a renew
-              if(req.body.custom.split('renew-').length !== 2) {
-                Hosting.checkSubdomainAvailability(req.body.custom, function (available) {
-                  if (!available) {
-                    NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
-                    return res.redirect('/purchase/hosting')
-                  }
-
-                  return res.view('./buy/paypal', data)
-                })
-              }
-              else { // Renew
-                // Search hosting
-                Hosting.count({id: req.body.custom.split('renew-')[1]}).exec(function (err, count) {
-                  if (err) {
-                    sails.log.error(err)
-                    return res.serverError('An error occured on dedipass api')
-                  }
-
-                  if (count === 0) {
-                    NotificationService.error(req, req.__('Vous ne pouvez pas renouveler une licence hébergée inexistant !'))
-                    return res.redirect('/purchase/hosting')
-                  }
-
-                  return res.view('./buy/paypal', data)
-                })
-              }
+          else {
+            next(sails.config.paypal.merchantEmail)
+          }
+          function next(merchantEmail) {
+            var data = { // Form PayPal values
+              tax: fees,
+              return_url: /*RouteService.getBaseUrl()*/'http://mineweb.org' + '/buy/paypal/success',
+              cancel_return: /*RouteService.getBaseUrl()*/'http://mineweb.org' + '/purchase/' + offer,
+              notify_url: /*RouteService.getBaseUrl()*/'http://51.255.36.20' + '/api/paypal-ipn',
+              business: merchantEmail,
+              item_name: item_name,
+              custom: querystring.stringify({
+                offer: offer,
+                voucher: voucherCode,
+                userId: req.session.userId,
+                other: req.body.custom
+              }),
+              amount: price,
+              cbt: req.__('Retourner sur mineweb.org')
             }
-            else { // Not hosting
-              return res.view('./buy/paypal', data)
-            }
+
+            // Render view
+            res.locals.title = req.__('Redirection vers PayPal')
+
+            // Check host (for hosting)
+              if (offer == 'hosting') {
+                if (req.body.custom === undefined || req.body.custom.length == 0) {
+                  NotificationService.error(req, req.__('Vous devez choisir un sous-domaine !'))
+                  return res.redirect('/purchase/hosting')
+                }
+
+                // If not a renew
+                if(req.body.custom.split('renew-').length !== 2) {
+                  Hosting.checkSubdomainAvailability(req.body.custom, function (available) {
+                    if (!available) {
+                      NotificationService.error(req, req.__('Vous devez choisir un sous-domaine disponible !'))
+                      return res.redirect('/purchase/hosting')
+                    }
+
+                    return res.view('./buy/paypal', data)
+                  })
+                }
+                else { // Renew
+                  // Search hosting
+                  Hosting.count({id: req.body.custom.split('renew-')[1]}).exec(function (err, count) {
+                    if (err) {
+                      sails.log.error(err)
+                      return res.serverError('An error occured on dedipass api')
+                    }
+
+                    if (count === 0) {
+                      NotificationService.error(req, req.__('Vous ne pouvez pas renouveler une licence hébergée inexistant !'))
+                      return res.redirect('/purchase/hosting')
+                    }
+
+                    return res.view('./buy/paypal', data)
+                  })
+                }
+              }
+              else { // Not hosting
+                return res.view('./buy/paypal', data)
+              }
+          }
         })
     })
   },
@@ -420,7 +435,7 @@ module.exports = {
             user: data.userId,
             paymentId: params.txn_id,
             paymentAmount: params.mc_gross,
-            taxAmount: 0.0,
+            taxAmount: null,
             buyerEmail: params.payer_email,
             paymentDate: (new Date(params.payment_date)),
             state: 'PENDING'
