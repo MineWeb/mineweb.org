@@ -388,11 +388,18 @@ block content
                       tr
                         th #{__('Date de la connexion')}
                         th #{__('Adresse IP de connexion')}
+                        th #{__('Localisation de la connexion')}
+                        th #{__('Navigateur de la connexion')}
                     tbody
                       each connection, index in user.connectionLogs
                         tr
                           td.moment-date(data-format='Le {L} à {LT}') #{connection.createdAt}
                           td #{connection.ip}
+                          td #{connection.location || 'N/A'}
+                          td
+                            | #{connection.agent || 'N/A'}
+                            if (connection.deviceName)
+                              | (#{connection.deviceName})
 
 
               hr

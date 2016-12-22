@@ -10,6 +10,8 @@ var moment = require('moment')
 var async = require('async')
 var twoFactor = require('two-factor')
 var _ = require('underscore')
+var geoip = require('geoip-lite')
+var useragent = require('useragent')
 
 module.exports = {
 
@@ -18,7 +20,6 @@ module.exports = {
 	*/
 
   login: function (req, res) {
-
     // On vérifie qu'il ne soit pas déjà connecté
     if (req.session.authenticated !== undefined && req.session.authenticated === true) {
       return res.json({
@@ -151,11 +152,25 @@ module.exports = {
           }
 
           // On ajoute une connexion aux logs de connexions de l'utilisateur
-          UserLog.create({ action: 'LOGIN', ip: CloudflareService.getIP(req), user: user.id, status: true}).exec(function (err, log) {
+          var geo = geoip.lookup(CloudflareService.getIP(req))
+          var agent = useragent.parse(req.headers['user-agent'])
+          agent = agent.toString()
+          UserLog.create({
+            action: 'LOGIN',
+            ip: CloudflareService.getIP(req),
+            user: user.id,
+            status: true,
+            location: (geo) ? ((geo.city) ? geo.city + ', ' : '') + geo.country : null,
+            agent: agent,
+            deviceName: req.device.name || null
+          }).exec(function (err, log) {
             if (err) {
               sails.log.error(err)
               return res.serverError()
             }
+
+            // find if it's the first connection with this agent + deviceName
+            //console.log('Une nouvelle connexion a été détectée sur votre compte depuis ' + geo.city + ', ' + geo.country + ' avec ' + agent + (req.device.name ? '(' + req.device.name + ')' : ''));
           })
         })
       })
