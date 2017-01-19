@@ -62,7 +62,7 @@ module.exports = {
         async.parallel([
           // Find with PayPal
           function (next) {
-            PayPalHistory.query("SELECT SUM(paypal.paymentAmount - paypal.taxAmount) AS sum FROM paypalhistory AS paypal INNER JOIN purchase AS purchase ON purchase.id = paypal.purchase WHERE (purchase.type = 'LICENSE' OR purchase.type = 'HOSTING') AND MONTH(paypal.paymentDate) = MONTH(NOW()) AND paypal.state = 'COMPLETED'", function (err, profit) {
+            PayPalHistory.query("SELECT SUM(paypal.paymentAmount - paypal.taxAmount) AS sum FROM paypalhistory AS paypal INNER JOIN purchase AS purchase ON purchase.id = paypal.purchase WHERE (purchase.type = 'LICENSE' OR purchase.type = 'HOSTING') AND paypal.state = 'COMPLETED'", function (err, profit) {
               if (err)
                 return next(err)
               next(null, profit[0].sum)
@@ -70,7 +70,7 @@ module.exports = {
           },
           // Find with Dedipass
           function (next) {
-            DedipassHistory.query("SELECT SUM(dedipass.payout) AS sum FROM dedipasshistory AS dedipass INNER JOIN purchase AS purchase ON purchase.id = dedipass.purchase WHERE (purchase.type = 'LICENSE' OR purchase.type = 'HOSTING') AND MONTH(dedipass.createdAt) = MONTH(NOW())", function (err, profit) {
+            DedipassHistory.query("SELECT SUM(dedipass.payout) AS sum FROM dedipasshistory AS dedipass INNER JOIN purchase AS purchase ON purchase.id = dedipass.purchase WHERE (purchase.type = 'LICENSE' OR purchase.type = 'HOSTING')", function (err, profit) {
               if (err)
                 return next(err)
               next(null, profit[0].sum)
@@ -94,18 +94,18 @@ module.exports = {
         async.parallel([
           // Find with PayPal
           function (next) {
-            PayPalHistory.query("SELECT SUM(paymentAmount - taxAmount) AS amount FROM paypalhistory WHERE paymentDate LIKE '" + date + "%' AND state = 'COMPLETED'", function (err, profit) {
+            PayPalHistory.query("SELECT SUM(paypal.paymentAmount - paypal.taxAmount) AS sum FROM paypalhistory AS paypal INNER JOIN purchase AS purchase ON purchase.id = paypal.purchase WHERE (purchase.type = 'LICENSE' OR purchase.type = 'HOSTING') AND MONTH(paypal.paymentDate) = MONTH(NOW()) AND paypal.state = 'COMPLETED'", function (err, profit) {
               if (err)
                 return next(err)
-              next(null, profit[0].amount)
+              next(null, profit[0].sum)
             })
           },
           // Find with Dedipass
           function (next) {
-            DedipassHistory.find({createdAt: {'like': date + '%'}}).limit(1).sum('payout').exec(function (err, profit) {
+            DedipassHistory.query("SELECT SUM(dedipass.payout) AS sum FROM dedipasshistory AS dedipass INNER JOIN purchase AS purchase ON purchase.id = dedipass.purchase WHERE (purchase.type = 'LICENSE' OR purchase.type = 'HOSTING') AND MONTH(dedipass.createdAt) = MONTH(NOW())", function (err, profit) {
               if (err)
                 return next(err)
-              next(null, profit[0].payout)
+              next(null, profit[0].sum)
             })
           }
         ], function (err, results) {
