@@ -6,6 +6,7 @@
  */
 
 var async = require('async')
+var moment = require('moment')
 
 module.exports = {
 
@@ -120,26 +121,19 @@ module.exports = {
         // vars
         var sales = []
 
-        var d = new Date()
-        var year = d.getFullYear()
-
         var months = [
-          (d.getMonth() - 4), // 6 months ago
-          (d.getMonth() - 3), // 5 months ago
-          (d.getMonth() - 2), // ...
-          (d.getMonth() - 1),
-          (d.getMonth()),
-          (d.getMonth() + 1) // actual month
+          moment().subtract(5, 'months').format('YYYY-MM'),
+          moment().subtract(4, 'months').format('YYYY-MM'),
+          moment().subtract(3, 'months').format('YYYY-MM'),
+          moment().subtract(2, 'months').format('YYYY-MM'),
+          moment().subtract(1, 'months').format('YYYY-MM'),
+          moment().format('YYYY-MM'),
         ]
 
         // sql
         async.forEach(months, function (month, next) { // for each months
 
-          if (month.toString().length === 1)
-            month = '0' + month
-          var date = year + '-' + month + '-' // setup date LIKE
-
-          License.count({createdAt: {'like': date + '%'}, hosting: null}).exec(function (err, count) {
+          License.count({createdAt: {'like': month + '%'}, hosting: null}).exec(function (err, count) {
             if (err)
               sales.push(0)
             else
@@ -156,26 +150,19 @@ module.exports = {
         // vars
         var sales = []
 
-        var d = new Date()
-        var year = d.getFullYear()
-
         var months = [
-          (d.getMonth() - 4), // 6 months ago
-          (d.getMonth() - 3), // 5 months ago
-          (d.getMonth() - 2), // ...
-          (d.getMonth() - 1),
-          (d.getMonth()),
-          (d.getMonth() + 1) // actual month
+          moment().subtract(5, 'months').format('YYYY-MM'),
+          moment().subtract(4, 'months').format('YYYY-MM'),
+          moment().subtract(3, 'months').format('YYYY-MM'),
+          moment().subtract(2, 'months').format('YYYY-MM'),
+          moment().subtract(1, 'months').format('YYYY-MM'),
+          moment().format('YYYY-MM'),
         ]
 
         // sql
         async.forEach(months, function (month, next) { // for each months
 
-          if (month.toString().length === 1)
-            month = '0' + month
-          date = year + '-' + month + '-' // setup date LIKE
-
-          Hosting.count({createdAt: {'like': date + '%'}}).exec(function (err, count) {
+          Hosting.count({createdAt: {'like': month + '%'}}).exec(function (err, count) {
             if (err)
               sales.push(0)
             else
