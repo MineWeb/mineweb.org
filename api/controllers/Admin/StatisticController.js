@@ -68,6 +68,7 @@ module.exports = {
         var sales = []
 
         var months = [
+          moment().subtract(6, 'months').format('YYYY-MM'),
           moment().subtract(5, 'months').format('YYYY-MM'),
           moment().subtract(4, 'months').format('YYYY-MM'),
           moment().subtract(3, 'months').format('YYYY-MM'),
@@ -97,6 +98,7 @@ module.exports = {
         var sales = []
 
         var months = [
+          moment().subtract(6, 'months').format('YYYY-MM'),
           moment().subtract(5, 'months').format('YYYY-MM'),
           moment().subtract(4, 'months').format('YYYY-MM'),
           moment().subtract(3, 'months').format('YYYY-MM'),
