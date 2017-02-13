@@ -34,7 +34,7 @@ block content
                 img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
               div.col-md-6
                 h3 #{plugin.name}
-                p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description, 250, true).replace(/(<([^>]+)>)/ig, '')}
+                p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 250, true)}
                 p.text-muted.market-item-infos
                   | #{__('Prix :')}&nbsp;
                   if plugin.price > 0
@@ -70,7 +70,7 @@ block content
                 img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
               div.col-md-6
                 h3 #{theme.name}
-                p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description, 250, true).replace(/(<([^>]+)>)/ig, '')}
+                p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 250, true)}
                 p.text-muted.market-item-infos
                   | #{__('Prix :')}&nbsp;
                   if theme.price > 0
