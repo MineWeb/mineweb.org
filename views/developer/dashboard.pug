@@ -58,7 +58,7 @@ block content
               .card-header
                 h4.card-title #{plugin.name} v#{plugin.version}
               .card-block
-                p.card-text !{Utils.truncate(plugin.description, 100, true)}
+                p.card-text !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 100, true)}
                 div.btn-group
                   a.btn.btn-ghost(href='/developer/edit/plugin/' + plugin.id) #{__('Modifier')}
                   a.btn.btn-outline-secondary(href='/developer/update/plugin/' + plugin.id, disabled=!plugin.versions[0].public, class=!plugin.versions[0].public ? 'disabled' : '') #{__('Ajouter une version')}
@@ -93,7 +93,7 @@ block content
               .card-header
                 h4.card-title #{theme.name} v#{theme.version}
               .card-block
-                p.card-text !{Utils.truncate(theme.description, 100, true)}
+                p.card-text !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 100, true)}
                 div.btn-group
                   a.btn.btn-ghost(href='/developer/edit/theme/' + theme.id) #{__('Modifier')}
                   a.btn.btn-outline-secondary(href='/developer/update/theme/' + theme.id, disabled=!theme.versions[0].public, class=!theme.versions[0].public ? 'disabled' : '') #{__('Ajouter une version')}
