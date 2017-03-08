@@ -338,7 +338,7 @@ module.exports = {
               offerType: offer.toUpperCase(),
               offerId: (data.other === undefined || data.other == 'undefined' || (offer != "plugin" && offer != "theme")) ? undefined : data.other,
               host: (data.other === undefined || data.other == 'undefined' || offer != "hosting" || data.other.split('renew-').length === 2) ? null : data.other,
-              hostRenew: (data.other.split('renew-').length === 2 && offer == "hosting") ? data.other.split('renew-')[1] : false,
+              hostRenew: (data.other && data.other.split('renew-').length === 2 && offer == "hosting") ? data.other.split('renew-')[1] : false,
               paymentType: 'PAYPAL',
               voucher: data.voucher,
               amount: params.mc_gross,
