@@ -509,6 +509,8 @@ module.exports = {
               sails.log.error(err)
               return res.serverError()
             }
+            if (!history || history.length === 0)
+               return res.send()
 
             // get purchase data
             Purchase.findOne({id: history[0].purchase}).exec(function (err, purchase) {
