@@ -15,15 +15,15 @@ block content
 
           h4.text-center #{__('Redirection en cours...')}
 
-          <!--p.lead.text-center
-            small(style='font-size:60%;font-weight: 300;') #{__('Nous vous redirigeons vers les services de PayPal pour effectuer le paiement ...')}-->
-          div.alert.alert-danger
-            | Le paiement par PayPal est temporairement désactivé (quelques heures maximum), désolé de la gêne occasionnée.
+          p.lead.text-center
+            small(style='font-size:60%;font-weight: 300;') #{__('Nous vous redirigeons vers les services de PayPal pour effectuer le paiement ...')}
+          <!--div.alert.alert-danger
+            | Le paiement par PayPal est temporairement désactivé (quelques heures maximum), désolé de la gêne occasionnée.-->
 
 block custom
   script(type='text/javascript').
 
-    /*$(window).ready(function() {
+    $(window).ready(function() {
       var formContent = '';
       formContent += '<form style="display:none;" action="https://#{sails.config.paypal.sandbox ? 'sandbox' : 'www'}.paypal.com/cgi-bin/webscr" method="post">';
         formContent += '<input name="currency_code" type="hidden" value="EUR" />';
@@ -46,4 +46,4 @@ block custom
       formContent += '</form>';
 
       $(formContent).appendTo('body').submit();
-    })*/
+    })
