@@ -156,7 +156,7 @@ module.exports = {
                 voucher: voucherCode,
                 userId: req.session.userId,
                 other: req.body.custom
-              }).replace(/=/g, '-').replace(/&/g, '|'),
+              }).replace(/=/g, '--').replace(/&/g, '|'),
               amount: price,
               cbt: req.__('Retourner sur mineweb.org')
             }
@@ -308,7 +308,7 @@ module.exports = {
         // Set vars
         var params = req.body
 
-        var data = querystring.parse(params.custom.replace(/-/g, '=').replace(/\|/g, '&'))
+        var data = querystring.parse(params.custom.replace(/--/g, '=').replace(/\|/g, '&'))
 
         if (data === undefined || data.offer === undefined)
           return res.serverError('Undefined offer')
