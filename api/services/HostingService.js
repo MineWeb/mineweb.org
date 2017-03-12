@@ -18,9 +18,9 @@ module.exports = {
       if (err) {
         sails.log.error(err)
         return next()
-      }
-
-      var out = stdout.split("\n")
+      }       
+      return next()
+      /*var out = stdout.split("\n")
       try {
         var ids = JSON.parse(out[6])
       } catch (e) {
@@ -35,7 +35,7 @@ module.exports = {
             return sails.log.error(err)
           return next()
         })
-      }
+      }*/
 
     })
   },
