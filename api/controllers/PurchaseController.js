@@ -296,17 +296,14 @@ module.exports = {
     Handle PayPal check after buy with IPN POSTed data
   */
   paypalIPN: function (req, res) {
-    if (sails.config.paypal.sandbox)
-      req.body.test_ipn = true
-
-    paypalIPN.verify(req.body, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
+    paypalIPN.verify(req.rawBody, {'allow_sandbox': sails.config.paypal.sandbox}, function (err, msg) {
       if (err) {
         sails.log.error(err)
         return res.serverError(err)
       }
       else {
         // Set vars
-        var params = req.body
+        var params = querystring.parse(req.rawBody)
 
         var data = querystring.parse(params.custom.replace(/--/g, '=').replace(/\|/g, '&'))
 

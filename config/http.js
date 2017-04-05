@@ -55,7 +55,7 @@ module.exports.http = {
   middleware: {
 
     rawBody: function (req, res, next) {
-      if (req.url.indexOf('/api/v1/') !== -1) {
+      if (req.url.indexOf('/api/v1/') !== -1 || req.url.indexOf('/api/paypal-ipn') !== -1) { // for api.mineweb.org or paypal ipn check
         req.rawBody = ''
         req.setEncoding('utf8')
 
