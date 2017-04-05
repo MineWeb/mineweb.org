@@ -64,6 +64,8 @@ module.exports.http = {
         })
 
         req.on('end', function () {
+          if (req.url.indexOf('/api/paypal-ipn') !== -1)
+            req.headers = {}
           next()
         })
       }
