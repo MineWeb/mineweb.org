@@ -186,6 +186,7 @@ module.exports.routes = {
   '/admin/support/untake/:id': 'Admin/TicketController.untake',
   '/admin/support/edit-category/:id': 'Admin/TicketController.editCategory',
   '/admin/support/edit-state/:id': 'Admin/TicketController.editState',
+  '/admin/support/find/:search': 'Admin/TicketController.find',
 
   'post /admin/support/reply/:id': 'Admin/TicketController.reply',
 

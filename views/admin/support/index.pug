@@ -1,5 +1,31 @@
 extends ../layouts/default
 
+block search
+  form.navbar-form-custom(role='search', action='search_results.html')
+    .form-group
+      input#top-search.form-control(type='text', placeholder=__('Rechercher un ticket...'), name='top-search')
+  ul#top-search-results.dropdown-menu.dropdown-messages(style='left: 70px;width:75%;padding:0;')
+    div(style='margin-top:5px;')
+    li
+      a.dropdown-messages-box(style='margin:0')
+        .media-body
+          small.pull-right Il y a 8 mois
+          | J'ai un problème urgent
+    li.divider
+    li
+      a.dropdown-messages-box(style='margin:0')
+        .media-body
+          small.pull-right Il y a 8 mois
+          | J'ai un problème urgent
+    li.divider
+    li
+      a.dropdown-messages-box(style='margin:0')
+        .media-body
+          small.pull-right Il y a 8 mois
+          | J'ai un problème urgent
+
+
+
 block content
   .row.wrapper.border-bottom.white-bg.page-heading
     .col-sm-4
@@ -33,9 +59,12 @@ block content
                           a(href='/admin/support/' + ticket.id) #{ticket.title}
                           br
                           small.moment-date(fromNow) #{ticket.createdAt}
-                        td.project-completion
-                          b #{__('Dernière activité')}&nbsp;
-                          span.moment-date(fromNow) #{ticket.lastReply.createdAt}
+                        if ticket.lastReply !== undefined
+                          td.project-completion
+                            b #{__('Dernière activité')}&nbsp;
+                            span.moment-date(fromNow) #{ticket.lastReply.createdAt}
+                        else
+                          td.project-completion
                         td.project-people
                           img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
                           if ticket.supported
@@ -89,4 +118,36 @@ block custom
       $("[data-toggle=tooltip]").each(function(e) {
         $(this).tooltip();
       });
+    })
+    var delay = (function(){
+      var timer = 0;
+      return function(callback, ms){
+        clearTimeout (timer);
+        timer = setTimeout(callback, ms);
+      };
+    })();
+    $('#top-search').keyup(function() {
+      delay(function(){
+        var search = $('#top-search').val()
+        if (search.length === 0)
+          return $('#top-search-results').css('display', 'none')
+        $.get('/admin/support/find/' + search, function (data) {
+          var response = '<li><a href=":link" style="margin:0" class="dropdown-messages-box"><div class="media-body"><small class="pull-right">:date</small> :title</div></a></li>'
+
+          var html = '<div style="margin-top:5px;"></div>'
+          var ticket
+          var i = 0
+          for (id in data.tickets) {
+            i++
+            ticket = data.tickets[id]
+            if (i > 1)
+              html += '<li class="divider"></li>'
+            html += response.replace(':link', '/admin/support/' + ticket.id + '?search=' + search).replace(':title', ticket.title).replace(':date', moment(ticket.lastUpdate).fromNow())
+          }
+          
+          if (i === 0)
+            return $('#top-search-results').css('display', 'none')
+          $('#top-search-results').html(html + '<div style="margin-top:5px;"></div>').css('display', 'block')
+        })
+      }, 300);
     });

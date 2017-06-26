@@ -9,6 +9,50 @@ var async = require('async')
 
 module.exports = {
 
+  find: function (req, res) {
+    if (req.param('search') === undefined)
+      return res.notFound()
+    var search = req.param('search')
+
+    async.parallel([
+      // Search with title
+      function (callback) {
+        Ticket.find({
+          title: {'like': '%' + search + '%'}
+        }).exec(callback)
+      },
+      // Search with content
+      function (callback) {
+        TicketReply.find({
+          content: {'like': '%' + search + '%'}
+        }).populate(['ticket']).exec(callback)
+      }
+    ], function (err, results) {
+      if (err) {
+        console.error(err)
+        return res.json({status: false, tickets: {}})
+      }
+
+      var tickets = {}
+      for (var i = 0; i < results[0].length; i++) {
+        tickets[results[0][i].id] = {
+          id: results[0][i].id,
+          title: results[0][i].title,
+          lastUpdate: results[0][i].updatedAt
+        }
+      }
+      for (var i = 0; i < results[1].length; i++) {
+        tickets[results[1][i].ticket.id] = {
+          id: results[1][i].ticket.id,
+          title: results[1][i].ticket.title,
+          lastUpdate: results[1][i].ticket.updatedAt
+        }
+      }
+
+      return res.json({status: true, tickets: tickets})
+    })
+  },
+
   index: function (req, res) {
 
     async.parallel([

@@ -42,6 +42,10 @@ module.exports.list = {
     controller: 'admin/ticket',
     action: 'reply'
   },
+  'ADMIN-FIND_TICKETS': {
+    controller: 'admin/ticket',
+    action: 'find'
+  },
   'ADMIN-MANAGE_SETTINGS': [
     {
       controller: 'admin/dashboard',
@@ -160,6 +164,7 @@ module.exports.access = {
     'ADMIN-EDIT_STATE_TICKET',
     'ADMIN-TAKE_TICKET',
     'ADMIN-REPLY_TICKET',
+    'ADMIN-FIND_TICKETS',
     'ADMIN-MANAGE_SETTINGS',
     'ADMIN-FIND_LICENSE',
     // 'ADMIN-SUSPEND_LICENSE',
@@ -188,6 +193,7 @@ module.exports.access = {
     'ADMIN-EDIT_STATE_TICKET',
     'ADMIN-TAKE_TICKET',
     'ADMIN-REPLY_TICKET',
+    'ADMIN-FIND_TICKETS',
     'ADMIN-MANAGE_SETTINGS',
     'ADMIN-FIND_LICENSE',
     'ADMIN-SUSPEND_LICENSE',

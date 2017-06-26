@@ -84,8 +84,9 @@ block content
         .chat-message-form
 
           form(action="/admin/support/reply/" + ticket.id, method="post", data-ajax, data-redirect-url='?')
-
-            input(type='hidden', name='last_reply_id', value=ticket.replies[ticket.replies.length-1].id)
+            
+            if ticket.replies[ticket.replies.length-1] !== undefined
+              input(type='hidden', name='last_reply_id', value=ticket.replies[ticket.replies.length-1].id)
 
             .form-group
               textarea#editor(name='reply', data-form-no-display-error)
@@ -133,6 +134,29 @@ block custom
     $('select[name="category"]').on('change', function (e) {
       $.post('/admin/support/edit-category/#{ticket.id}', {category:$(this).val()}, function(){})
     })
+  script(type='text/javascript').
+    function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+    var search = getParameterByName('search')
+    if (search) {
+      $('span.message-content').each(function () {
+        var content = $(this).html()
+        content = content.replace(new RegExp(search, 'gi'), '<span style="background:yellow">' + search + '</span>')
+        $(this).html(content)
+      })
+      $('.page-heading h2').each(function () {
+        var content = $(this).html()
+        content = content.replace(new RegExp(search, 'gi'), '<span style="background:yellow">' + search + '</span>')
+        $(this).html(content)
+      })
+    }
 
 block cssCustom
   link(rel='stylesheet', href='/styles/admin/summernote/summernote.css')
