@@ -1,0 +1,15 @@
+extends ../layouts/email
+block message
+  p #{sails.__('Bonjour')} <strong>#{username}</strong>,
+    br
+    br
+    | #{sails.__('Une nouvelle connexion a été détectée sur votre compte sur')} <strong>mineweb.org</strong> #{sails.__('il y a quelques instants')} #{sails.__('avec l\'IP')} <strong>#{ip}</strong>.
+    br
+    | !{sails.__('La connexion a eu lieue depuis <strong>' + city + ', ' + country + '</strong> avec <strong>' + agent + '</strong>' + (device ? ' (' + device + ')' : ''))}
+
+  p
+    small(style='color:grey;') #{sails.__('Si il ne s\'agit pas de vous, changez immédiatement votre mot de passe, sinon, vous pouvez ignorer ce mail.')}
+
+  p
+    small
+    em #{sails.__('Ceci est un message automatique, veuillez ne pas y répondre.')}

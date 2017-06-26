@@ -155,6 +155,29 @@ module.exports = {
           var geo = geoip.lookup(CloudflareService.getIP(req))
           var agent = useragent.parse(req.headers['user-agent'])
           agent = agent.toString()
+
+          // find if it's the first connection with this agent + deviceName
+          UserLog.find({
+            user: user.id,
+            ip: CloudflareService.getIP(req),
+            deviceName: req.device.name || null,
+            agent: agent,
+            action: 'LOGIN',
+            status: true
+          }).exec(function (err, log) {
+            if (!err && log === undefined || log.length === 0) {
+              MailService.send('new_login', {
+                username: user.username,
+                city: geo.city,
+                country: geo.country,
+                agent: agent,
+                ip: CloudflareService.getIP(req),
+                device: req.device.nam
+              }, req.__('Nouvelle connexion a votre compte'), user.email);
+            }
+          })
+
+          // create
           UserLog.create({
             action: 'LOGIN',
             ip: CloudflareService.getIP(req),
@@ -168,9 +191,6 @@ module.exports = {
               sails.log.error(err)
               return res.serverError()
             }
-
-            // find if it's the first connection with this agent + deviceName
-            //console.log('Une nouvelle connexion a été détectée sur votre compte depuis ' + geo.city + ', ' + geo.country + ' avec ' + agent + (req.device.name ? '(' + req.device.name + ')' : ''));
           })
         })
       })
