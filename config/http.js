@@ -13,6 +13,7 @@ var pmx = require('pmx');
 var expressLog = require('express-winston');
 var ESTransport = require('winston-elasticsearch');
 var winston = require('winston')
+var device = require('express-device')
 
 var TRANSPORTS = [];
 if (process.env.NODE_ENV === 'production') {
@@ -89,6 +90,7 @@ module.exports.http = {
       'rawBody',
       'bodyParser',
       'handleBodyParserError',
+      'device',
       'compress',
       'methodOverride',
       'router',
@@ -121,7 +123,9 @@ module.exports.http = {
       responseWhitelist: ['statusCode']
     }),
 
-    errorLogger: pmx.expressErrorHandler()
+    errorLogger: pmx.expressErrorHandler(),
+
+    device: device.capture()
 
 
     /***************************************************************************

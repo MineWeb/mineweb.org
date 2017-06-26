@@ -370,11 +370,18 @@ block content
                     tr
                       th #{__('Date de la connexion')}
                       th #{__('Adresse IP de connexion')}
+                      th #{__('Localisation de la connexion')}
+                      th #{__('Navigateur de la connexion')}
                   tbody
                     each connection in connectionLogs
                       tr
                         td.moment-date(data-format='Le {L} à {LT}') #{connection.createdAt}
                         td #{connection.ip}
+                        td #{connection.location || 'N/A'}
+                        td
+                          | #{connection.agent || 'N/A'}
+                          if (connection.deviceName)
+                            | (#{connection.deviceName})
         .col-md-12
           .ibox.float-e-margins
             .ibox-title
