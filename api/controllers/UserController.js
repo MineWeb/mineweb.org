@@ -988,13 +988,46 @@ module.exports = {
       }
 
       // On ajoute une connexion aux logs de connexions de l'utilisateur
-      UserLog.create({ action: 'LOGIN', ip: CloudflareService.getIP(req), user: user.id, status: true}).exec(function (err, log) {
+      var geo = geoip.lookup(CloudflareService.getIP(req))
+      var agent = useragent.parse(req.headers['user-agent'])
+      agent = agent.toString()
+
+      // find if it's the first connection with this agent + deviceName
+      UserLog.find({
+        user: user.id,
+        ip: CloudflareService.getIP(req),
+        deviceName: req.device.name || null,
+        agent: agent,
+        action: 'LOGIN',
+        status: true
+      }).exec(function (err, log) {
+        if (!err && log === undefined || log.length === 0) {
+          MailService.send('new_login', {
+            username: user.username,
+            city: geo.city,
+            country: geo.country,
+            agent: agent,
+            ip: CloudflareService.getIP(req),
+            device: req.device.nam
+          }, req.__('Nouvelle connexion a votre compte'), user.email);
+        }
+      })
+
+      // create
+      UserLog.create({
+        action: 'LOGIN',
+        ip: CloudflareService.getIP(req),
+        user: user.id,
+        status: true,
+        location: (geo) ? ((geo.city) ? geo.city + ', ' : '') + geo.country : null,
+        agent: agent,
+        deviceName: req.device.name || null
+      }).exec(function (err, log) {
         if (err) {
           sails.log.error(err)
           return res.serverError()
         }
-
-      });
+      })
 
 
     })
