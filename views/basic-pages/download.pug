@@ -51,7 +51,7 @@ block content
                   i.fa.fa-check.text-success
                   |  #{__('Documentation complète')}
               .panel-footer
-                a(href=req.session.authenticated !== undefined && req.session.authenticated ? '/purchase/hosting' : '#', onclick=req.session.authenticated !== undefined && req.session.authenticated ? '' : "toastr.error('"+__('Vous devez être connecté pour procéder à un achat !')+"')").btn.btn-lg.btn-block.btn-primary #{__('LOUER !')}
+                a.disabled(href=req.session.authenticated !== undefined && req.session.authenticated ? '/purchase/hosting' : '#', onclick=req.session.authenticated !== undefined && req.session.authenticated ? '' : "toastr.error('"+__('Vous devez être connecté pour procéder à un achat !')+"')").btn.btn-lg.btn-block.btn-primary #{__('Désactivé temporairement')}
 
           div.clearfix
 
