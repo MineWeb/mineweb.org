@@ -48,7 +48,11 @@ block content
                   small.form-text.text-muted #{__('Vous devez envoyer une archive zip contenant le dossier du thème.')}
 
             hr
-
+            
+            p.pull-left
+              |  En soumettant ces informations vous devez respecter le
+              a(href='/developer/cgu')  règlement
+              | .
             button.btn.btn-success.btn-lg.pull-right(type="submit")
               span.fa.fa-upload
               | &nbsp;#{__('Soumettre la version du thème')}

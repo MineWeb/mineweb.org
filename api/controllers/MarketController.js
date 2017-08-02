@@ -100,7 +100,7 @@ module.exports = {
     if (slug === undefined)
       return response.notFound();
 
-	  Theme.find({ 'slug': slug }).populate('author').exec(function (err, results) {
+	  Theme.find({ 'slug': slug, 'state': 'CONFIRMED' }).populate('author').exec(function (err, results) {
 		  if (err) return response.serverError(err);
 
       if (results.length == 0)
@@ -211,7 +211,7 @@ module.exports = {
     if (slug === undefined)
       return response.notFound();
 
-	  Plugin.find({ 'slug': slug }).populate('author').exec(function (err, results) {
+	  Plugin.find({ 'slug': slug, 'state': 'CONFIRMED' }).populate('author').exec(function (err, results) {
 		  if (err) return response.serverError(err);
 
       if (results.length == 0)

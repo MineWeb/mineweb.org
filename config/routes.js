@@ -46,6 +46,8 @@ module.exports.routes = {
   '/legal/conditions': { view: 'legal/conditions', locals: {title: 'CGV'} },
   '/legal/cgu': { view: 'legal/cgu', locals: {title: 'CGU'} },
 
+  '/developer/cgu': { view: 'developer/cgu', locals: {title: 'CGU'} },
+
   '/api/plugin_version/*': 'ApiController.plugin_version',
 
   /*
