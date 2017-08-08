@@ -122,118 +122,47 @@ module.exports = {
         })
       },
 
-      // Get plugins purchases last months
       function (callback) {
-        Purchase.query("SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM purchase WHERE type = 'PLUGIN' GROUP BY month LIMIT 7", function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataMonths = _.clone(dataMonthsList)
-          for (var i = 0; i < data.length; i++) {
-            dataMonths[data[i].month] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var month in dataMonths) {
-            dataFormatted.push(dataMonths[month])
-          }
-          // return data
-          callback(null, dataFormatted)
+        User.query('SELECT SUM(sum) AS total, month FROM (' +
+          '  SELECT SUM(paypal.paymentAmount - paypal.taxAmount) AS sum, MONTH(paypal.paymentDate) AS month, YEAR(paypal.paymentDate) AS year FROM paypalhistory AS paypal ' +
+          '  INNER JOIN purchase AS purchase ON purchase.id = paypal.purchase ' +
+          '  WHERE ' +
+          '  (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') ' +
+          '  AND paypal.state = \'COMPLETED\'' +
+          '  GROUP BY MONTH(paypal.paymentDate) + \'.\' + YEAR(paypal.paymentDate)' +
+          ' UNION ALL' +
+          '  SELECT SUM(dedipass.payout) AS sum, MONTH(dedipass.createdAt) AS month, YEAR(dedipass.createdAt) AS year FROM dedipasshistory AS dedipass ' +
+          '  INNER JOIN purchase AS purchase ON purchase.id = dedipass.purchase ' +
+          '  WHERE (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') ' +
+          '  GROUP BY MONTH(dedipass.createdAt) + \'.\' + YEAR(dedipass.createdAt)' +
+          ') AS q' +
+          ' GROUP BY month' +
+          ' ORDER BY year,month LIMIT 6;', function (err, data) {
+            if (err) return callback(err)
+            // add results to defaults results
+            var dataMonths = _.clone(dataMonthsList)
+            for (var i = 0; i < data.length; i++) {
+              dataMonths[data[i].month] = data[i].count
+            }
+            // format into simple array
+            var dataFormatted = []
+            for (var month in dataMonths) {
+              if (dataMonths[month])
+                dataFormatted.push(dataMonths[month])
+              else
+                dataFormatted.push(0);
+            }
+            // return data
+            callback(null, dataFormatted)
         })
       },
 
-      // Get themes purchases last months
       function (callback) {
-        Purchase.query("SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM purchase WHERE type = 'THEME' GROUP BY month LIMIT 7", function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataMonths = _.clone(dataMonthsList)
-          for (var i = 0; i < data.length; i++) {
-            dataMonths[data[i].month] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var month in dataMonths) {
-            dataFormatted.push(dataMonths[month])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })
+        User.query('SELECT plugin.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY plugin.id;\n', callback)
       },
 
-      // Get paypal purchases last months
       function (callback) {
-        PayPalHistory.query("SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM paypalhistory WHERE state = 'COMPLETED' GROUP BY month LIMIT 7", function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataMonths = _.clone(dataMonthsList)
-          for (var i = 0; i < data.length; i++) {
-            dataMonths[data[i].month] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var month in dataMonths) {
-            dataFormatted.push(dataMonths[month])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })
-      },
-
-      // Get dedipass purchases last months
-      function (callback) {
-        DedipassHistory.query('SELECT COUNT(*) AS count, MONTH(createdAt) AS month FROM dedipasshistory GROUP BY month LIMIT 7', function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataMonths = _.clone(dataMonthsList)
-          for (var i = 0; i < data.length; i++) {
-            dataMonths[data[i].month] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var month in dataMonths) {
-            dataFormatted.push(dataMonths[month])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })
-      },
-
-      // Get paypal purchases last week
-      function (callback) {
-        PayPalHistory.query("SELECT COUNT(*) AS count, DAY(createdAt) AS day FROM paypalhistory WHERE createdAt > DATE_SUB(NOW(), INTERVAL 7 DAY) AND state = 'COMPLETED' GROUP BY day LIMIT 7", function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataDays = _.clone(dataDaysList)
-          for (var i = 0; i < data.length; i++) {
-            dataDays[data[i].day] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var day in dataDays) {
-            dataFormatted.push(dataDays[day])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })
-      },
-
-      // Get dedipass purchases last week
-      function (callback) {
-        DedipassHistory.query('SELECT COUNT(*) AS count, DAY(createdAt) AS day FROM dedipasshistory WHERE createdAt > DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY day LIMIT 7', function (err, data) {
-          if (err) return callback(err)
-          // add results to defaults results
-          var dataDays = _.clone(dataDaysList)
-          for (var i = 0; i < data.length; i++) {
-            dataDays[data[i].day] = data[i].count
-          }
-          // format into simple array
-          var dataFormatted = []
-          for (var day in dataDays) {
-            dataFormatted.push(dataDays[day])
-          }
-          // return data
-          callback(null, dataFormatted)
-        })
+        User.query('SELECT theme.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY theme.id;\n', callback)
       }
 
     ], function (err, results) {
@@ -243,6 +172,8 @@ module.exports = {
       }
 
       moment.locale(res.locals.user.lang)
+
+      console.log(results[8])
 
       res.view('admin/statistic/index', {
         title: req.__('Statistiques'),
@@ -274,15 +205,10 @@ module.exports = {
           purchasesThisMonth: {
             licences: results[6],
             hostings: results[7],
-            plugins: results[8],
-            themes: results[9],
-            paypal: results[10],
-            dedipass: results[11]
           },
-          purchasesLastDays: {
-            paypal: results[12],
-            dedipass: results[13]
-          }
+          totalIncomeByMonths: results[8],
+          pluginsIncomes: results[9],
+          themesIncomes: results[10]
         }
       })
     })
