@@ -142,7 +142,7 @@ module.exports = {
             // add results to defaults results
             var dataMonths = _.clone(dataMonthsList)
             for (var i = 0; i < data.length; i++) {
-              dataMonths[data[i].month] = data[i].count
+              dataMonths[data[i].month] = data[i].total
             }
             // format into simple array
             var dataFormatted = []
@@ -172,9 +172,7 @@ module.exports = {
       }
 
       moment.locale(res.locals.user.lang)
-
-      console.log(results[8])
-
+      
       res.view('admin/statistic/index', {
         title: req.__('Statistiques'),
         lastMonths: [
