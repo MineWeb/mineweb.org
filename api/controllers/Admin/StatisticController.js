@@ -136,7 +136,7 @@ module.exports = {
           '  WHERE (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') \n' +
           '  GROUP BY MONTH(dedipass.createdAt) + \'.\' + YEAR(dedipass.createdAt)\n' +
           ') AS q\n' +
-          'WHERE month > MONTH(DATE_SUB(now(), INTERVAL 6 MONTH)) AND year >= YEAR(DATE_SUB(now(), INTERVAL 6 MONTH))\n' +
+          'WHERE month >= MONTH(DATE_SUB(now(), INTERVAL 6 MONTH)) AND year >= YEAR(DATE_SUB(now(), INTERVAL 6 MONTH))\n' +
           'GROUP BY month\n' +
           'ORDER BY year,month;', function (err, data) {
             if (err) return callback(err)
@@ -159,11 +159,11 @@ module.exports = {
       },
 
       function (callback) {
-        User.query('SELECT plugin.name, ROUND(SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount)) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY plugin.id;\n', callback)
+        User.query('SELECT plugin.name, ROUND(SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount)) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY plugin.id ORDER BY total DESC;', callback)
       },
 
       function (callback) {
-        User.query('SELECT theme.name, ROUND(SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount)) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY theme.id;\n', callback)
+        User.query('SELECT theme.name, ROUND(SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount)) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY theme.id ORDER BY total DESC;', callback)
       }
 
     ], function (err, results) {
