@@ -136,7 +136,7 @@ module.exports = {
           '  WHERE (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') ' +
           '  GROUP BY MONTH(dedipass.createdAt) + \'.\' + YEAR(dedipass.createdAt)' +
           ') AS q' +
-          ' WHERE month > DATE_SUB(now(), INTERVAL 6 MONTH)' +
+          ' WHERE month > DATE_SUB(now(), INTERVAL 6 MONTH) AND year >= YEAR(DATE_SUB(now(), INTERVAL 6 MONTH))' +
           ' GROUP BY month' +
           ' ORDER BY year,month', function (err, data) {
             if (err) return callback(err)
@@ -159,11 +159,11 @@ module.exports = {
       },
 
       function (callback) {
-        User.query('SELECT plugin.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY plugin.id;\n', callback)
+        User.query('SELECT plugin.name, ROUND(SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount)) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY plugin.id;\n', callback)
       },
 
       function (callback) {
-        User.query('SELECT theme.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY theme.id;\n', callback)
+        User.query('SELECT theme.name, ROUND(SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount)) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId GROUP BY theme.id;\n', callback)
       }
 
     ], function (err, results) {
@@ -173,7 +173,7 @@ module.exports = {
       }
 
       moment.locale(res.locals.user.lang)
-      
+
       res.view('admin/statistic/index', {
         title: req.__('Statistiques'),
         lastMonths: [
@@ -203,7 +203,7 @@ module.exports = {
           monthProfit: Utils.numberWithSpaces(results[5][0].monthProfit),
           purchasesThisMonth: {
             licences: results[6],
-            hostings: results[7],
+            hostings: results[7]
           },
           totalIncomeByMonths: results[8],
           pluginsIncomes: results[9],
