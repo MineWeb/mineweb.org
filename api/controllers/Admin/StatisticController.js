@@ -136,8 +136,9 @@ module.exports = {
           '  WHERE (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') ' +
           '  GROUP BY MONTH(dedipass.createdAt) + \'.\' + YEAR(dedipass.createdAt)' +
           ') AS q' +
+          ' WHERE month > DATE_SUB(now(), INTERVAL 6 MONTH)' +
           ' GROUP BY month' +
-          ' ORDER BY year,month LIMIT 6;', function (err, data) {
+          ' ORDER BY year,month', function (err, data) {
             if (err) return callback(err)
             // add results to defaults results
             var dataMonths = _.clone(dataMonthsList)
@@ -148,7 +149,7 @@ module.exports = {
             var dataFormatted = []
             for (var month in dataMonths) {
               if (dataMonths[month])
-                dataFormatted.push(dataMonths[month])
+                dataFormatted.push(Math.round(dataMonths[month]))
               else
                 dataFormatted.push(0);
             }
