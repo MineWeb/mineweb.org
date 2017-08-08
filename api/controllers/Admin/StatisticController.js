@@ -123,22 +123,22 @@ module.exports = {
       },
 
       function (callback) {
-        User.query('SELECT SUM(sum) AS total, month FROM (' +
-          '  SELECT SUM(paypal.paymentAmount - paypal.taxAmount) AS sum, MONTH(paypal.paymentDate) AS month, YEAR(paypal.paymentDate) AS year FROM paypalhistory AS paypal ' +
-          '  INNER JOIN purchase AS purchase ON purchase.id = paypal.purchase ' +
-          '  WHERE ' +
-          '  (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') ' +
-          '  AND paypal.state = \'COMPLETED\'' +
-          '  GROUP BY MONTH(paypal.paymentDate) + \'.\' + YEAR(paypal.paymentDate)' +
-          ' UNION ALL' +
-          '  SELECT SUM(dedipass.payout) AS sum, MONTH(dedipass.createdAt) AS month, YEAR(dedipass.createdAt) AS year FROM dedipasshistory AS dedipass ' +
-          '  INNER JOIN purchase AS purchase ON purchase.id = dedipass.purchase ' +
-          '  WHERE (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') ' +
-          '  GROUP BY MONTH(dedipass.createdAt) + \'.\' + YEAR(dedipass.createdAt)' +
-          ') AS q' +
-          ' WHERE month > DATE_SUB(now(), INTERVAL 6 MONTH) AND year >= YEAR(DATE_SUB(now(), INTERVAL 6 MONTH))' +
-          ' GROUP BY month' +
-          ' ORDER BY year,month', function (err, data) {
+        User.query('SELECT SUM(sum) AS total, month FROM (\n' +
+          '  SELECT SUM(paypal.paymentAmount - paypal.taxAmount) AS sum, MONTH(paypal.paymentDate) AS month, YEAR(paypal.paymentDate) AS year FROM paypalhistory AS paypal \n' +
+          '  INNER JOIN purchase AS purchase ON purchase.id = paypal.purchase \n' +
+          '  WHERE \n' +
+          '  \t(purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') \n' +
+          '  \tAND paypal.state = \'COMPLETED\'\n' +
+          '  GROUP BY MONTH(paypal.paymentDate) + \'.\' + YEAR(paypal.paymentDate)\n' +
+          'UNION ALL\n' +
+          '  SELECT SUM(dedipass.payout) AS sum, MONTH(dedipass.createdAt) AS month, YEAR(dedipass.createdAt) AS year FROM dedipasshistory AS dedipass \n' +
+          '  INNER JOIN purchase AS purchase ON purchase.id = dedipass.purchase \n' +
+          '  WHERE (purchase.type = \'LICENSE\' OR purchase.type = \'HOSTING\') \n' +
+          '  GROUP BY MONTH(dedipass.createdAt) + \'.\' + YEAR(dedipass.createdAt)\n' +
+          ') AS q\n' +
+          'WHERE month > MONTH(DATE_SUB(now(), INTERVAL 6 MONTH)) AND year >= YEAR(DATE_SUB(now(), INTERVAL 6 MONTH))\n' +
+          'GROUP BY month\n' +
+          'ORDER BY year,month;', function (err, data) {
             if (err) return callback(err)
             // add results to defaults results
             var dataMonths = _.clone(dataMonthsList)
