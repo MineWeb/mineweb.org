@@ -16,9 +16,7 @@ var winston = require('winston')
 var device = require('express-device')
 
 var TRANSPORTS = [];
-if (process.env.NODE_ENV !== 'production') {
-  TRANSPORTS.push(new winston.transports.Console({ json: false, colorize: true }))
-}
+TRANSPORTS.push(new winston.transports.Console({ json: false, colorize: true }))
 
 module.exports.http = {
 
