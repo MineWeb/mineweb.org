@@ -113,7 +113,7 @@ module.exports = {
             if (err)
               sales.push(0)
             else
-              sales.push(res.count)
+              sales.push(res[0].count)
             next()
           })
         }, function () {
