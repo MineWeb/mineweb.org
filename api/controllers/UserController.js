@@ -46,10 +46,8 @@ module.exports = {
       }).exec(function (err, retries) {
         if (err) {
           sails.log.error(err)
-          return res.serverError()
         }
-
-        if (retries >= 10) {
+        else if (retries >= 10) {
           // Bloqué par l'anti-bruteforce
           return res.json({
             status: false,

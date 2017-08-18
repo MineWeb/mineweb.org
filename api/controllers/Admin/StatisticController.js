@@ -109,12 +109,11 @@ module.exports = {
 
         // sql
         async.forEach(months, function (month, next) { // for each months
-
-          Hosting.count({createdAt: {'like': month + '%'}}).exec(function (err, count) {
+          Hosting.query("SELECT COUNT(*) AS count FROM purchase WHERE type = 'HOSTING' AND createdAt LIKE '" + month + "%'", function (err, res) {
             if (err)
               sales.push(0)
             else
-              sales.push(count)
+              sales.push(res.count)
             next()
           })
         }, function () {
