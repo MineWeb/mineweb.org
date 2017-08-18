@@ -16,30 +16,9 @@ var winston = require('winston')
 var device = require('express-device')
 
 var TRANSPORTS = [];
-if (process.env.NODE_ENV === 'production') {
-  var elasticTransport = new ESTransport({
-    level: 'info',
-    indexPrefix: 'main-express',
-    mappingTemplate: require('./es_log_mapping.json'),
-    clientOpts: { host: '51.255.36.38:9200', apiVersion: 'master' },
-    transformer: function (logData) {
-      const transformed = {};
-      transformed['@timestamp'] = new Date().toISOString();
-      transformed['@level'] = logData.level;
-      transformed['@version'] = 1;
-      transformed.fields = logData.meta;
-      return transformed;
-    }
-  });
-
-  elasticTransport.emitErrs = true;
-  elasticTransport.on('error', function (err) {
-    pmx.notify(err);
-  });
-  TRANSPORTS.push(elasticTransport)
-}
-else
+if (process.env.NODE_ENV !== 'production') {
   TRANSPORTS.push(new winston.transports.Console({ json: false, colorize: true }))
+}
 
 module.exports.http = {
 
@@ -113,13 +92,11 @@ module.exports.http = {
       ignoredRoutes: ['/favicon.ico', '/favicon.png'],
       requestFilter: function (req, propName) {
         var data = req[propName];
-        if (propName === 'headers')
-          return { agent: data["user-agent"], language: data["accept-language"], origin: data.origin, host: data.host }
         if (propName === 'session')
           return data && data.userId ? data.userId.toString() : undefined;
         return req[propName];
       },
-      requestWhitelist: ['url', 'headers', 'method', 'originalUrl', 'session', 'ip'],
+      requestWhitelist: ['url', 'method', 'originalUrl', 'session', 'ip'],
       responseWhitelist: ['statusCode']
     }),
 
