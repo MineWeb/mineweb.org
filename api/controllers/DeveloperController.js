@@ -394,16 +394,9 @@ module.exports = {
 							operator: operator,
 							version: version
 						})
-
-
-
-
-
 					}
-
 					plugin.requirements = requirements
 					callback(undefined, plugin)
-
 				})
 			},
 
@@ -443,6 +436,9 @@ module.exports = {
 	// add or edit
 	editPlugin: function (req, res) {
 		var add = (req.path === '/developer/add/plugin')
+    var data = JSON.parse(req.body.data);
+    console.log(data);
+		return res.end();
 
 		if (add) {
 

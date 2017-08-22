@@ -20,7 +20,7 @@ module.exports = {
   connections: {
     main_sql: {
       adapter: 'sails-mysql',
-      host: 'status.hardfight.fr',
+      host: process.env.SQL_HOST || 'status.hardfight.fr',
       user: process.env.SQL_USER || 'mineweb',
       password: process.env.SQL_PWD || 'mineweb42', // optional
       database: process.env.SQL_DB || 'mineweb' // optional

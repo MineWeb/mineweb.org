@@ -6,7 +6,7 @@ block content
       div.row
         div.col-md-12
 
-          form(method="post", action=add ? "/developer/add/plugin" : "/developer/edit/plugin/" + plugin.id, data-ajax, data-redirect-url="/developer")
+          form(method="post", action=add ? "/developer/add/plugin" : "/developer/edit/plugin/" + plugin.id, data-ajax, data-redirect-url="/developer", data-custom-data-formatter="parser")
 
             div.row
               div.col-md-6
@@ -59,8 +59,8 @@ block content
                   - var i = 0
                   each version in plugin.versions
                     if version.public
-                      div.col-md-6
-                        input(type='hidden', value=version.version, name="versions["+i+"].version")
+                      div.col-md-6.version
+                        input(type='hidden', value=version.version, name="versions.version")
                         .card.text-xs-center
                           .card-header
                             h4.card-title v#{version.version}
@@ -71,7 +71,7 @@ block content
                               each changelog in version.changelog['fr_FR']
                                 div.input-group(data-i=i, data-i2=i2)
                                   span.input-group-addon &nbsp;-&nbsp;
-                                  input.form-control(type='text', name="versions["+i+"].changelog[]", value=changelog)
+                                  input.form-control(type='text', name="versions.changelog", value=changelog)
                                   span.input-group-btn
                                     button.btn.btn-danger.removeChangelog(type="button", data-i=i, data-i2=i2)
                                       span.fa.fa-times
@@ -105,7 +105,7 @@ block content
                   each requirement in plugin.requirements
                     tr(data-requirements-id=i, data-requirements-already-saved)
                       td
-                        select.form-control.requirementType(name='requirements['+i+'][type]', data-requirements-id=i)
+                        select.form-control.requirementType(name='requirements.type', data-requirements-id=i)
                           optgroup(label=__('Général'))
                             option(selected=requirement.type == 'CMS', value='CMS', data-requirements-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
                           optgroup(label=__('Plugins'))
@@ -116,7 +116,7 @@ block content
                             each theme in themesList
                               option(selected=requirement.type == 'theme--' + theme.id, value='theme--' + theme.id, data-requirements-id=i, data-version-availables=JSON.stringify(theme.versionsAvailable)) #{theme.name}
                       td
-                        select.form-control(name='requirements['+i+'][operator]')
+                        select.form-control(name='requirements.operator')
                           option(value='>=', selected=requirement.operator == '>=') #{__('>=')}
                           option(value='=', selected=requirement.operator == '=') #{__('=')}
                           option(value='<=', selected=requirement.operator == '<=') #{__('<=')}
@@ -129,7 +129,7 @@ block content
                     - i++
                   tr(data-requirements-id=i, data-requirement-empty, style="display:none;")
                     td
-                      select.form-control.requirementType(name='requirements['+i+'][type]', data-requirements-id=i)
+                      select.form-control.requirementType(name='requirements.type', data-requirements-id=i)
                         option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
                         optgroup(label=__('Général'))
                           option(value='CMS', data-requirements-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
@@ -141,7 +141,7 @@ block content
                           each theme in themesList
                             option(value='theme--' + theme.id, data-requirements-id=i, data-version-availables=JSON.stringify(theme.versionsAvailable)) #{theme.name}
                     td
-                      select.form-control(name='requirements['+i+'][operator]')
+                      select.form-control(name='requirements.operator')
                         option(value='>=') #{__('>=')}
                         option(value='=') #{__('=')}
                         option(value='<=') #{__('<=')}
@@ -206,6 +206,39 @@ block custom
 
     $('textarea').summernote({height: 200})
 
+    function parser(form)
+    {
+      var json = {};
+      // Global
+      json.name = form.find('input[name="name"]').val()
+      json.price = form.find('input[name="price"]').val()
+      json.img = form.find('input[name="img"]').val()
+      json.description = form.find('textarea[name="description"]').val()
+      // Versions
+      json.versions = $('.version').map(function () {
+        return {
+          version: $(this).find('[name="versions.version"]').val(),
+          changelog: $(this).find('[name="versions.changelog"]').map(function () {
+            return $(this).val()
+          }).get()
+        }
+      }).get()
+      // Requirements
+      json.requirements = $('tr[data-requirements-id]:not([data-requirement-empty])').map(function () {
+        return {
+          type: $(this).find('[name="requirements.type"]').val(),
+          operator: $(this).find('[name="requirements.operator"]').val(),
+          version: $(this).find('[name="requirements.version"]').val()
+        }
+      }).get()
+      json = JSON.stringify(json);
+      var data = new FormData();
+      data.append('data', json);
+      if (form.find('input[name="files"]').length > 1)
+        data.append('files', form.find('input[name="files"]')[1].files[0]);
+      return data;
+    }
+
     $('.addChangelog').on('click', function (e) {
 
       e.preventDefault()
@@ -214,7 +247,7 @@ block custom
       var i = btn.attr('data-i')
       var i2 = btn.attr('data-i2')
 
-      $('<div class="input-group" data-i="'+i+'" data-i2="'+i2+'"><span class="input-group-addon">&nbsp;-&nbsp;</span><input class="form-control" type="text" name="versions['+i+'].changelog[]"><span class="input-group-btn"><button class="btn btn-danger removeChangelog" data-i="'+i+'" data-i2="'+i2+'"><span class="fa fa-times"></span></button></span></div>').insertBefore(btn)
+      $('<div class="input-group" data-i="'+i+'" data-i2="'+i2+'"><span class="input-group-addon">&nbsp;-&nbsp;</span><input class="form-control" type="text" name="versions.changelog"><span class="input-group-btn"><button class="btn btn-danger removeChangelog" data-i="'+i+'" data-i2="'+i2+'"><span class="fa fa-times"></span></button></span></div>').insertBefore(btn)
       initChangelogRemoveEntry()
 
     })
@@ -259,7 +292,7 @@ block custom
       }
 
       // Setup select/option
-      var versionSelect = '<select class="form-control" name="requirements[' + requirementId + '][version]">'
+      var versionSelect = '<select class="form-control" name="requirements.version">'
       for (var i = 0; i < versionsAvailable.length; i++) {
         versionSelect += '<option value="' + versionsAvailable[i] + '"';
         if (currentVersion == versionsAvailable[i])
@@ -296,7 +329,7 @@ block custom
         }
 
         // Setup select/option
-        var versionSelect = '<select class="form-control" name="requirements[' + requirementId + '][version]">'
+        var versionSelect = '<select class="form-control" name="requirements.version">'
         for (var i = 0; i < versionsAvailable.length; i++) {
           versionSelect += '<option value="' + versionsAvailable[i] + '">' + versionsAvailable[i] + '</option>'
         }
@@ -324,7 +357,6 @@ block custom
       // handle requirement
       var requirement = $('tr[data-requirement-empty]').html()
       var requirementId = $('tr[data-requirement-empty]').attr('data-requirements-id')
-      requirement = requirement.replaceAll('requirements['+requirementId+']', 'requirements[REQUIREMENTS_ID]')
       requirement = requirement.replaceAll('data-requirements-id="'+requirementId+'"', 'data-requirements-id="REQUIREMENTS_ID"')
       delete requirementId
 
