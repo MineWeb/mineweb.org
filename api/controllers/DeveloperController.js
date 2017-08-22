@@ -154,53 +154,29 @@ module.exports = {
 
 					// Find purchases of his plugins
 					function (callback) {
-						async.forEach(plugins, function (plugin, next) { // for each plugin, find purchases
-							Purchase.find({itemId: plugin.id, type: 'PLUGIN'}).exec(function (err, purchases) {
-
-								if (err)
-									return sails.log.error(err)
-
-								if (purchases !== undefined) {
-									// Add purchases into list
-									purchases.push(purchases)
-									// Increment total gain
-									for (var i = 0; i < purchases.length; i++) {
-										if (purchases[i].paymentType !== 'FREE') // If not free
-											purchasesTotalGain += plugin.price
-									}
-								}
-								next()
-
-							})
-						}, function () {
-							callback()
-						})
+						Purchase.query('SELECT plugin.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId WHERE plugin.author = ' + req.session.userId + ' GROUP BY plugin.id;', function (err, results) {
+						  if (err) {
+						    sails.log.error(err)
+						    return callback()
+              }
+              for (plugin in results)
+                purchasesTotalGain += results[plugin].total
+              callback()
+            })
 					},
 
 					// Find purchases of his themes
-					function (callback) {
-						async.forEach(themes, function (theme, next) { // for each themes, find purchases
-							Purchase.find({itemId: theme.id, type: 'THEME'}).exec(function (err, purchases) {
-
-								if (err)
-									return sails.log.error(err)
-
-								if (purchases !== undefined) {
-									// Add purchases into list
-									purchases.push(purchases)
-									// Increment total gain
-									for (var i = 0; i < purchases.length; i++) {
-										if (purchases[i].paymentType !== 'FREE') // If not free
-											purchasesTotalGain += theme.price
-									}
-								}
-								next()
-
-							})
-						}, function () {
-							callback()
-						})
-					}
+          function (callback) {
+            Purchase.query('SELECT theme.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId WHERE theme.author = ' + req.session.userId + ' GROUP BY theme.id;', function (err, results) {
+              if (err) {
+                sails.log.error(err)
+                return callback()
+              }
+              for (theme in results)
+                purchasesTotalGain += results[theme].total
+              callback()
+            })
+          },
 
 				], function (err, results) {
 
