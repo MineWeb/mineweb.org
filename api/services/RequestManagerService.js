@@ -18,6 +18,13 @@ module.exports = {
     this.response = response
     return this
   },
+  setBody: function (data) {
+    if (!this.request)
+      this.request = {body: data}
+    else
+      this.request.body = data
+    return this
+  },
 
   /**
    * Valid a request with validation arg and execute next() function at the end

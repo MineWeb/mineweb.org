@@ -438,11 +438,10 @@ module.exports = {
 		var add = (req.path === '/developer/add/plugin')
     var data = JSON.parse(req.body.data);
     console.log(data);
-		return res.end();
 
 		if (add) {
 
-			RequestManagerService.setRequest(req).setResponse(res).valid({
+			RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
 				"Tous les champs ne sont pas remplis.": [
 					['name', "Vous devez spécifier un nom"],
 					['price', "Vous devez spécifier un prix (0 pour gratuit)"],
@@ -458,7 +457,7 @@ module.exports = {
 
 		}
 		else { // edit
-			RequestManagerService.setRequest(req).setResponse(res).valid({
+			RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
 				"Tous les champs ne sont pas remplis.": [
 					['name', "Vous devez spécifier un nom"],
 					['price', "Vous devez spécifier un prix (0 pour gratuit)"],
@@ -495,93 +494,22 @@ module.exports = {
 		}
 
 		function parseBody(plugin) {
+      var requirements = {};
 
-			/*
-			=== Handle body parse ===
-			*/
+      for (i in data.requirements) {
+        requirements[data.requirements[i].type] = data.requirements[i].operator + ' ' + data.requirements[i].version
+      }
+      if (!add) {
+        for (i in plugin.versions) {
+          for (index in data.versions) {
+            if (data.versions[index].version == plugin.versions[i].version) {
+              plugin.versions[index].changelog['fr_FR'] = data.versions[index].changelog
+              break;
+            }
+          }
+        }
+      }
 
-			var requirements = []
-			var versions = []
-			var alreadyDoneRequirements = []
-			var alreadyDoneVersions = []
-
-			for (var key in req.body) {
-				if (key.indexOf('requirements[') != '-1') { // match a requirement
-
-					var nb = /\[\d\]/g.exec(key)[0].substr(1).slice(0, 1)
-
-					if (alreadyDoneRequirements.indexOf(nb) == '-1') {
-
-						requirements.push({
-							type: req.body['requirements['+nb+'][type]'],
-							operator: req.body['requirements['+nb+'][operator]'],
-							version: req.body['requirements['+nb+'][version]']
-						})
-						alreadyDoneRequirements.push(nb)
-
-					}
-
-				}
-				else if (key.indexOf('versions[') != '-1') { // match versions
-
-					var nb = /\[\d\]/g.exec(key)[0].substr(1).slice(0, 1)
-
-					if (alreadyDoneVersions.indexOf(nb) == '-1') {
-
-						var push = {}
-						push[req.body['versions['+nb+'].version']] = req.body['versions['+nb+'].changelog[]']
-						versions.push(push)
-
-						alreadyDoneVersions.push(nb)
-
-					}
-
-				}
-			}
-
-			req.body.requirements = requirements
-			req.body.versions = versions
-
-
-
-
-			/*
-			=== Handle changelog ===
-			*/
-			if (!add) {
-
-				for (var i = 0; i < plugin.versions.length; i++) {
-
-					var search = req.body.versions.find(function (obj) {
-						return Object.keys(obj)[0] === plugin.versions[i].version
-					})
-
-					// If find a version in body with this version
-					if (search !== undefined && plugin.versions[i].public) {
-						// update changelog with body content
-						plugin.versions[i].changelog['fr_FR'] = (typeof search[plugin.versions[i].version] === 'object') ? search[plugin.versions[i].version] : [search[plugin.versions[i].version]]
-					}
-
-
-
-				}
-
-			}
-			/*
-			=== Handle requirements ===
-			*/
-			var requirements = {}
-			for (var i = 0; i < req.body.requirements.length; i++) {
-				if (req.body.requirements[i].version !== undefined && req.body.requirements[i].version.length > 0 && req.body.requirements[i].type !== undefined && req.body.requirements[i].type.length > 0 && req.body.requirements[i].operator !== undefined && req.body.requirements[i].operator.length > 0) {
-					var operator = (req.body.requirements[i].operator === '=') ? '' : req.body.requirements[i].operator + ' '
-					requirements[req.body.requirements[i].type] = operator + req.body.requirements[i].version
-
-				}
-			}
-
-			/*
-				Save
-			*/
 			if (add)
 				savePlugin(requirements)
 			else
@@ -590,10 +518,10 @@ module.exports = {
 
 		function updatePlugin(plugin, requirements) {
 			Plugin.update({id: plugin.id}, {
-				name: req.body.name,
-				price: req.body.price,
-				img: req.body.img,
-				description: req.body.description,
+				name: data.name,
+				price: data.price,
+				img: data.img,
+				description: data.description,
 				requirements: requirements,
 				versions: plugin.versions
 			}).exec(function (err, pluginUpdated) {
@@ -637,7 +565,7 @@ module.exports = {
 	          }
 						else {
 	            // save
-							var name = req.session.userId + '-' + slugify(req.body.name) + '.zip'
+							var name = req.session.userId + '-' + slugify(data.name) + '.zip'
 	            cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.plugins, name))
 	          }
 
@@ -652,10 +580,10 @@ module.exports = {
 
 				 // save in db
 				 Plugin.create({
-					 name: req.body.name,
-					 price: req.body.price,
-					 img: req.body.img,
-					 description: req.body.description,
+					 name: data.name,
+					 price: data.price,
+					 img: data.img,
+					 description: data.description,
 					 requirements: requirements,
 					 versions: '[{"version":"1.0.0","public":false,"changelog":{"fr_FR":["Mise en place du plugin"]},"releaseDate":null}]',
 					 author: req.session.userId,
