@@ -437,7 +437,6 @@ module.exports = {
 	editPlugin: function (req, res) {
 		var add = (req.path === '/developer/add/plugin')
     var data = JSON.parse(req.body.data);
-    console.log(data);
 
 		if (add) {
 
@@ -916,12 +915,12 @@ module.exports = {
 
 	// add or edit
 	editTheme: function (req, res) {
-
 		var add = (req.path === '/developer/add/theme')
+    var data = JSON.parse(req.body.data);
 
 		if (add) {
 
-			RequestManagerService.setRequest(req).setResponse(res).valid({
+			RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
 				"Tous les champs ne sont pas remplis.": [
 					['name', "Vous devez spécifier un nom"],
 					['price', "Vous devez spécifier un prix (0 pour gratuit)"],
@@ -937,7 +936,7 @@ module.exports = {
 
 		}
 		else { // edit
-			RequestManagerService.setRequest(req).setResponse(res).valid({
+			RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
 				"Tous les champs ne sont pas remplis.": [
 					['name', "Vous devez spécifier un nom"],
 					['price', "Vous devez spécifier un prix (0 pour gratuit)"],
@@ -973,106 +972,35 @@ module.exports = {
 			})
 		}
 
-		function parseBody(theme) {
+    function parseBody(plugin) {
+      var requirements = {};
 
-			/*
-			=== Handle body parse ===
-			*/
+      for (i in data.supported) {
+        requirements[data.supported[i].type] = data.supported[i].operator + ' ' + data.supported[i].version
+      }
+      if (!add) {
+        for (i in plugin.versions) {
+          for (index in data.versions) {
+            if (data.versions[index].version == plugin.versions[i].version) {
+              plugin.versions[index].changelog['fr_FR'] = data.versions[index].changelog
+              break;
+            }
+          }
+        }
+      }
 
-			var supported = []
-			var versions = []
-			var alreadyDoneSupported = []
-			var alreadyDoneVersions = []
-
-			for (var key in req.body) {
-				if (key.indexOf('supported[') != '-1') { // match a requirement
-
-					var nb = /\[\d\]/g.exec(key)[0].substr(1).slice(0, 1)
-
-					if (alreadyDoneSupported.indexOf(nb) == '-1') {
-
-						supported.push({
-							type: req.body['supported['+nb+'][type]'],
-							operator: req.body['supported['+nb+'][operator]'],
-							version: req.body['supported['+nb+'][version]']
-						})
-						alreadyDoneSupported.push(nb)
-
-					}
-
-				}
-				else if (key.indexOf('versions[') != '-1') { // match versions
-
-					var nb = /\[\d\]/g.exec(key)[0].substr(1).slice(0, 1)
-
-					if (alreadyDoneVersions.indexOf(nb) == '-1') {
-
-						var push = {}
-						push[req.body['versions['+nb+'].version']] = req.body['versions['+nb+'].changelog[]']
-						versions.push(push)
-
-						alreadyDoneVersions.push(nb)
-
-					}
-
-				}
-			}
-
-			req.body.supported = supported
-			req.body.versions = versions
-
-
-
-
-			/*
-			=== Handle changelog ===
-			*/
-			if (!add) {
-
-				for (var i = 0; i < theme.versions.length; i++) {
-
-					var search = req.body.versions.find(function (obj) {
-						return Object.keys(obj)[0] === theme.versions[i].version
-					})
-
-					// If find a version in body with this version
-					if (search !== undefined && theme.versions[i].public) {
-						// update changelog with body content
-						theme.versions[i].changelog['fr_FR'] = (typeof search[theme.versions[i].version] === 'object') ? search[theme.versions[i].version] : [search[theme.versions[i].version]]
-					}
-
-
-
-				}
-
-			}
-			/*
-			=== Handle supported ===
-			*/
-			var supported = {}
-			for (var i = 0; i < req.body.supported.length; i++) {
-				if (req.body.supported[i].version !== undefined && req.body.supported[i].version.length > 0 && req.body.supported[i].type !== undefined && req.body.supported[i].type.length > 0 && req.body.supported[i].operator !== undefined && req.body.supported[i].operator.length > 0) {
-					var operator = (req.body.supported[i].operator === '=') ? '' : req.body.supported[i].operator + ' '
-					supported[req.body.supported[i].type] = operator + req.body.supported[i].version
-
-				}
-			}
-
-			/*
-				Save
-			*/
-			if (add)
-				saveTheme(supported)
-			else
-				updateTheme(theme, supported)
-		}
+      if (add)
+        saveTheme(requirements)
+      else
+        updateTheme(plugin, requirements)
+    }
 
 		function updateTheme(theme, supported) {
 			Theme.update({id: theme.id}, {
-				name: req.body.name,
-				price: req.body.price,
-				img: req.body.img,
-				description: req.body.description,
+				name: data.name,
+				price: data.price,
+				img: data.img,
+				description: data.description,
 				supported: supported,
 				versions: theme.versions
 			}).exec(function (err, themeUpdated) {
@@ -1129,10 +1057,10 @@ module.exports = {
 
 				 // save in db
 				 Theme.create({
-					 name: req.body.name,
-					 price: req.body.price,
-					 img: req.body.img,
-					 description: req.body.description,
+					 name: data.name,
+					 price: data.price,
+					 img: data.img,
+					 description: data.description,
 					 supported: supported,
 					 versions: '[{"version":"1.0.0","public":false,"changelog":{"fr_FR":["Mise en place du thème"]},"releaseDate":null}]',
 					 author: req.session.userId,

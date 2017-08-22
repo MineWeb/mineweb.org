@@ -6,7 +6,7 @@ block content
       div.row
         div.col-md-12
 
-          form(method="post", action=add ? "/developer/add/theme" : "/developer/edit/theme/" + theme.id, data-ajax, data-redirect-url="/developer")
+          form(method="post", action=add ? "/developer/add/theme" : "/developer/edit/theme/" + theme.id, data-ajax, data-redirect-url="/developer", data-custom-data-formatter="parser")
 
             div.row
               div.col-md-6
@@ -59,8 +59,8 @@ block content
                   - var i = 0
                   each version in theme.versions
                     if version.public
-                      div.col-md-6
-                        input(type='hidden', value=version.version, name="versions["+i+"].version")
+                      div.col-md-6.version
+                        input(type='hidden', value=version.version, name="versions.version")
                         .card.text-xs-center
                           .card-header
                             h4.card-title v#{version.version}
@@ -71,7 +71,7 @@ block content
                               each changelog in version.changelog['fr_FR']
                                 div.input-group(data-i=i, data-i2=i2)
                                   span.input-group-addon &nbsp;-&nbsp;
-                                  input.form-control(type='text', name="versions["+i+"].changelog[]", value=changelog)
+                                  input.form-control(type='text', name="versions.changelog", value=changelog)
                                   span.input-group-btn
                                     button.btn.btn-danger.removeChangelog(type="button", data-i=i, data-i2=i2)
                                       span.fa.fa-times
@@ -105,14 +105,14 @@ block content
                   each supportedEntry in theme.supported
                     tr(data-supported-id=i, data-supported-already-saved)
                       td
-                        select.form-control.supportedType(name='supported['+i+'][type]', data-supported-id=i)
+                        select.form-control.supportedType(name='supported.type', data-supported-id=i)
                           optgroup(label=__('Général'))
                             option(selected=supportedEntry.type == 'CMS', value='CMS', data-supported-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
                           optgroup(label=__('Plugins'))
                             each pluginOption in pluginsList
                               option(selected=supportedEntry.type == 'plugin--' + pluginOption.id, value='thème--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
                       td
-                        select.form-control(name='supported['+i+'][operator]')
+                        select.form-control(name='supported.operator')
                           option(value='>=', selected=supportedEntry.operator == '>=') #{__('>=')}
                           option(value='=', selected=supportedEntry.operator == '=') #{__('=')}
                           option(value='<=', selected=supportedEntry.operator == '<=') #{__('<=')}
@@ -125,7 +125,7 @@ block content
                     - i++
                   tr(data-supported-id=i, data-supported-empty, style="display:none;")
                     td
-                      select.form-control.supportedType(name='supported['+i+'][type]', data-supported-id=i)
+                      select.form-control.supportedType(name='supported.type', data-supported-id=i)
                         option(disabled, selected, value) -- #{__('Sélectionnez une option')} --
                         optgroup(label=__('Général'))
                           option(value='CMS', data-supported-id=i, data-version-availables=JSON.stringify(cmsVersionsAvailables)) #{__('CMS')}
@@ -133,7 +133,7 @@ block content
                           each pluginOption in pluginsList
                             option(value='plugin--' + pluginOption.id, data-supported-id=i, data-version-availables=JSON.stringify(pluginOption.versionsAvailable)) #{pluginOption.name}
                     td
-                      select.form-control(name='supported['+i+'][operator]')
+                      select.form-control(name='supported.operator')
                         option(value='>=') #{__('>=')}
                         option(value='=') #{__('=')}
                         option(value='<=') #{__('<=')}
@@ -197,6 +197,38 @@ block custom
 
     $('textarea').summernote({height: 200})
 
+    function parser(form) {
+      var json = {};
+      // Global
+      json.name = form.find('input[name="name"]').val()
+      json.price = form.find('input[name="price"]').val()
+      json.img = form.find('input[name="img"]').val()
+      json.description = form.find('textarea[name="description"]').val()
+      // Versions
+      json.versions = $('.version').map(function () {
+        return {
+          version: $(this).find('[name="versions.version"]').val(),
+          changelog: $(this).find('[name="versions.changelog"]').map(function () {
+            return $(this).val()
+          }).get()
+        }
+      }).get()
+      // Requirements
+      json.supported = $('tr[data-supported-id]:not([data-supported-empty])').map(function () {
+        return {
+          type: $(this).find('[name="supported.type"]').val(),
+          operator: $(this).find('[name="supported.operator"]').val(),
+          version: $(this).find('[name="supported.version"]').val()
+        }
+      }).get()
+      json = JSON.stringify(json);
+      var data = new FormData();
+      data.append('data', json);
+      if (form.find('input[name="files"]').length > 1)
+        data.append('files', form.find('input[name="files"]')[1].files[0]);
+      return data;
+    }
+
     $('.addChangelog').on('click', function (e) {
 
       e.preventDefault()
@@ -250,7 +282,7 @@ block custom
       }
 
       // Setup select/option
-      var versionSelect = '<select class="form-control" name="supported[' + supportedId + '][version]">'
+      var versionSelect = '<select class="form-control" name="supported.version">'
       for (var i = 0; i < versionsAvailable.length; i++) {
         versionSelect += '<option value="' + versionsAvailable[i] + '"';
         if (currentVersion == versionsAvailable[i])
@@ -287,7 +319,7 @@ block custom
         }
 
         // Setup select/option
-        var versionSelect = '<select class="form-control" name="supported[' + supportedId + '][version]">'
+        var versionSelect = '<select class="form-control" name="supported.version">'
         for (var i = 0; i < versionsAvailable.length; i++) {
           versionSelect += '<option value="' + versionsAvailable[i] + '">' + versionsAvailable[i] + '</option>'
         }
@@ -315,7 +347,6 @@ block custom
       // handle supported
       var supported = $('tr[data-supported-empty]').html()
       var supportedId = $('tr[data-supported-empty]').attr('data-supported-id')
-      supported = supported.replaceAll('supported['+supportedId+']', 'supported[REQUIREMENTS_ID]')
       supported = supported.replaceAll('data-supported-id="'+supportedId+'"', 'data-supported-id="REQUIREMENTS_ID"')
       delete supportedId
 
