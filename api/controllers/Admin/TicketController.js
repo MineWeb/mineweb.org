@@ -82,6 +82,9 @@ module.exports = {
 									case 'SERVER':
 										tickets[i].category = req.__('Serveur')
 										break;
+                  case 'INSTALL':
+                    tickets[i].category = req.__('Installation')
+                    break;
 									case 'DEVELOPMENT':
 										tickets[i].category = req.__('Développement')
 										break;

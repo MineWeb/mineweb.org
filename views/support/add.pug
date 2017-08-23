@@ -23,6 +23,7 @@ block content
               select.form-control(name='category')
                 option(value='GENERAL') #{__('Général')}
                 option(value='SERVER') #{__('Serveur')}
+                option(value='INSTALL') #{__('Installation')}
                 option(value='DEVELOPMENT') #{__('Développement')}
                 option(value='SUGGESTION') #{__('Suggestion')}
                 option(value='QUESTION') #{__('Question')}
@@ -68,8 +69,24 @@ block content
 block custom
   script(type='text/javascript').
     function afterAddTicket(inputs, json) {
-
       document.location = '/support/view/' + json.data.id
       return false
-
     }
+    $('select[name="category"]').on('change', function (event) {
+      if ($(this).val() === 'SERVER') {
+        var content = "Bonjour,\n\nJ'ai un problème lors de la liaison site-serveur, voici les informations nécessaires à la résolution de mon problème :\n\n" +
+          "IP: \n" +
+          "Port: \n" +
+          "Le port est ouvert car ...\n" +
+          "Les commandes /mineweb port et /mineweb setup on été faites: \n" +
+          "Erreur dans la console: \n" +
+          "Le serveur a bien été redémarré: \n" +
+          "Lien des logs de démarrage sur pastebin.com: \n" +
+          "Lien du fichier db.yml du plugin sur pastebin.com: \n\n" +
+          "Merci d'avance,\nCordialement."
+        $('textarea').val(content)
+      }
+      else {
+        $('textarea').val('')
+      }
+    })

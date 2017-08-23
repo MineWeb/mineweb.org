@@ -42,6 +42,7 @@ block content
                   select.form-control(name='category')
                     option(value="GENERAL", selected=ticket.category === 'GENERAL') #{__('Général')}
                     option(value="SERVER", selected=ticket.category === 'SERVER') #{__('Serveur')}
+                    option(value="INSTALL", selected=ticket.category === 'INSTALL') #{__('Installation')}
                     option(value="DEVELOPMENT", selected=ticket.category === 'DEVELOPMENT') #{__('Développement')}
                     option(value="SUGGESTION", selected=ticket.category === 'SUGGESTION') #{__('Suggestion')}
                     option(value="QUESTION", selected=ticket.category === 'QUESTION') #{__('Question')}
@@ -84,7 +85,7 @@ block content
         .chat-message-form
 
           form(action="/admin/support/reply/" + ticket.id, method="post", data-ajax, data-redirect-url='?')
-            
+
             if ticket.replies[ticket.replies.length-1] !== undefined
               input(type='hidden', name='last_reply_id', value=ticket.replies[ticket.replies.length-1].id)
 

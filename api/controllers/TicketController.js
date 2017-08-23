@@ -188,7 +188,7 @@ module.exports = {
           },
           {
             field: 'category',
-            in: ['GENERAL', 'SERVER', 'DEVELOPMENT', 'SUGGESTION', 'QUESTION', 'OTHER'],
+            in: ['GENERAL', 'SERVER', 'INSTALL', 'DEVELOPMENT', 'SUGGESTION', 'QUESTION', 'OTHER'],
             error: 'La catégorie sélectionnée est inconnue'
           }
         ]
