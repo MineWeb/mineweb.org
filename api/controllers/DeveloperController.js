@@ -13,6 +13,22 @@ var htmlentities = new Entities()
 
 module.exports = {
 
+  canEdit: function (type, extension, userId, next) {
+    if (extension.author === userId)
+      return next(true)
+    console.log('check')
+    Contributor.findOne({type: type, extension: extension.id, user: userId}).exec(function (err, result) {
+      if (err) {
+        sails.log.error(err)
+        return next(false)
+      }
+      console.log(result)
+      if (result !== undefined)
+        return next(true)
+      return next(false)
+    })
+  },
+
 	getPluginsThemesCmsVersionsAvailables: function (next) {
 		async.parallel([
 
@@ -113,42 +129,6 @@ module.exports = {
 		else if (res.locals.user.developer === 'CONFIRMED') {
 
 			async.parallel([
-
-				/*// Find plugins
-				function (callback) {
-					Plugin.find({author: req.session.userId, state:'CONFIRMED'}).exec(function (err, plugins) {
-					  async.map(plugins, function (plugin, next) {
-					    Contributor.find({type: 'PLUGIN', extension: plugin.id}).populate(['user']).exec(function (err, contributors) {
-                if (err)
-                  return next(err, plugin)
-                plugin.contributors = contributors
-                next(undefined, plugin)
-              })
-            }, function (err, plugins) {
-					    if (err)
-					      sails.log.error(err)
-              return callback(err, plugins)
-            })
-					})
-				},
-
-				// Find themes
-				function (callback) {
-					Theme.find({author: req.session.userId, state:'CONFIRMED'}).exec(function (err, themes) {
-            async.map(themes, function (theme, next) {
-              Contributor.find({type: 'THEME', extension: theme.id}).populate(['user']).exec(function (err, contributors) {
-                if (err)
-                  return next(err, theme)
-                theme.contributors = contributors
-                next(undefined, theme)
-              })
-            }, function (err, themes) {
-              if (err)
-                sails.log.error(err)
-              return callback(err, themes)
-            })
-          })
-				}*/
 
         // Find plugins
         function (callback) {
@@ -462,26 +442,27 @@ module.exports = {
 			if (results[0] === undefined)
 				return res.notFound()
 
-			if (results[0].author !== req.session.userId)
-				return res.forbidden()
+      self.canEdit('PLUGIN', results[0], req.session.userId, function (canEdit) {
+        if (!canEdit)
+          return res.forbidden()
 
-			// render
-			return res.render('developer/edit_plugin', {
-				title: req.__('Edition de votre plugin'),
-				plugin: results[0],
-				pluginsList: results[1][0],
-				themesList: results[1][1],
-				cmsVersionsAvailables: results[1][2]
-			})
-
+        // render
+        return res.render('developer/edit_plugin', {
+          title: req.__('Edition de votre plugin'),
+          plugin: results[0],
+          pluginsList: results[1][0],
+          themesList: results[1][1],
+          cmsVersionsAvailables: results[1][2]
+        })
+      })
 		})
-
 	},
 
 	// add or edit
 	editPlugin: function (req, res) {
 		var add = (req.path === '/developer/add/plugin')
     var data = JSON.parse(req.body.data);
+    var self = this
 
 		if (add) {
 
@@ -527,12 +508,12 @@ module.exports = {
 					if (plugin === undefined)
 						return res.notFound()
 
-					// if not author
-					if (plugin.author !== req.session.userId)
-						return res.forbidden()
+          self.canEdit('PLUGIN', plugin, req.session.userId, function (canEdit) {
+            if (!canEdit)
+              return res.forbidden()
 
-					parseBody(plugin)
-
+            parseBody(plugin)
+          })
 				})
 			})
 		}
@@ -666,6 +647,7 @@ module.exports = {
 			return res.notFound('ID is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
 		Plugin.findOne({id:id, state:'CONFIRMED'}).exec(function (err, plugin) {
 
@@ -677,15 +659,16 @@ module.exports = {
 			if (plugin === undefined)
 				return res.notFound()
 
-			if (plugin.author !== req.session.userId || !plugin.versions[0].public)
-				return res.forbidden()
+      self.canEdit('PLUGIN', plugin, req.session.userId, function (canEdit) {
+        if (!canEdit || !plugin.versions[0].public)
+          return res.forbidden()
 
-			// render
-			return res.render('developer/update_plugin', {
-				title: req.__('Ajouter une version à votre plugin'),
-				plugin: plugin
-			})
-
+        // render
+        return res.render('developer/update_plugin', {
+          title: req.__('Ajouter une version à votre plugin'),
+          plugin: plugin
+        })
+      })
 		})
 	},
 
@@ -695,6 +678,7 @@ module.exports = {
 			return res.notFound('ID is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
 		if (req.body['versionChangelog[]'] !== undefined && typeof req.body['versionChangelog[]'] !== 'object')
 			req.body['versionChangelog[]'] = [req.body['versionChangelog[]']]
@@ -723,84 +707,84 @@ module.exports = {
 			// find plugin
 			Plugin.findOne({id:id, state:'CONFIRMED'}).exec(function (err, plugin) {
 
-				if (err) {
-					sails.log.error(err)
-					return res.serverError()
-				}
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
 
-				// not found
-				if (plugin === undefined)
-					return res.notFound()
+        // not found
+        if (plugin === undefined)
+          return res.notFound()
 
-				// not author
-				if (plugin.author !== req.session.userId || !plugin.versions[0].public)
-					return res.forbidden()
+        self.canEdit('PLUGIN', plugin, req.session.userId, function (canEdit) {
+          if (!canEdit || !plugin.versions[0].public)
+            return res.forbidden()
 
-				// add version
-				plugin.versions.unshift({
-					version: req.body.versionName,
-					public: false,
-					changelog: {
-						'fr_FR': req.body['versionChangelog[]']
-					}
-				})
+          // add version
+          plugin.versions.unshift({
+            version: req.body.versionName,
+            public: false,
+            changelog: {
+              'fr_FR': req.body['versionChangelog[]']
+            }
+          })
 
-				// try to upload files
-				req.file("files").upload({
+          // try to upload files
+          req.file("files").upload({
 
-					 saveAs: function (file, cb) { // Check extension & content-type
+            saveAs: function (file, cb) { // Check extension & content-type
 
-							var extension = file.filename.split('.').pop()
+              var extension = file.filename.split('.').pop()
 
-							// seperate allowed and disallowed file types
-							if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed' && file.headers['content-type'] !== 'application/octet-stream') || extension != 'zip') {
-								// don't save
-								return res.json({
-									status: false,
-									msg: req.__("Vous avez tenté d'envoyer un fichier autre qu'une archive zip ou n'ayant pas la bonne extension."),
-									inputs:{}
-								})
-							}
-							else {
-								// save
-								var name = req.session.userId + '-' + plugin.slug + '-v' + req.body.versionName + '.zip'
-								cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.plugins, name))
-							}
+              // seperate allowed and disallowed file types
+              if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed' && file.headers['content-type'] !== 'application/octet-stream') || extension != 'zip') {
+                // don't save
+                return res.json({
+                  status: false,
+                  msg: req.__("Vous avez tenté d'envoyer un fichier autre qu'une archive zip ou n'ayant pas la bonne extension."),
+                  inputs: {}
+                })
+              }
+              else {
+                // save
+                var name = req.session.userId + '-' + plugin.slug + '-v' + req.body.versionName + '.zip'
+                cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.plugins, name))
+              }
 
-					 }
+            }
 
-				},function whenDone (err, file) {
+          }, function whenDone(err, file) {
 
-					if (err) {
-						sails.log.error(err)
-						return res.serverError()
-					}
+            if (err) {
+              sails.log.error(err)
+              return res.serverError()
+            }
 
-					// Save
-					Plugin.update({id: id}, {versions: plugin.versions}).exec(function (err, pluginUpdated) {
+            // Save
+            Plugin.update({id: id}, {versions: plugin.versions}).exec(function (err, pluginUpdated) {
 
-						if (err) {
-							sails.log.error(err)
-							return res.serverError()
-						}
+              if (err) {
+                sails.log.error(err)
+                return res.serverError()
+              }
 
-						// Pushbullet
-						PushbulletService.push('Nouvelle version de plugin à vérifier', RouteService.getBaseUrl() + '/admin/developer/plugin/update/validate/' + id, 'Plugin', id, [sails.config.pushbullet.principalEmail])
+              // Pushbullet
+              PushbulletService.push('Nouvelle version de plugin à vérifier', RouteService.getBaseUrl() + '/admin/developer/plugin/update/validate/' + id, 'Plugin', id, [sails.config.pushbullet.principalEmail])
 
-						// Notification
-						NotificationService.success(req, req.__('Vous avez bien ajouté une nouvelle version à votre plugin ! Elle sera vérifiée et validée sous peu.'))
+              // Notification
+              NotificationService.success(req, req.__('Vous avez bien ajouté une nouvelle version à votre plugin ! Elle sera vérifiée et validée sous peu.'))
 
-						// render
-						res.json({
-							status: true,
-							msg: req.__('Vous avez bien ajouté une nouvelle version à votre plugin ! Elle sera vérifiée et validée sous peu.'),
-							inputs:{}
-						})
+              // render
+              res.json({
+                status: true,
+                msg: req.__('Vous avez bien ajouté une nouvelle version à votre plugin ! Elle sera vérifiée et validée sous peu.'),
+                inputs: {}
+              })
 
-					})
+            })
 
-				})
-
+          })
+        })
 			})
 
 		})
@@ -913,16 +897,9 @@ module.exports = {
 							operator: operator,
 							version: version
 						})
-
-
-
-
-
 					}
-
 					theme.supported = supported
 					callback(undefined, theme)
-
 				})
 			},
 
@@ -943,28 +920,28 @@ module.exports = {
 			if (results[0] === undefined)
 				return res.notFound()
 
-			if (results[0].author !== req.session.userId)
-				return res.forbidden()
+      self.canEdit('THEME', results[0], req.session.userId, function (canEdit) {
+        if (!canEdit)
+          return res.forbidden()
 
-			// render
-			return res.render('developer/edit_theme', {
-				title: req.__('Edition de votre thème'),
-				theme: results[0],
-				pluginsList: results[1][0],
-				cmsVersionsAvailables: results[1][2]
-			})
-
+        // render
+        return res.render('developer/edit_theme', {
+          title: req.__('Edition de votre thème'),
+          theme: results[0],
+          pluginsList: results[1][0],
+          cmsVersionsAvailables: results[1][2]
+        })
+      })
 		})
-
 	},
 
 	// add or edit
 	editTheme: function (req, res) {
 		var add = (req.path === '/developer/add/theme')
     var data = JSON.parse(req.body.data);
+    var self = this
 
 		if (add) {
-
 			RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
 				"Tous les champs ne sont pas remplis.": [
 					['name', "Vous devez spécifier un nom"],
@@ -973,12 +950,7 @@ module.exports = {
 					['description', "Vous devez spécifier une description"],
 					{field: 'files', file: true, error: "Vous devez envoyer des fichiers"},
 				]
-			}, function () {
-
-				parseBody()
-
-			})
-
+			}, parseBody())
 		}
 		else { // edit
 			RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
@@ -1008,11 +980,12 @@ module.exports = {
 						return res.notFound()
 
 					// if not author
-					if (theme.author !== req.session.userId)
-						return res.forbidden()
+          self.canEdit('THEME', theme, req.session.userId, function (canEdit) {
+            if (!canEdit)
+              return res.forbidden()
 
-					parseBody(theme)
-
+            parseBody(theme)
+          })
 				})
 			})
 		}
@@ -1143,6 +1116,7 @@ module.exports = {
 			return res.notFound('ID is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
 		Theme.findOne({id:id, state:'CONFIRMED'}).exec(function (err, theme) {
 
@@ -1154,15 +1128,16 @@ module.exports = {
 			if (theme === undefined)
 				return res.notFound()
 
-			if (theme.author !== req.session.userId || !theme.versions[0].public)
-				return res.forbidden()
+      self.canEdit('THEME', theme, req.session.userId, function (canEdit) {
+        if (!canEdit || !theme.versions[0].public)
+          return res.forbidden()
 
-			// render
-			return res.render('developer/update_theme', {
-				title: req.__('Ajouter une version à votre thème'),
-				theme: theme
-			})
-
+        // render
+        return res.render('developer/update_theme', {
+          title: req.__('Ajouter une version à votre thème'),
+          theme: theme
+        })
+      })
 		})
 	},
 
@@ -1172,6 +1147,7 @@ module.exports = {
 			return res.notFound('ID is missing')
 		}
 		var id = req.param('id')
+    var self = this
 
 		if (req.body['versionChangelog[]'] !== undefined && typeof req.body['versionChangelog[]'] !== 'object')
 			req.body['versionChangelog[]'] = [req.body['versionChangelog[]']]
@@ -1200,87 +1176,83 @@ module.exports = {
 			// find plugin
 			Theme.findOne({id:id, state:'CONFIRMED'}).exec(function (err, theme) {
 
-				if (err) {
-					sails.log.error(err)
-					return res.serverError()
-				}
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
 
-				// not found
-				if (theme === undefined)
-					return res.notFound()
+        // not found
+        if (theme === undefined)
+          return res.notFound()
 
-				// not author
-				if (theme.author !== req.session.userId || !theme.versions[0].public)
-					return res.forbidden()
+        self.canEdit('THEME', theme, req.session.userId, function (canEdit) {
+          if (!canEdit || !theme.versions[0].public)
+            return res.forbidden()
 
-				// add version
-				theme.versions.unshift({
-					version: req.body.versionName,
-					public: false,
-					changelog: {
-						'fr_FR': req.body['versionChangelog[]']
-					}
-				})
+          // add version
+          theme.versions.unshift({
+            version: req.body.versionName,
+            public: false,
+            changelog: {
+              'fr_FR': req.body['versionChangelog[]']
+            }
+          })
 
-				// try to upload files
-				req.file("files").upload({
+          // try to upload files
+          req.file("files").upload({
 
-					 saveAs: function (file, cb) { // Check extension & content-type
+            saveAs: function (file, cb) { // Check extension & content-type
 
-							var extension = file.filename.split('.').pop()
+              var extension = file.filename.split('.').pop()
 
-							// seperate allowed and disallowed file types
-							if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed' && file.headers['content-type'] !== 'application/octet-stream') || extension != 'zip') {
-								// don't save
-								return res.json({
-									status: false,
-									msg: req.__("Vous avez tenté d'envoyer un fichier autre qu'une archive zip ou n'ayant pas la bonne extension."),
-									inputs:{}
-								})
-							}
-							else {
-								// save
-								var name = req.session.userId + '-' + theme.slug + '-v' + req.body.versionName + '.zip'
-								cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.themes, name))
-							}
+              // seperate allowed and disallowed file types
+              if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed' && file.headers['content-type'] !== 'application/octet-stream') || extension != 'zip') {
+                // don't save
+                return res.json({
+                  status: false,
+                  msg: req.__("Vous avez tenté d'envoyer un fichier autre qu'une archive zip ou n'ayant pas la bonne extension."),
+                  inputs: {}
+                })
+              }
+              else {
+                // save
+                var name = req.session.userId + '-' + theme.slug + '-v' + req.body.versionName + '.zip'
+                cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.themes, name))
+              }
 
-					 }
+            }
 
-				},function whenDone (err, file) {
+          }, function whenDone(err) {
+            if (err) {
+              sails.log.error(err)
+              return res.serverError()
+            }
 
-					if (err) {
-						sails.log.error(err)
-						return res.serverError()
-					}
+            // Save
+            Theme.update({id: id}, {versions: theme.versions}).exec(function (err) {
 
+              if (err) {
+                sails.log.error(err)
+                return res.serverError()
+              }
 
-					// Save
-					Theme.update({id: id}, {versions: theme.versions}).exec(function (err, themeUpdated) {
+              // Pushbullet
+              PushbulletService.push('Nouvelle version de thème à vérifier', RouteService.getBaseUrl() + '/admin/developer/theme/update/validate/' + id, 'Theme', id, [sails.config.pushbullet.principalEmail])
 
-						if (err) {
-							sails.log.error(err)
-							return res.serverError()
-						}
+              // Notification
+              NotificationService.success(req, req.__('Vous avez bien ajouté une nouvelle version à votre thème ! Elle sera vérifiée et validée sous peu.'))
 
-						// Pushbullet
-						PushbulletService.push('Nouvelle version de thème à vérifier', RouteService.getBaseUrl() + '/admin/developer/theme/update/validate/' + id, 'Theme', id, [sails.config.pushbullet.principalEmail])
+              // render
+              res.json({
+                status: true,
+                msg: req.__('Vous avez bien ajouté une nouvelle version à votre thème ! Elle sera vérifiée et validée sous peu.'),
+                inputs: {}
+              })
 
-						// Notification
-						NotificationService.success(req, req.__('Vous avez bien ajouté une nouvelle version à votre thème ! Elle sera vérifiée et validée sous peu.'))
-
-						// render
-						res.json({
-							status: true,
-							msg: req.__('Vous avez bien ajouté une nouvelle version à votre thème ! Elle sera vérifiée et validée sous peu.'),
-							inputs:{}
-						})
-
-					})
-
-				})
-
+            })
+          })
+        })
 			})
-
 		})
 	},
 
