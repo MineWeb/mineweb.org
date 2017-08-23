@@ -18,6 +18,9 @@ block content
             a.btn.btn-success.btn-lg.pull-right(href='/support/open')
               span.fa.fa-pencil
               | &nbsp;#{__('Ouvrir un nouveau ticket')}
+            a.btn.btn-primary.btn-lg.pull-right(href='/discord', style="background-color: #7289da;border-color:#7289da;margin-right:10px;")
+              img(src='/img/discord.png', alt='', width=23)
+              | &nbsp;#{__('Rejoindre notre discord')}
 
           if openTickets !== undefined && openTickets.length > 0
             div.table-responsive
