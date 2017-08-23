@@ -29,7 +29,7 @@ module.exports = {
         ]
     }, function () {
       // Find user
-      User.findOne({username: req.body.user}).exec(function (err, user) {
+      User.findOne({username: req.body.user, developer: 'CONFIRMED'}).exec(function (err, user) {
         if (err) {
           sails.log.error(err)
           return res.serverError()
