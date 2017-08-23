@@ -70,10 +70,20 @@ block content
                 .pull-right
                   span(data-toggle="tooltip", data-placement="top", data-original-title=plugin.author.username)
                     img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(plugin.author), alt='', width=30)
-                  each contributor in plugin.contributors
+                  span.contributors-list(data-extension-type="PLUGIN", data-extension-id=plugin.id)
+                    each contributor in plugin.contributors
+                      | &nbsp;
+                      span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
+                        if plugin.author.id === user.id
+                          span.hover
+                            span.cross.delete-contributor(data-id=contributor.id)
+                              i.fa.fa-times
+                        img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
+                  if plugin.author.id === user.id
                     | &nbsp;
-                    span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
-                      img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
+                    span.add-contributor(data-extension-type="PLUGIN", data-extension-id=plugin.id, data-toggle="tooltip", data-placement="top", data-original-title=__('Ajouter un contributeur'))
+                     i.fa.fa-plus.circle(style='font-size:13px')
+
         div.col-md-4
           .card.text-xs-center
             .card-header
@@ -113,10 +123,19 @@ block content
                 .pull-right
                   span(data-toggle="tooltip", data-placement="top", data-original-title=theme.author.username)
                     img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(theme.author), alt='', width=30)
-                  each contributor in theme.contributors
+                  span.contributors-list(data-extension-type="THEME", data-extension-id=theme.id)
+                    each contributor in theme.contributors
+                      | &nbsp;
+                      span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
+                        if theme.author.id === user.id
+                          span.hover
+                            span.cross.delete-contributor(data-id=contributor.id)
+                              i.fa.fa-times
+                        img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
+                  if theme.author.id === user.id
                     | &nbsp;
-                    span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
-                      img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user.author), alt='', width=30)
+                    span.add-contributor(data-extension-type="THEME", data-extension-id=theme.id, data-toggle="tooltip", data-placement="top", data-original-title=__('Ajouter un contributeur'))
+                     i.fa.fa-plus.circle(style='font-size:13px')
 
         div.col-md-4
           .card.text-xs-center
@@ -150,12 +169,48 @@ block content
                   button.btn.btn-outline-secondary(type="submit") #{__('Modifier')}
               small.form-text.text-muted #{__('Si vous avez des plugins/thèmes payants, les paiements PayPal seront envoyés sur cette adresse email.')}
 
-
-
-
+  .modal.fade#addContributor
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h4.modal-title #{__('Ajouter un contributeur')}
+        .modal-body
+          form(method='post', action='/developer/contributor/add', data-ajax='true', data-custom-callback='afterAddContributor')
+            input(name='extension', type='hidden')
+            input(name='type', type='hidden')
+            .form-group
+              label #{__("Nom d'utilisateur")}
+              div.input-group
+                input.form-control(name='user')
+                span.input-group-btn
+                  button.btn.btn-outline-success
+                    i.fa.fa-plus
+                    | &nbsp;#{__('Ajouter')}
+              small.form-text.text-muted #{__('Un contributeur peut modifier et mettre à jour votre extension.')}
 
 block customCss
   style.
+
+    span.hover {
+      background: center center no-repeat rgba(255, 255, 255, 0.18);
+      height: 30px;
+      position: absolute;
+      text-align: center;
+      width: 30px;
+      z-index: 10;
+      border-radius: 50%;
+      opacity: 0;
+    }
+    span.hover span.cross {
+      cursor: pointer;
+      color: #d9534f;
+      font-size: 15px;
+      position: absolute;
+      top: 3px;
+      left: 9.5px;
+      z-index: 10;
+    }
+
     /*
       DARK MODE
     */
@@ -195,16 +250,23 @@ block customCss
       margin-bottom:40px;
     }
 
-    .card-header, .card-footer {
+    .card-header, .card-footer, .modal-header, .modal-footer {
       background-color: #171717;
       color: #818a91;
     }
 
-    .card-header h4 {
+    .card-header h4, .modal-header h4 {
       color: rgb(85, 85, 85);
     }
 
-    .card {
+    .modal-header h4 {
+      text-align: center;
+    }
+    .modal-footer, .modal-header {
+      border: none;
+    }
+
+    .card, .modal-content {
       background-color: #242424;
       color: rgb(255, 255, 255);
     }
@@ -234,3 +296,40 @@ block customCss
     .alert.alert-success {
       background-color: #b1beab;
     }
+
+block custom
+  script(type='text/javascript').
+    $('.add-contributor').on('click', function (event) {
+      event.preventDefault()
+      $('#addContributor form input[name="extension"]').val($(this).attr('data-extension-id'))
+      $('#addContributor form input[name="type"]').val($(this).attr('data-extension-type'))
+      $('#addContributor form input[name="user"]').val('')
+      $('#addContributor form .ajax-msg').remove()
+      $('#addContributor').modal('show')
+    })
+    function afterAddContributor(req, res) {
+      $('#addContributor').modal('hide')
+      var list = $('.contributors-list[data-extension-type="' + $('#addContributor form input[name="type"]').val() + '"][data-extension-id="' + $('#addContributor form input[name="extension"]').val() + '"]')
+      var content = '&nbsp;' +
+        '<span data-toggle="tooltip" data-placement="top" data-original-title="' + res.data.user.username + '">' +
+          '<img src="http://www.gravatar.com/avatar/' + res.data.user.md5Email + '" alt="" width="30" class="img-circle"/>' +
+        '</span>'
+      list.append(content)
+      $('[data-toggle="tooltip"][data-original-title="' + res.data.user.username + '"]').tooltip()
+      return true
+    }
+    $('.contributors-list span[data-toggle="tooltip"]').hover(function () {
+        $(this).find('.hover').stop().animate({
+          opacity: 1
+        }, 'fast');
+      },
+      function () {
+        $(this).find('.hover').stop().animate({
+          opacity: 0
+        }, 'fast');
+      })
+    $('.delete-contributor').on('click', function (event) {
+      event.preventDefault()
+      $.get('/developer/contributor/remove/' + $(this).attr('data-id'))
+      $(this).parent().parent().remove()
+    })

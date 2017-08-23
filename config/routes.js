@@ -151,7 +151,7 @@ module.exports.routes = {
   'get /developer/update/plugin/:id': 'DeveloperController.updatePluginPage',
   'post /developer/update/plugin/:id': 'DeveloperController.updatePlugin',
 
-  '/developer/delete/plugin/:id': 'DeveloperController.deletePlugin',
+  'get /developer/delete/plugin/:id': 'DeveloperController.deletePlugin',
 
   'get /developer/add/theme': 'DeveloperController.addThemePage',
   'post /developer/add/theme': 'DeveloperController.editTheme',
@@ -162,7 +162,10 @@ module.exports.routes = {
   'get /developer/update/theme/:id': 'DeveloperController.updateThemePage',
   'post /developer/update/theme/:id': 'DeveloperController.updateTheme',
 
-  '/developer/delete/theme/:id': 'DeveloperController.deleteTheme',
+  'get /developer/delete/theme/:id': 'DeveloperController.deleteTheme',
+
+  'post /developer/contributor/add': 'DeveloperController.addContributor',
+  'get /developer/contributor/remove/:id': 'DeveloperController.removeContributor',
 
   /*
     REVERSE PROXY FOR API

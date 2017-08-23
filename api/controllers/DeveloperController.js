@@ -13,6 +13,135 @@ var htmlentities = new Entities()
 
 module.exports = {
 
+  addContributor: function (req, res) {
+    RequestManagerService.setRequest(req).setResponse(res).valid({
+        "Tous les champs ne sont pas remplis.": [
+          ['user', "Vous devez spécifier un utilisateur"],
+          ['type', 'Vous devez choisir un type d\'extension'],
+          ['extension', 'Vous devez choisir une extension']
+        ],
+        "Vous avez choisi une extension invalide": [
+          {
+            field: 'type',
+            in: ['PLUGIN', 'THEME'],
+            error: 'Type d\'extension non valide'
+          }
+        ]
+    }, function () {
+      // Find user
+      User.findOne({username: req.body.user}).exec(function (err, user) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+        if (user === undefined)
+          return res.json({
+            status: false,
+            msg: req.__("L'utilisateur n'a pas été trouvé. Veuillez renseigner un nom d'utilisateur valide."),
+            inputs: {}
+          })
+        if (user.id === req.session.userId)
+          return res.json({
+            status: false,
+            msg: req.__("Vous ne pouvez pas vous ajouter vous-même."),
+            inputs: {}
+          })
+        // Find extension
+        var model = (req.body.type === 'PLUGIN') ? Plugin : Theme
+        model.findOne({id: req.body.extension}).exec(function (err, extension) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+          if (extension === undefined)
+            return res.json({
+              status: false,
+              msg: req.__("L'extension n'a pas été trouvée."),
+              inputs: {}
+            })
+          if (extension.author !== req.session.userId)
+            return res.forbidden()
+          // Check if unique
+          Contributor.findOne({user: user.id, type: req.body.type, extension: extension.id}).exec(function (err, contributor) {
+            if (err) {
+              sails.log.error(err)
+              return res.serverError()
+            }
+            if (contributor !== undefined)
+              return res.json({
+                status: false,
+                msg: req.__("L'utilisateur est déjà contributeur."),
+                inputs: {}
+              })
+            // Add contributor
+            Contributor.create({
+              user: user.id,
+              type: req.body.type,
+              extension: extension.id
+            }).exec(function (err) {
+              if (err) {
+                sails.log.error(err)
+                return res.serverError()
+              }
+              return res.json({
+                status: true,
+                msg: req.__("L'utilisateur a bien été ajouté en tant que contributeur !"),
+                inputs: {},
+                data: {
+                  user: User.addMd5Email(user)
+                }
+              })
+            })
+          })
+        })
+      })
+    })
+  },
+
+  removeContributor: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('ID is missing')
+    }
+    var id = req.param('id')
+
+    // Get contributor
+    Contributor.findOne({id: id}).exec(function (err, contributor) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (contributor === undefined)
+        return res.notFound()
+      // Get extension
+      var model = (contributor.type === 'PLUGIN') ? Plugin : Theme
+      model.findOne({id: contributor.extension}).exec(function (err, extension) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+        // Extension not found
+        if (extension === undefined) {
+          Contributor.destroy({id: contributor.id}).exec(function (err) {
+            if (err)
+              sails.log.error(err)
+          })
+          return res.send()
+        }
+        // Check permission
+        if (extension.author !== req.session.userId)
+          return res.forbidden()
+        // Delete
+        Contributor.destroy({id: contributor.id}).exec(function (err) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+          return res.send()
+        })
+      })
+    })
+  },
+
   canEdit: function (type, extension, userId, next) {
     if (extension.author === userId)
       return next(true)

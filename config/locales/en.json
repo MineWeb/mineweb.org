@@ -604,5 +604,14 @@
 
   "Une nouvelle connexion a été détectée sur votre compte sur" : "",
   "Si il ne s'agit pas de vous, changez immédiatement votre mot de passe, sinon, vous pouvez ignorer ce mail.": "",
-  "Nouvelle connexion a votre compte": ""
+  "Nouvelle connexion a votre compte": "",
+
+  "Ajouter un contributeur": "",
+  "Vous avez choisi une extension invalide": "",
+  "L'utilisateur n'a pas été trouvé. Veuillez renseigner un nom d'utilisateur valide.": "",
+  "L'extension n'a pas été trouvée.": "",
+  "L'utilisateur a bien été ajouté en tant que contributeur !": "",
+  "Un contributeur peut modifier et mettre à jour votre extension.": "",
+  "L'utilisateur est déjà contributeur.": "",
+  "Vous ne pouvez pas vous ajouter vous-même.": ""
 }
