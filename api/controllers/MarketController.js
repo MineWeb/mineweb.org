@@ -191,15 +191,22 @@ module.exports = {
 				}
 
 			}, function() {
-
 				results[0]['supported'] = result
-				return response.view('market/theme', {
-					title: results[0].name,
-					theme: results[0],
-				})
 
+        // Contributors
+        Contributor.find({type: 'THEME', extension: results[0].id}).populate(['user']).exec(function (err, contributors) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+          results[0].contributors = contributors
+          return response.view('market/theme', {
+            title: results[0].name,
+            theme: results[0]
+          })
+        })
 			})
-		});
+		})
 	},
 
   /**
@@ -306,16 +313,21 @@ module.exports = {
 				}
 
 			}, function() {
-
 				results[0]['requirements'] = result
 
-				return response.view('market/plugin', {
-					title: results[0].name,
-					plugin: results[0],
-				})
-
+        // Contributors
+        Contributor.find({type: 'PLUGIN', extension: results[0].id}).populate(['user']).exec(function (err, contributors) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+          results[0].contributors = contributors
+          return response.view('market/plugin', {
+            title: results[0].name,
+            plugin: results[0]
+          })
+        })
 			})
-
-		});
+		})
 	}
-};
+}

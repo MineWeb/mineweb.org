@@ -22,6 +22,17 @@ block content
 
           hr
 
+          h4 #{__('Développeurs')}
+
+          span(data-toggle="tooltip", data-placement="top", data-original-title=theme.author.username)
+            img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(theme.author), alt='', width=40)
+          each contributor in theme.contributors
+            | &nbsp;
+            span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
+              img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=40)
+
+          hr
+
           h4 !{__('Plugins supportés')}
 
           div.table-responsive
