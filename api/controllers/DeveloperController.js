@@ -114,19 +114,69 @@ module.exports = {
 
 			async.parallel([
 
-				// Find plugins
+				/*// Find plugins
 				function (callback) {
 					Plugin.find({author: req.session.userId, state:'CONFIRMED'}).exec(function (err, plugins) {
-						return callback(err, plugins)
+					  async.map(plugins, function (plugin, next) {
+					    Contributor.find({type: 'PLUGIN', extension: plugin.id}).populate(['user']).exec(function (err, contributors) {
+                if (err)
+                  return next(err, plugin)
+                plugin.contributors = contributors
+                next(undefined, plugin)
+              })
+            }, function (err, plugins) {
+					    if (err)
+					      sails.log.error(err)
+              return callback(err, plugins)
+            })
 					})
 				},
 
 				// Find themes
 				function (callback) {
 					Theme.find({author: req.session.userId, state:'CONFIRMED'}).exec(function (err, themes) {
-						return callback(err, themes)
-					})
-				}
+            async.map(themes, function (theme, next) {
+              Contributor.find({type: 'THEME', extension: theme.id}).populate(['user']).exec(function (err, contributors) {
+                if (err)
+                  return next(err, theme)
+                theme.contributors = contributors
+                next(undefined, theme)
+              })
+            }, function (err, themes) {
+              if (err)
+                sails.log.error(err)
+              return callback(err, themes)
+            })
+          })
+				}*/
+
+        // Find plugins
+        function (callback) {
+          Plugin.find({author: req.session.userId, state:'CONFIRMED'}).populate(['author']).exec(callback)
+        },
+
+        // Find themes
+        function (callback) {
+          Theme.find({author: req.session.userId, state:'CONFIRMED'}).populate(['author']).exec(callback)
+        },
+
+        // Find contributed plugins
+        function (callback) {
+          Contributor.find({user: req.session.userId, type: 'PLUGIN'}).exec(function (err, contributors) {
+            async.map(contributors, function (contributor, next) {
+              Plugin.findOne({id: contributor.extension, state: 'CONFIRMED'}).populate(['author']).exec(next)
+            }, callback)
+          })
+        },
+
+        // Find contributed themes
+        function (callback) {
+          Contributor.find({user: req.session.userId, type: 'THEME'}).exec(function (err, contributors) {
+            async.map(contributors, function (contributor, next) {
+              Theme.findOne({id: contributor.extension, state: 'CONFIRMED'}).populate(['author']).exec(next)
+            }, callback)
+          })
+        }
 
 			], function (err, results) {
 
@@ -136,69 +186,88 @@ module.exports = {
 				}
 
 				// Set vars
-				var plugins = (results[0] === undefined) ? [] : results[0]
-				var themes = (results[1] === undefined) ? [] : results[1]
+        var plugins = _.union(results[0], results[2])
+        var themes = _.union(results[1], results[3])
 				var totalDownloads = 0
-				var purchases = []
 				var purchasesTotalGain = 0
 
-				// Calcul downloads
-				for (var i = 0; i < plugins.length; i++) {
-					totalDownloads += plugins[i].downloads
-				}
-				for (var i = 0; i < themes.length; i++) {
-					totalDownloads += themes[i].downloads
-				}
+        // Handle contributors
+        async.map(plugins, function (plugin, next) {
+          Contributor.find({type: 'PLUGIN', extension: plugin.id}).populate(['user']).exec(function (err, contributors) {
+            if (err)
+              return next(err, plugin)
+            plugin.contributors = contributors
+            next(undefined, plugin)
+          })
+        }, function (err, plugins) {
+          if (err)
+            sails.log.error(err)
 
-				async.parallel([
-
-					// Find purchases of his plugins
-					function (callback) {
-						Purchase.query('SELECT plugin.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId WHERE plugin.author = ' + req.session.userId + ' GROUP BY plugin.id;', function (err, results) {
-						  if (err) {
-						    sails.log.error(err)
-						    return callback()
-              }
-              for (plugin in results)
-                purchasesTotalGain += results[plugin].total
-              callback()
+          async.map(themes, function (theme, next) {
+            Contributor.find({type: 'THEME', extension: theme.id}).populate(['user']).exec(function (err, contributors) {
+              if (err)
+                return next(err, theme)
+              theme.contributors = contributors
+              next(undefined, theme)
             })
-					},
+          }, function (err, themes) {
+            if (err)
+              sails.log.error(err)
 
-					// Find purchases of his themes
-          function (callback) {
-            Purchase.query('SELECT theme.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId WHERE theme.author = ' + req.session.userId + ' GROUP BY theme.id;', function (err, results) {
+            // Calcul downloads
+            for (var i = 0; i < plugins.length; i++)
+              totalDownloads += plugins[i].downloads
+            for (i = 0; i < themes.length; i++)
+              totalDownloads += themes[i].downloads
+
+            async.parallel([
+
+              // Find purchases of his plugins
+              function (callback) {
+                Purchase.query('SELECT plugin.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM plugin INNER JOIN purchase ON purchase.itemId = plugin.id AND purchase.type = \'PLUGIN\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId WHERE plugin.author = ' + req.session.userId + ' GROUP BY plugin.id;', function (err, results) {
+                  if (err) {
+                    sails.log.error(err)
+                    return callback()
+                  }
+                  for (plugin in results)
+                    purchasesTotalGain += results[plugin].total
+                  callback()
+                })
+              },
+
+              // Find purchases of his themes
+              function (callback) {
+                Purchase.query('SELECT theme.name, SUM(paypalhistory.paymentAmount - paypalhistory.taxAmount) AS total FROM theme INNER JOIN purchase ON purchase.itemId = theme.id AND purchase.type = \'THEME\' INNER JOIN paypalhistory ON paypalhistory.id = purchase.paymentId WHERE theme.author = ' + req.session.userId + ' GROUP BY theme.id;', function (err, results) {
+                  if (err) {
+                    sails.log.error(err)
+                    return callback()
+                  }
+                  for (theme in results)
+                    purchasesTotalGain += results[theme].total
+                  callback()
+                })
+              },
+
+            ], function (err) {
+
               if (err) {
                 sails.log.error(err)
-                return callback()
+                return res.serverError()
               }
-              for (theme in results)
-                purchasesTotalGain += results[theme].total
-              callback()
+
+              // Render
+              return res.render('developer/dashboard', {
+                title: req.__('Espace développeur'),
+                plugins: plugins,
+                themes: themes,
+                totalDownloads: totalDownloads,
+                purchasesTotalGain: purchasesTotalGain
+              })
+
             })
-          },
-
-				], function (err, results) {
-
-					if (err) {
-						sails.log.error(err)
-						return res.serverError()
-					}
-
-					// Render
-					return res.render('developer/dashboard', {
-						title: req.__('Espace développeur'),
-						plugins: plugins,
-						themes: themes,
-						totalDownloads: totalDownloads,
-						purchases: purchases,
-						purchasesTotalGain: purchasesTotalGain
-					})
-
-				})
-
+          })
+        })
 			})
-
 		}
 		else {
 

@@ -40,7 +40,7 @@ block content
             .card-block
               h2.card-title
                 span.fa.fa-credit-card
-                | &nbsp;#{purchasesTotalGain} €
+                | &nbsp;#{Math.round(purchasesTotalGain)} €
               p.card-text #{__('De ventes')}
 
       // ===================
@@ -62,10 +62,18 @@ block content
                 div.btn-group
                   a.btn.btn-ghost(href='/developer/edit/plugin/' + plugin.id) #{__('Modifier')}
                   a.btn.btn-outline-secondary(href='/developer/update/plugin/' + plugin.id, disabled=!plugin.versions[0].public, class=!plugin.versions[0].public ? 'disabled' : '') #{__('Ajouter une version')}
-              .card-footer.text-muted #{__('Publié')}&nbsp;
-                span.moment-date(fromNow) #{plugin.createdAt}
-                if plugin.price > 0
-                  | &nbsp;- #{plugin.price} €
+              .card-footer
+                .pull-left.text-muted #{__('Publié')}&nbsp;
+                  span.moment-date(fromNow) #{plugin.createdAt}
+                  if plugin.price > 0
+                    | &nbsp;- #{plugin.price} €
+                .pull-right
+                  span(data-toggle="tooltip", data-placement="top", data-original-title=plugin.author.username)
+                    img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(plugin.author), alt='', width=30)
+                  each contributor in plugin.contributors
+                    | &nbsp;
+                    span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
+                      img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
         div.col-md-4
           .card.text-xs-center
             .card-header
@@ -97,10 +105,19 @@ block content
                 div.btn-group
                   a.btn.btn-ghost(href='/developer/edit/theme/' + theme.id) #{__('Modifier')}
                   a.btn.btn-outline-secondary(href='/developer/update/theme/' + theme.id, disabled=!theme.versions[0].public, class=!theme.versions[0].public ? 'disabled' : '') #{__('Ajouter une version')}
-              .card-footer.text-muted #{__('Publié')}&nbsp;
-                span.moment-date(fromNow) #{theme.createdAt}
-                if theme.price > 0
-                  |  &nbsp;- #{theme.price} €
+              .card-footer
+                .pull-left.text-muted #{__('Publié')}&nbsp;
+                  span.moment-date(fromNow) #{theme.createdAt}
+                  if theme.price > 0
+                   |  &nbsp;- #{theme.price} €
+                .pull-right
+                  span(data-toggle="tooltip", data-placement="top", data-original-title=theme.author.username)
+                    img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(theme.author), alt='', width=30)
+                  each contributor in theme.contributors
+                    | &nbsp;
+                    span(data-toggle="tooltip", data-placement="top", data-original-title=contributor.user.username)
+                      img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user.author), alt='', width=30)
+
         div.col-md-4
           .card.text-xs-center
             .card-header
