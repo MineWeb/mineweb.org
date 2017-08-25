@@ -50,6 +50,8 @@ module.exports.routes = {
 
   '/api/plugin_version/*': 'ApiController.plugin_version',
 
+  '/discord': 'https://discordapp.com/invite/3QYdt8r',
+
   /*
     PURCHASE
   */
