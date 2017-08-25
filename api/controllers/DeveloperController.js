@@ -876,7 +876,7 @@ module.exports = {
               }
               else {
                 // save
-                var name = req.session.userId + '-' + plugin.slug + '-v' + req.body.versionName + '.zip'
+                var name = plugin.author + '-' + plugin.slug + '-v' + req.body.versionName + '.zip'
                 cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.plugins, name))
               }
 
@@ -1345,7 +1345,7 @@ module.exports = {
               }
               else {
                 // save
-                var name = req.session.userId + '-' + theme.slug + '-v' + req.body.versionName + '.zip'
+                var name = theme.author + '-' + theme.slug + '-v' + req.body.versionName + '.zip'
                 cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.themes, name))
               }
 
