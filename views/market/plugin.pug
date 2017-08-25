@@ -1,5 +1,20 @@
 extends ../layouts/layout
 
+block metas
+  meta(property="og:url" content="https://mineweb.org/market/plugin/" + plugin.slug)
+  meta(property="og:type" content="website")
+  meta(property="og:site_name" content="MineWeb")
+  meta(property="og:title" content='Plugin: ' + plugin.name)
+  meta(property="og:description" content=Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 250, true))
+  meta(property="og:image" content=plugin.img !== null && plugin.img.length > 0 ? plugin.img : "https://mineweb.org/favicon.png")
+
+  meta(name="twitter:card" content="summary")
+  meta(name="twitter:site" content="@MineWebCMS")
+  meta(name="twitter:title" content='Plugin: ' + plugin.name)
+  meta(name="twitter:description" content=Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 250, true))
+  meta(name="twitter:image:src" content=plugin.img !== null && plugin.img.length > 0 ? plugin.img : "https://mineweb.org/favicon.png")
+  meta(name="twitter:url" content="https://mineweb.org/")
+
 block content
   section#intro.text-intro.no-padding-bottom
     .container
