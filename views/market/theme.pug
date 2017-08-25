@@ -1,16 +1,16 @@
 extends ../layouts/layout
 
 block metas
-  meta(property="og:url" content="https://mineweb.org/market/plugin/" + plugin.slug)
+  meta(property="og:url" content="https://mineweb.org/market/plugin/" + theme.slug)
   meta(property="og:type" content="website")
   meta(property="og:site_name" content="MineWeb")
-  meta(property="og:title" content='Thème: ' + plugin.name)
+  meta(property="og:title" content='Thème: ' + theme.name)
   meta(property="og:description" content=Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 250, true))
   meta(property="og:image" content=theme.img !== null && theme.img.length > 0 ? theme.img : "https://mineweb.org/favicon.png")
 
   meta(name="twitter:card" content="summary")
   meta(name="twitter:site" content="@MineWebCMS")
-  meta(name="twitter:title" content='Thème: ' + plugin.name)
+  meta(name="twitter:title" content='Thème: ' + theme.name)
   meta(name="twitter:description" content=Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 250, true))
   meta(name="twitter:image:src" content=theme.img !== null && theme.img.length > 0 ? theme.img : "https://mineweb.org/favicon.png")
   meta(name="twitter:url" content="https://mineweb.org/")
