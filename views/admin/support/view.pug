@@ -71,7 +71,7 @@ block content
           each reply in ticket.replies
             // left if author/user, right if staff member
             .chat-message(class=reply.user.id === ticket.user.id ? 'left' : 'right')
-              img.message-avatar(src="http://www.gravatar.com/avatar/" + reply.user.md5Email, alt='')
+              img.message-avatar(src="https://www.gravatar.com/avatar/" + reply.user.md5Email, alt='')
               .message
                 a.message-author(href='/admin/user/view/' + reply.user.id) #{reply.user.username}
                 span.message-date.moment-date(fromNow) #{reply.createdAt}

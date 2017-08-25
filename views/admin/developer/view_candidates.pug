@@ -26,7 +26,7 @@ block content
                         td.project-title
                           a(href='/admin/user/view/' + user.id) #{user.username}
                         td.project-people
-                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=user.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(user).md5Email, alt="Gravatar de " + user.username)
+                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=user.username, src="https://www.gravatar.com/avatar/" + User.addMd5Email(user).md5Email, alt="Gravatar de " + user.username)
                         td.project-actions
                           a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/candidate/view/" + user.id)
                             i.fa.fa-reply

@@ -69,7 +69,7 @@ block content
                     | &nbsp;- #{plugin.price} €
                 .pull-right
                   span(data-toggle="tooltip", data-placement="top", data-original-title=plugin.author.username)
-                    img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(plugin.author), alt='', width=30)
+                    img.img-circle(src="https://www.gravatar.com/avatar/" + User.getMd5Email(plugin.author), alt='', width=30)
                   span.contributors-list(data-extension-type="PLUGIN", data-extension-id=plugin.id)
                     each contributor in plugin.contributors
                       | &nbsp;
@@ -78,7 +78,7 @@ block content
                           span.hover
                             span.cross.delete-contributor(data-id=contributor.id)
                               i.fa.fa-times
-                        img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
+                        img.img-circle(src="https://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
                   if plugin.author.id === user.id
                     | &nbsp;
                     span.add-contributor(data-extension-type="PLUGIN", data-extension-id=plugin.id, data-toggle="tooltip", data-placement="top", data-original-title=__('Ajouter un contributeur'))
@@ -122,7 +122,7 @@ block content
                    |  &nbsp;- #{theme.price} €
                 .pull-right
                   span(data-toggle="tooltip", data-placement="top", data-original-title=theme.author.username)
-                    img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(theme.author), alt='', width=30)
+                    img.img-circle(src="https://www.gravatar.com/avatar/" + User.getMd5Email(theme.author), alt='', width=30)
                   span.contributors-list(data-extension-type="THEME", data-extension-id=theme.id)
                     each contributor in theme.contributors
                       | &nbsp;
@@ -131,7 +131,7 @@ block content
                           span.hover
                             span.cross.delete-contributor(data-id=contributor.id)
                               i.fa.fa-times
-                        img.img-circle(src="http://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
+                        img.img-circle(src="https://www.gravatar.com/avatar/" + User.getMd5Email(contributor.user), alt='', width=30)
                   if theme.author.id === user.id
                     | &nbsp;
                     span.add-contributor(data-extension-type="THEME", data-extension-id=theme.id, data-toggle="tooltip", data-placement="top", data-original-title=__('Ajouter un contributeur'))
@@ -312,7 +312,7 @@ block custom
       var list = $('.contributors-list[data-extension-type="' + $('#addContributor form input[name="type"]').val() + '"][data-extension-id="' + $('#addContributor form input[name="extension"]').val() + '"]')
       var content = '&nbsp;' +
         '<span data-toggle="tooltip" data-placement="top" data-original-title="' + res.data.user.username + '">' +
-          '<img src="http://www.gravatar.com/avatar/' + res.data.user.md5Email + '" alt="" width="30" class="img-circle"/>' +
+          '<img src="https://www.gravatar.com/avatar/' + res.data.user.md5Email + '" alt="" width="30" class="img-circle"/>' +
         '</span>'
       list.append(content)
       $('[data-toggle="tooltip"][data-original-title="' + res.data.user.username + '"]').tooltip()

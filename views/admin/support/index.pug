@@ -66,9 +66,9 @@ block content
                         else
                           td.project-completion
                         td.project-people
-                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
+                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="https://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
                           if ticket.supported
-                            img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=ticket.supported.username, src="http://www.gravatar.com/avatar/" + User.addMd5Email(ticket.supported).md5Email, alt="Gravatar de " + ticket.supported.username)
+                            img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=ticket.supported.username, src="https://www.gravatar.com/avatar/" + User.addMd5Email(ticket.supported).md5Email, alt="Gravatar de " + ticket.supported.username)
                           else
                             a.btn.btn-outline.btn-success.btn-sm(href="/admin/support/take/" + ticket.id)
                               i.fa.fa-hand-rock-o
@@ -105,7 +105,7 @@ block content
                           b #{__('Date de fermeture')}&nbsp;
                           span.moment-date(fromNow) #{ticket.closedDate}
                         td.project-people
-                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="http://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
+                          img.img-circle.pull-left(data-toggle="tooltip", data-placement="top", data-original-title=ticket.user.username, src="https://www.gravatar.com/avatar/" + ticket.user.md5Email, alt="Gravatar de " + ticket.user.username)
                         td.project-actions
                           a.btn.btn-outline.btn-info.btn-sm(href="/admin/support/" + ticket.id)
                             i.fa.fa-eye
@@ -144,7 +144,7 @@ block custom
               html += '<li class="divider"></li>'
             html += response.replace(':link', '/admin/support/' + ticket.id + '?search=' + search).replace(':title', ticket.title).replace(':date', moment(ticket.lastUpdate).fromNow())
           }
-          
+
           if (i === 0)
             return $('#top-search-results').css('display', 'none')
           $('#top-search-results').html(html + '<div style="margin-top:5px;"></div>').css('display', 'block')
