@@ -1521,6 +1521,23 @@ module.exports = {
 
   downloadCustomSecure: function (req, res)
   {
+    if (req.param('id') === undefined) {
+      return res.notFound('ID is missing')
+    }
+    var id = req.param('id')
 
+    CustomExtension.findOne({id: id, author: req.session.userId}).exec(function (err, extension) {
+      if (err) {
+        console.error(err)
+        return res.serverError()
+      }
+      if (extension === undefined || extension.id === undefined)
+        return res.notFound();
+
+      res.set('Content-Type', 'text/plain')
+      res.set('Content-Length', JSON.stringify(extension.secure).length)
+      res.set('Content-Disposition', 'attachment; filename=secure')
+      res.send(JSON.stringify(extension.secure))
+    })
   }
 };
