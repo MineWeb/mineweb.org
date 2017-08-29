@@ -74,7 +74,10 @@ module.exports.policies = {
   DeveloperController: {
     '*': ['isAuthenticated', 'sessionAuth', 'flash', 'notification', 'developer'],
     'index': ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    'candidate': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    'candidate': ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    'submitCustomExtensionPage': ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    'submitCustomExtension': ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    'downloadCustomSecure': ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   'Admin/DashboardController': {

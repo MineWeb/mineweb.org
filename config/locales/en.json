@@ -614,7 +614,22 @@
   "Un contributeur peut modifier et mettre à jour votre extension.": "",
   "L'utilisateur est déjà contributeur.": "",
   "Vous ne pouvez pas vous ajouter vous-même.": "",
-  "Développeurs": "",
   "Installation": "",
-  "Rejoindre notre discord": ""
+  "Rejoindre notre discord": "",
+
+  "Soumettre une extension personnalisée": "",
+  "Soumettre une <span>extension personnalisée</span>": "",
+  "En soumettant votre extension (thème/plugin) celle-ci sera vérifiée et un fichier de sécurité sera généré et vous sera envoyé par email pour vous permettre d'utiliser votre extension en production (sur une licence basique).": "",
+  "Soumettre mon extension": "",
+  "Le slug de votre plugin (le nom de son dossier)": "",
+  "Fichiers du plugin/thème": "",
+
+  "Basique": "",
+  "Développement utilisateur": "",
+  "Inconnu": "",
+  "En attente...": "",
+  "Validée": "",
+  "Invalide": "",
+  "Télécharger le fichier de sécurité": "",
+  "Il y a quelques instants": ""
 }

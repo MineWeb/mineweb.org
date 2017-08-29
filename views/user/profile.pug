@@ -104,6 +104,7 @@ block content
                     thead
                       tr
                         th ID
+                        th #{__("Type")}
                         th #{__('Site')}
                         th #{__("Clé d'activation")}
                         th #{__('Statut')}
@@ -113,6 +114,15 @@ block content
                       each license, index in user.licenses
                         tr(class=license.suspended !== null ? 'disabled' : '', style=license.suspended !== null ? 'opacity:0.5;' : '')
                           td #{license.id}
+                          td
+                            if license.type === 'BASIC'
+                              span.tag.tag-success #{__('Basique')}
+                            else if license.type === 'DEV'
+                              span.tag.tag-info #{__('Développement')}
+                            else if license.type === 'USER_DEV'
+                              span.tag.tag-info #{__('Développement utilisateur')}
+                            else
+                              span.tag.tag-warning #{__('Inconnu')}
                           td.licenseHost(data-license-id=license.id)
                             if license.host != null && license.host.length > 0
                               a(href=license.host, target='_blank')

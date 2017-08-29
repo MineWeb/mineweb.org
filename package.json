@@ -51,5 +51,12 @@
     "debug": "node debug app.js",
     "start": "node app.js"
   },
-  "main": "app.js"
+  "main": "app.js",
+  "devDependencies": {
+    "eslint-config-standard": "^10.2.1",
+    "eslint-config-standard-jsx": "^4.0.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^7.3.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
 }

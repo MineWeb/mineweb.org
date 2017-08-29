@@ -1,71 +1,5 @@
 // List of all permissions
 module.exports.list = {
-  'DEVELOPER-ACCESS': [
-    {
-      controller: 'developer',
-      action: 'addContributor'
-    },
-    {
-      controller: 'developer',
-      action: 'removeContributor'
-    },
-    {
-      controller: 'developer',
-      action: 'index'
-    },
-    {
-      controller: 'developer',
-      action: 'editPayPalData'
-    },
-    {
-      controller: 'developer',
-      action: 'addPluginPage'
-    },
-    {
-      controller: 'developer',
-      action: 'editPluginPage'
-    },
-    {
-      controller: 'developer',
-      action: 'editPlugin'
-    },
-    {
-      controller: 'developer',
-      action: 'updatePluginPage'
-    },
-    {
-      controller: 'developer',
-      action: 'updatePlugin'
-    },
-    {
-      controller: 'developer',
-      action: 'deletePlugin'
-    },
-    {
-      controller: 'developer',
-      action: 'addThemePage'
-    },
-    {
-      controller: 'developer',
-      action: 'editThemePage'
-    },
-    {
-      controller: 'developer',
-      action: 'editTheme'
-    },
-    {
-      controller: 'developer',
-      action: 'updateThemePage'
-    },
-    {
-      controller: 'developer',
-      action: 'updateTheme'
-    },
-    {
-      controller: 'developer',
-      action: 'deleteTheme'
-    }
-  ],
   'ADMIN-ACCESS': {
     controller: 'admin/dashboard',
     action: 'admin'
@@ -220,9 +154,7 @@ module.exports.list = {
 // Access per role of all permissions
 module.exports.access = {
   'USER': [],
-  'DEVELOPER': [
-    'DEVELOPER-ACCESS'
-  ],
+  'DEVELOPER': [],
   'MOD': [
     // 'ADMIN-ACCESS_DASHBOARD',
     'ADMIN-VIEW_TICKETS',

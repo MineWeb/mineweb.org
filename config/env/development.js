@@ -80,7 +80,8 @@ module.exports = {
     upload: {
       folders: {
         plugins: 'uploads/plugins',
-        themes: 'uploads/themes'
+        themes: 'uploads/themes',
+        custom: 'uploads/custom'
       }
     }
   },

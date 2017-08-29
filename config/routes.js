@@ -169,6 +169,10 @@ module.exports.routes = {
   'post /developer/contributor/add': 'DeveloperController.addContributor',
   'get /developer/contributor/remove/:id': 'DeveloperController.removeContributor',
 
+  'get /developer/custom': 'DeveloperController.submitCustomExtensionPage',
+  'post /developer/custom': 'DeveloperController.submitCustomExtension',
+  'get /developer/custom/download/:id': 'DeveloperController.downloadCustomSecure',
+
   /*
     REVERSE PROXY FOR API
    */

@@ -1421,6 +1421,106 @@ module.exports = {
 			})
 
 		})
-	}
+	},
 
+  submitCustomExtensionPage: function (req, res)
+  {
+    CustomExtension.find({author: req.session.userId}).exec(function (err, extensions) {
+      if (err) {
+        console.error(err)
+        return res.serverError()
+      }
+
+      res.view('developer/submit_custom_extension', {
+        title: req.__('Soumettre une extension personnalisée'),
+        extensions: extensions
+      })
+    })
+  },
+
+  submitCustomExtension: function (req, res)
+  {
+    RequestManagerService.setRequest(req).setResponse(res).valid({
+        "Tous les champs ne sont pas remplis.": [
+          ['slug', "Vous devez spécifier un nom de version"],
+          {field: 'files', file: true, error: "Vous devez envoyer des fichiers"}
+        ],
+        "Vous n'avez pas respecté certaines règles": [
+          {
+            field: 'slug',
+            max: 50,
+            error: 'Votre slug doit faire au maximum 50 caractères'
+          },
+          {
+            field: 'type',
+            in: ['PLUGIN', 'THEME'],
+            error: 'Le type sélectionné est inconnu'
+          }
+        ]
+    }, function () {
+      // Check if not already uploaded
+      CustomExtension.findOne({author: req.session.userId, type: req.body.type, slug: req.body.slug, state: 'PENDING'}).exec(function (err, extension) {
+        if (err) {
+          console.error(err)
+          return res.status(500).send();
+        }
+        if (extension !== undefined && extension.id !== undefined)
+          return res.json({status: false, msg: req.__("L'extension est déjà soumise, veuillez patienter.")});
+
+        // Try to upload
+        req.file("files").upload({
+          saveAs: function (file, cb) { // Check extension & content-type
+
+            var extension = file.filename.split('.').pop()
+
+            // seperate allowed and disallowed file types
+            if ((file.headers['content-type'] !== 'application/zip' && file.headers['content-type'] !== 'application/x-zip-compressed' && file.headers['content-type'] !== 'application/octet-stream') || extension != 'zip') {
+              // don't save
+              return res.json({
+                status: false,
+                msg: req.__("Vous avez tenté d'envoyer un fichier autre qu'une archive zip ou n'ayant pas la bonne extension."),
+                inputs:{}
+              })
+            }
+            else {
+              // save
+              var name = req.body.type + '_' + req.session.userId + '-' + slugify(req.body.slug) + '.zip'
+              cb(null, path.join(__dirname, '../../', sails.config.developer.upload.folders.custom, name))
+            }
+          }
+        },function whenDone (err, file) {
+          if (err) {
+            console.error(err)
+            return res.status(500).send();
+          }
+
+          CustomExtension.create({
+            type: req.body.type,
+            state: 'PENDING',
+            slug: req.body.slug,
+            author: req.session.userId
+          }).exec(function (err, extension) {
+            if (err) {
+              console.error(err)
+              return res.status(500).send();
+            }
+
+            return res.json({
+              status: true,
+              msg: req.__("L'extension a bien été soumise, vous recevrez un email quand celle-ci sera validée."),
+              inputs: {},
+              data: {
+                extension: extension
+              }
+            })
+          })
+        })
+      })
+    })
+  },
+
+  downloadCustomSecure: function (req, res)
+  {
+
+  }
 };
