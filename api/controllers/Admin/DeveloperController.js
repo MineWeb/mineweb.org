@@ -73,7 +73,11 @@ module.exports = {
         username: user.username
       }, req.__('Acceptation de votre candidature de développeur'), user.email)
       // update db
-      User.update({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}, {developer: 'CONFIRMED'}).exec(function (err) {
+      User.update({
+        developerCandidacy: {'!': null},
+        developer: 'CANDIDATE',
+        id: id
+      }, {developer: 'CONFIRMED'}).exec(function (err) {
         if (err) sails.log.error(err)
       })
       // send notification
@@ -91,10 +95,10 @@ module.exports = {
     var id = req.param('id')
 
     RequestManagerService.setRequest(req).setResponse(res).valid({
-			'Tous les champs ne sont pas remplis.': [
-				['explanation', '']
-			]
-		}, function () {
+      'Tous les champs ne sont pas remplis.': [
+        ['explanation', '']
+      ]
+    }, function () {
       // find user
       User.findOne({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}).exec(function (err, user) {
         if (err) {
@@ -109,7 +113,11 @@ module.exports = {
           explanation: req.body.explanation
         }, req.__('Refus de votre candidature de développeur'), user.email)
         // update db
-        User.update({developerCandidacy: {'!': null}, developer: 'CANDIDATE', id: id}, {developer: 'NONE'}).exec(function (err) {
+        User.update({
+          developerCandidacy: {'!': null},
+          developer: 'CANDIDATE',
+          id: id
+        }, {developer: 'NONE'}).exec(function (err) {
           if (err) sails.log.error(err)
         })
         // send notification
@@ -129,11 +137,17 @@ module.exports = {
     async.parallel([
       // find Plugins
       function (callback) {
-        Plugin.find({versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'}).populate(['author']).exec(callback)
+        Plugin.find({
+          versions: {'like': '[{"version":"%","public":false,%'},
+          state: 'CONFIRMED'
+        }).populate(['author']).exec(callback)
       },
       // find themes
       function (callback) {
-        Theme.find({versions: {'like': '[{"version":"%","public":false,%'}, state: 'CONFIRMED'}).populate(['author']).exec(callback)
+        Theme.find({
+          versions: {'like': '[{"version":"%","public":false,%'},
+          state: 'CONFIRMED'
+        }).populate(['author']).exec(callback)
       },
       // find new Plugins
       function (callback) {
@@ -142,6 +156,10 @@ module.exports = {
       // find new themes
       function (callback) {
         Theme.find({state: 'UNCONFIRMED'}).populate(['author']).exec(callback)
+      },
+      // find custom extensions
+      function (callback) {
+        CustomExtension.find({state: 'PENDING'}).populate(['author']).exec(callback)
       }
     ], function (err, results) {
       if (err) {
@@ -154,7 +172,8 @@ module.exports = {
         pluginsUpdated: results[0] || [],
         themesUpdated: results[1] || [],
         pluginsAdded: results[2] || [],
-        themesAdded: results[3] || []
+        themesAdded: results[3] || [],
+        customExtensions: results[4] || []
       })
     })
   },
@@ -237,7 +256,8 @@ module.exports = {
       res.writeHead(200, {
         'Content-Type': 'application/zip',
         'Content-Length': fs.statSync(pluginPath).size,
-        'Content-Disposition': 'attachment; filename=' + slugify(plugin.name) + '-v' + plugin.version + '.zip'})
+        'Content-Disposition': 'attachment; filename=' + slugify(plugin.name) + '-v' + plugin.version + '.zip'
+      })
 
       // stream the file to the response
       pump(fs.createReadStream(pluginPath), res)
@@ -270,7 +290,8 @@ module.exports = {
       res.writeHead(200, {
         'Content-Type': 'application/zip',
         'Content-Length': fs.statSync(themePath).size,
-        'Content-Disposition': 'attachment; filename=' + slugify(theme.name) + '-v' + theme.version + '.zip'})
+        'Content-Disposition': 'attachment; filename=' + slugify(theme.name) + '-v' + theme.version + '.zip'
+      })
 
       // stream the file to the response
       pump(fs.createReadStream(themePath), res)
@@ -630,6 +651,164 @@ module.exports = {
         title: req.__('Listes des plugins/thèmes en ligne'),
         plugins: results[0] || [],
         themes: results[1] || []
+      })
+    })
+  },
+
+  viewExtensionSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+
+    CustomExtension.findOne({id: id, state: 'PENDING'}).populate(['author']).exec(function (err, extension) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (extension === undefined) return res.notFound()
+
+      res.view('admin/developer/view_extension_submitted', {
+        title: req.__('Extension "%s"', extension.slug),
+        extension: extension
+      })
+    })
+  },
+
+  downloadExtensionSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+
+    CustomExtension.findOne({id: id, state: 'PENDING'}).exec(function (err, extension) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (extension === undefined) return res.notFound()
+
+      var filename = extension.type + '_' + extension.author + '-' + slugify(extension.slug) + '.zip'
+      var filepath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.custom, filename)
+
+      // write header
+      res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Length': fs.statSync(filepath).size,
+        'Content-Disposition': 'attachment; filename=' + slugify(extension.slug) + '.zip'
+      })
+
+      // stream the file to the response
+      pump(fs.createReadStream(filepath), res)
+    })
+  },
+
+  acceptExtensionSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+
+    CustomExtension.findOne({id: id, state: 'PENDING'}).populate(['author']).exec(function (err, extension) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (extension === undefined) return res.notFound()
+
+      // send to API
+      var r = request.post(sails.config.api.endpoint + sails.config.api.custom.replace('{TYPE}', extension.type.toLowerCase()), form, function (err, httpResponse, body) {
+        body = JSON.parse(body)
+        if (err || httpResponse.statusCode !== 200 || !body.status) {
+          sails.log.error(err || httpResponse.statusCode)
+          return res.serverError(body)
+        }
+
+        // update plugin
+        CustomExtension.update({id: id}, {state: 'SUCCESS', secure: body.success}, function (err, extensions) {
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
+
+          // remove file from server
+          fs.unlink(filepath, function (err) {
+            if (err) sails.log.error(err)
+          })
+          // send email
+          MailService.send('developer/accepted_extension', {
+            url: RouteService.getBaseUrl() + '/developer/custom',
+            username: extension.author.username,
+            name: extension.slug
+          }, req.__('Acceptation de votre extension'), extension.author.email)
+          // send notification
+          NotificationService.success(req, req.__('L\'extension a bien été acceptée !'))
+          // response to redirect
+          return res.json({
+            status: true,
+            msg: req.__('L\'extension a bien été acceptée !'),
+            inputs: {}
+          })
+        })
+      })
+      // construct form
+      var form = r.form()
+      form.append('slug', extension.slug)
+      var filename = extension.type + '_' + extension.author.id + '-' + slugify(extension.slug) + '.zip'
+      var filepath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.custom, filename)
+      form.append('file', fs.createReadStream(filepath))
+    })
+  },
+
+  refuseExtensionSubmitted: function (req, res) {
+    if (req.param('id') === undefined) {
+      return res.notFound('Id is missing')
+    }
+    var id = req.param('id')
+
+    CustomExtension.findOne({id: id, state: 'PENDING'}).populate(['author']).exec(function (err, extension) {
+      if (err) {
+        sails.log.error(err)
+        return res.serverError()
+      }
+      if (extension === undefined) return res.notFound()
+      // check explanation
+      if (req.body.explanation === undefined || req.body.explanation.length === 0) {
+        return res.json({
+          status: false,
+          msg: req.__('Vous devez spécifier une raison !'),
+          inputs: {}
+        })
+      }
+
+      // update plugin
+      CustomExtension.update({id: id, state: 'PENDING'}, {state: 'FAILED'}, function (err, extensions) {
+        if (err) {
+          sails.log.error(err)
+          return res.serverError()
+        }
+
+        // remove file from server
+        var filename = extension.type + '_' + extension.author.id + '-' + slugify(extension.slug) + '.zip'
+        var filepath = path.join(__dirname, '../../../', sails.config.developer.upload.folders.custom, filename)
+        fs.unlink(filepath, function (err) {
+          if (err) sails.log.error(err)
+        })
+        // send email
+        MailService.send('developer/refused_extension', {
+          url: RouteService.getBaseUrl() + '/developer/custom',
+          username: extension.author.username,
+          name: extension.name,
+          explanation: req.body.explanation
+        }, req.__('Refus de votre extension'), extension.author.email)
+        // send notification
+        NotificationService.success(req, req.__('L\'extension a bien été refusée !'))
+        // response to redirect
+        return res.json({
+          status: true,
+          msg: req.__('L\'extension a bien été refusée !'),
+          inputs: {}
+        })
       })
     })
   }

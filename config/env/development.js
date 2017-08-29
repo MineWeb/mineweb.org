@@ -73,7 +73,8 @@ module.exports = {
     storage: {
       getCMS: 'storage/get_cms',
       upload: 'api/storage/upload'
-    }
+    },
+    custom: '{TYPE}/security/generate'
   },
 
   developer: {

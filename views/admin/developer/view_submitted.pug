@@ -143,3 +143,41 @@ block content
                             | &nbsp;
             else
               .alert.alert-danger #{__("Aucune nouvelle version de thème n'a été soumise")}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .ibox
+          .ibox-title
+            h5 #{__('Liste des extensions customisées en attente')}
+          .ibox-content
+            if customExtensions && customExtensions.length > 0
+              .project-list
+                .table-responsive
+                  table.table.table-hover
+                    tbody
+                      each extension in customExtensions
+                        tr
+                          td.project-status
+                            if extension.type === 'PLUGIN'
+                              span.label.label-info(style='border-radius: 10') #{__('Plugin')}
+                            else
+                              span.label.label-warning(style='border-radius: 10') #{__('Thème')}
+                          td.project-title
+                            a(href='/admin/developer/submitted/extension/view/' + extension.id) #{extension.slug}
+                            br
+                            small.moment-date(fromNow) #{extension.createdAt}
+                          td.project-people
+                            span.pull-left
+                              img.img-circle(data-toggle="tooltip", data-placement="top", data-original-title=extension.author.username, src="https://www.gravatar.com/avatar/" + User.addMd5Email(extension.author).md5Email, alt="Gravatar de " + extension.author.username)
+                              | &nbsp;#{extension.author.username}
+                          td.project-actions
+                            a.btn.btn-outline.btn-primary.btn-sm(href="/admin/developer/submitted/extension/view/" + extension.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__('Voir')}
+                            | &nbsp;
+                            a.btn.btn-outline.btn-success.btn-sm(href="/admin/user/view/" + extension.author.id)
+                              i.fa.fa-reply
+                              | &nbsp;#{__("Voir l'auteur")}
+                            | &nbsp;
+            else
+              .alert.alert-danger #{__("Aucune nouvelle extension customisée n'a été soumise")}

@@ -244,6 +244,9 @@ module.exports.routes = {
   'post /admin/developer/submitted/theme/accept/:id': 'Admin/DeveloperController.acceptThemeSubmitted',
   'post /admin/developer/submitted/theme/refuse/:id': 'Admin/DeveloperController.refuseThemeSubmitted',
   '/admin/developer/submitted/plugin/download/:id': 'Admin/DeveloperController.downloadPluginSubmitted',
-  '/admin/developer/submitted/theme/download/:id': 'Admin/DeveloperController.downloadThemeSubmitted'
-
+  '/admin/developer/submitted/theme/download/:id': 'Admin/DeveloperController.downloadThemeSubmitted',
+  '/admin/developer/submitted/extension/view/:id': 'Admin/DeveloperController.viewExtensionSubmitted',
+  '/admin/developer/submitted/extension/download/:id': 'Admin/DeveloperController.downloadExtensionSubmitted',
+  'post /admin/developer/submitted/extension/accept/:id': 'Admin/DeveloperController.acceptExtensionSubmitted',
+  'post /admin/developer/submitted/extension/refuse/:id': 'Admin/DeveloperController.refuseExtensionSubmitted'
 }

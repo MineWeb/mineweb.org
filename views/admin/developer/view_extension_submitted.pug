@@ -1,0 +1,75 @@
+extends ../layouts/default
+
+block content
+  .row.wrapper.border-bottom.white-bg.page-heading
+    .col-md-12
+      h2 #{__('Extension customisée "%s"', extension.slug)}
+      ol.breadcrumb
+        li
+          a(href="/admin/dashboard") #{__('Dashboard')}
+        li.active
+          strong #{__('Espace développeur')}
+  .row
+    .col-lg-12
+      .wrapper.wrapper-content.animated.fadeInUp
+        .row
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                h5 #{__('Données de l\'extension')}
+              .ibox-content
+
+                form.form-horizontal(method='post', action="/admin/developer/submitted/extension/accept/" + extension.id, data-ajax, data-custom-callback="afterExtensionAccepted")
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Type")}
+                    .col-sm-10
+                      input.form-control(type='text', value=extension.type, disabled)
+
+                  .form-group
+                    label.col-sm-2.control-label #{__("Slug")}
+                    .col-sm-10
+                      input.form-control(type='text', value=extension.slug, disabled)
+
+                  .hr-line-dashed
+
+                  .form-group
+                    label.col-sm-2.control-label
+                    .col-sm-10
+                      a.btn.btn-outline.btn-info(href='/admin/user/view/'+extension.author.id) #{__("Voir l'auteur (%s)", extension.author.username)}
+
+                  .hr-line-dashed
+
+                  .form-group
+                    .col-sm-offset-2
+                      .row
+                        .col-md-6
+                          button.btn.btn-primary(type='submit')
+                            i.fa.fa-check
+                            | &nbsp;#{__('Accepter')}
+                        .col-md-6
+                          textarea.form-control(rows="3", name="explanation", placeholder=__('Explication'))
+                          button.btn.btn-danger.pull-right#refuse(type='button', style="margin-top:10px;")
+                            i.fa.fa-times
+                            | &nbsp;#{__('Refuser')}
+
+
+          .col-md-12
+            .ibox.float-e-margins
+              .ibox-title
+                h5 #{__('Fichiers')}
+              .ibox-content
+                a.btn.btn-block.btn-info(href='/admin/developer/submitted/extension/download/' + extension.id) #{__('Télécharger les fichiers')}
+
+block custom
+  script(type='text/javascript').
+    function afterExtensionAccepted(form, json) {
+      document.location = '/admin/developer/view/submitted'
+      return false
+    }
+    $('#refuse').on('click', function (e) {
+      e.preventDefault()
+      $('form').attr('action', '/admin/developer/submitted/extension/refuse/#{extension.id}')
+      $('form').submit()
+    })
