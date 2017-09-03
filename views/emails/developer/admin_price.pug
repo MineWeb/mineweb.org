@@ -1,0 +1,11 @@
+extends ../../layouts/email
+block message
+  p #{sails.__('Bonjour')} <strong>Eywek</strong>,
+    br
+    br
+    | Le prix du #{type.toLowerCase()} <b>#{name}</b> a été modifié de #{oldPrice} a #{price}.
+    br
+
+  p
+    small
+      em #{sails.__('Ceci est un message automatique, veuillez ne pas y répondre.')}
