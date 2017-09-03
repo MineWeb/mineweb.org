@@ -618,7 +618,7 @@ module.exports = {
         ]
       }, function () {
 
-        parseBody()
+        savePlugin()
 
       })
 
@@ -654,42 +654,18 @@ module.exports = {
             if (!canEdit)
               return res.forbidden()
 
-            parseBody(plugin)
+            updatePlugin(plugin)
           })
         })
       })
     }
 
-    function parseBody (plugin) {
-      var requirements = {}
-
-      for (i in data.requirements) {
-        requirements[data.requirements[i].type] = data.requirements[i].operator + ' ' + data.requirements[i].version
-      }
-      if (!add) {
-        for (i in plugin.versions) {
-          for (index in data.versions) {
-            if (data.versions[index].version == plugin.versions[i].version) {
-              plugin.versions[index].changelog['fr_FR'] = data.versions[index].changelog
-              break
-            }
-          }
-        }
-      }
-
-      if (add)
-        savePlugin(requirements)
-      else
-        updatePlugin(plugin, requirements)
-    }
-
-    function updatePlugin (plugin, requirements) {
+    function updatePlugin (plugin) {
       Plugin.update({id: plugin.id}, {
         name: data.name,
         price: data.price,
         img: data.img,
         description: data.description,
-        requirements: requirements,
         versions: plugin.versions
       }).exec(function (err, pluginUpdated) {
 
@@ -711,7 +687,7 @@ module.exports = {
       })
     }
 
-    function savePlugin (requirements) {
+    function savePlugin () {
 
       //global.requirements = requirements
 
@@ -752,7 +728,6 @@ module.exports = {
           price: data.price,
           img: data.img,
           description: data.description,
-          requirements: requirements,
           versions: '[{"version":"1.0.0","public":false,"changelog":{"fr_FR":["Mise en place du plugin"]},"releaseDate":null}]',
           author: req.session.userId,
           version: '1.0.0'
@@ -1093,7 +1068,7 @@ module.exports = {
           ['description', 'Vous devez spécifier une description'],
           {field: 'files', file: true, error: 'Vous devez envoyer des fichiers'},
         ]
-      }, parseBody())
+      }, saveTheme())
     }
     else { // edit
       RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
@@ -1127,44 +1102,20 @@ module.exports = {
             if (!canEdit)
               return res.forbidden()
 
-            parseBody(theme)
+            updateTheme(theme)
           })
         })
       })
     }
 
-    function parseBody (plugin) {
-      var requirements = {}
-
-      for (i in data.supported) {
-        requirements[data.supported[i].type] = data.supported[i].operator + ' ' + data.supported[i].version
-      }
-      if (!add) {
-        for (i in plugin.versions) {
-          for (index in data.versions) {
-            if (data.versions[index].version == plugin.versions[i].version) {
-              plugin.versions[index].changelog['fr_FR'] = data.versions[index].changelog
-              break
-            }
-          }
-        }
-      }
-
-      if (add)
-        saveTheme(requirements)
-      else
-        updateTheme(plugin, requirements)
-    }
-
-    function updateTheme (theme, supported) {
+    function updateTheme (theme) {
       Theme.update({id: theme.id}, {
         name: data.name,
         price: data.price,
         img: data.img,
         description: data.description,
-        supported: supported,
         versions: theme.versions
-      }).exec(function (err, themeUpdated) {
+      }).exec(function (err) {
 
         if (err) {
           sails.log.error(err)
@@ -1184,7 +1135,7 @@ module.exports = {
       })
     }
 
-    function saveTheme (supported) {
+    function saveTheme () {
 
       // try to upload files
       req.file('files').upload({
@@ -1223,7 +1174,6 @@ module.exports = {
           price: data.price,
           img: data.img,
           description: data.description,
-          supported: supported,
           versions: '[{"version":"1.0.0","public":false,"changelog":{"fr_FR":["Mise en place du thème"]},"releaseDate":null}]',
           author: req.session.userId,
           version: '1.0.0'
