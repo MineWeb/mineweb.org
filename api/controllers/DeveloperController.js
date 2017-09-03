@@ -674,11 +674,11 @@ module.exports = {
           return res.serverError()
         }
 
-        if (pluginUpdated.price > plugin.price)
+        if (pluginUpdated[0].price > plugin.price)
           MailService.send('developer/admin_price', {
             name: plugin.name,
             type: 'PLUGIN',
-            price: pluginUpdated.price,
+            price: pluginUpdated[0].price,
             oldPrice: plugin.price
           }, req.__('Modification de prix d\'un plugin'), 'contact@eywek.fr')
 
@@ -1130,11 +1130,11 @@ module.exports = {
           return res.serverError()
         }
 
-        if (themeUpdated.price > theme.price)
+        if (themeUpdated[0].price > theme.price)
           MailService.send('developer/admin_price', {
             name: theme.name,
             type: 'THEME',
-            price: themeUpdated.price,
+            price: themeUpdated[0].price,
             oldPrice: theme.price
           }, req.__('Modification de prix d\'un thème'), 'contact@eywek.fr')
 
