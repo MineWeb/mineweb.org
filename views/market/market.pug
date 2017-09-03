@@ -22,72 +22,66 @@ block content
       .tab-content
         #plugins.tab-pane.fade.in.active(role='tabpanel')
 
-          - var i = 0
-          each plugin in plugins
-            - i++
+          div.row.market-item
+            div.col-md-12
+              div.row
+                - var i = 0
+                each plugin in plugins
+                  - i++
 
-            if i > 1
-              hr
+                  if i % 3 === 1 && i > 1
+                    | </div><hr></div><div class="col-md-12" style="margin-top:30px"><div class="row">
 
-            div.row.market-item
-              div.col-md-6
-                img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
-              div.col-md-6
-                h3 #{plugin.name}
-                p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 250, true)}
-                p.text-muted.market-item-infos
-                  | #{__('Prix :')}&nbsp;
-                  if plugin.price > 0
-                    b #{plugin.price} €
-                  else
-                    em
-                      span.tag.tag-success #{__('Gratuit')}
-                  br
-                  | #{__('Téléchargements :')}&nbsp;
-                  b #{plugin.downloads}
-                  br
-                  | #{__('Version actuelle :')}&nbsp;
-                  b #{plugin.version}
-                  br
-                  | #{__('Dernière mise à jour :')}&nbsp;
-                  b.moment-date(fromNow) #{plugin.updatedAt}
-
-                a.btn.btn-primary(href='/market/plugin/' + plugin.slug)
-                  i.fa.fa-plus
-                  | &nbsp;#{__("Plus d'informations")}
+                  div.col-md-4.text-center
+                    h3 #{plugin.name}
+                    img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
+                    p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 50, true)}
+                    p.text-muted.market-item-infos
+                      span.pull-left
+                        | #{__('Prix :')}&nbsp;
+                        if plugin.price > 0
+                          b #{plugin.price} €
+                        else
+                          em
+                            span.tag.tag-success #{__('Gratuit')}
+                      span.pull-right v#{plugin.version}
+                      .clearfix
+                    p.text-muted.market-item-infos.text-center
+                      b #{plugin.downloads}
+                      |  #{__('téléchargements')}
+                    a.btn.btn-primary.btn-block(href='/market/plugin/' + plugin.slug)
+                      i.fa.fa-plus
+                      | &nbsp;#{__("Plus d'informations")}
 
         #themes.tab-pane.fade(role='tabpanel')
 
-          - var i = 0
-          each theme in themes
-            - i++
+          div.row.market-item
+            div.col-md-12
+              div.row
+                - var i = 0
+                each theme in themes
+                  - i++
 
-            if i > 1
-              hr
+                  if i % 3 === 1 && i > 1
+                    | </div><hr></div><div class="col-md-12" style="margin-top:30px"><div class="row">
 
-            div.row.market-item
-              div.col-md-6
-                img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
-              div.col-md-6
-                h3 #{theme.name}
-                p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 250, true)}
-                p.text-muted.market-item-infos
-                  | #{__('Prix :')}&nbsp;
-                  if theme.price > 0
-                    b #{theme.price} €
-                  else
-                    em
-                      span.tag.tag-success #{__('Gratuit')}
-                  br
-                  | #{__('Téléchargements :')}&nbsp;
-                  b #{theme.downloads}
-                  br
-                  | #{__('Version actuelle :')}&nbsp;
-                  b #{theme.version}
-                  br
-                  | #{__('Dernière mise à jour :')}&nbsp;
-                  b.moment-date(fromNow) #{theme.updatedAt}
-
-                a.btn.btn-primary(href='/market/theme/' + theme.slug)
-                  i.fa.fa-plus
-                  | &nbsp;#{__("Plus d'informations")}
+                  div.col-md-4.text-center
+                    h3 #{theme.name}
+                    img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
+                    p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 50, true)}
+                    p.text-muted.market-item-infos
+                      span.pull-left
+                        | #{__('Prix :')}&nbsp;
+                        if theme.price > 0
+                          b #{theme.price} €
+                        else
+                          em
+                            span.tag.tag-success #{__('Gratuit')}
+                      span.pull-right v#{theme.version}
+                      .clearfix
+                    p.text-muted.market-item-infos.text-center
+                      b #{theme.downloads}
+                      |  #{__('téléchargements')}
+                    a.btn.btn-primary.btn-block(href='/market/theme/' + theme.slug)
+                      i.fa.fa-plus
+                      | &nbsp;#{__("Plus d'informations")}
