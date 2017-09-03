@@ -674,6 +674,14 @@ module.exports = {
           return res.serverError()
         }
 
+        if (pluginUpdated[0].price > plugin.price)
+          MailService.send('developer/admin_price', {
+            name: plugin.name,
+            type: 'PLUGIN',
+            price: pluginUpdated[0].price,
+            oldPrice: plugin.price
+          }, req.__('Modification de prix d\'un plugin'), 'contact@eywek.fr')
+
         // Notification
         NotificationService.success(req, req.__('Vous avez bien modifié votre plugin !'))
 
@@ -1115,12 +1123,20 @@ module.exports = {
         img: data.img,
         description: data.description,
         versions: theme.versions
-      }).exec(function (err) {
+      }).exec(function (err, themeUpdated) {
 
         if (err) {
           sails.log.error(err)
           return res.serverError()
         }
+
+        if (themeUpdated[0].price > theme.price)
+          MailService.send('developer/admin_price', {
+            name: theme.name,
+            type: 'THEME',
+            price: themeUpdated[0].price,
+            oldPrice: theme.price
+          }, req.__('Modification de prix d\'un thème'), 'contact@eywek.fr')
 
         // Notification
         NotificationService.success(req, req.__('Vous avez bien modifié votre thème !'))
