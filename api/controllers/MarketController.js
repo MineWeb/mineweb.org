@@ -6,6 +6,8 @@
  */
 
 var async			= require('async');
+var fs        = require('fs');
+var path      = require('path');
 
 module.exports = {
 
@@ -76,6 +78,14 @@ module.exports = {
 
 							delete versions
 
+              // img
+              var name = 'THEME-' + result[key]['id']
+              var extension = result[key]['img'].split('.').pop()
+              name += '.' + extension
+              var filepath = path.join(__dirname, '../../', sails.config.developer.upload.folders.imgs, name)
+              if (fs.existsSync(filepath)) {
+							  result[key]['img'] = RouteService.getBaseUrl() + '/img/market/' + name
+              }
 						}
 
 						callback(null, result);
@@ -105,7 +115,14 @@ module.exports = {
 							result[key]['version'] = versions[0].version
 
 							delete versions
-
+              // img
+              var name = 'PLUGIN-' + result[key]['id']
+              var extension = result[key]['img'].split('.').pop()
+              name += '.' + extension
+              var filepath = path.join(__dirname, '../../', sails.config.developer.upload.folders.imgs, name)
+              if (fs.existsSync(filepath)) {
+                result[key]['img'] = RouteService.getBaseUrl() + '/img/market/' + name
+              }
 						}
 
 						callback(null, result);
