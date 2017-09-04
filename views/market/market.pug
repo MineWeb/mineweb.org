@@ -30,9 +30,9 @@ block content
                   - i++
 
                   if i % 3 === 1 && i > 1
-                    | </div><hr></div><div class="col-md-12" style="margin-top:30px"><div class="row">
+                    | </div><hr></div><div class="col-md-12"><div class="row">
 
-                  div.col-md-4.text-center
+                  div.col-md-4.text-center(style="margin-top:30px;")
                     h3 #{plugin.name}
                     img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
                     p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 50, true)}
@@ -63,9 +63,9 @@ block content
                   - i++
 
                   if i % 3 === 1 && i > 1
-                    | </div><hr></div><div class="col-md-12" style="margin-top:30px"><div class="row">
+                    | </div><hr></div><div class="col-md-12"><div class="row">
 
-                  div.col-md-4.text-center
+                  div.col-md-4.text-center(style="margin-top:30px;")
                     h3 #{theme.name}
                     img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
                     p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 50, true)}
