@@ -10,8 +10,41 @@ var path = require('path')
 var slugify = require('slugify')
 var Entities = require('html-entities').AllHtmlEntities
 var htmlentities = new Entities()
+var http = require('http')
+var fs = require('fs')
 
 module.exports = {
+
+  uploadImage: function (name, req, res, next) {
+    var fileToDownload = req.body.img
+    var extension = fileToDownload.split('.').pop()
+    if (extension != 'png' && extension != 'jpg' && extension != 'jpeg')
+      return res.json({
+        status: false,
+        msg: req.__('Vous avez tenté de configurer une image n\'ayant pas la bonne extension.'),
+        inputs: {}
+      })
+    name += '.' + extension
+    var file = fs.createWriteStream(path.join(__dirname, '../../', sails.config.developer.upload.folders.imgs, name))
+    http.get(fileToDownload, function(response) {
+      if (response.headers['content-type'] != 'image/jpeg' && response.headers['content-type'] != 'image/png')
+        return res.json({
+          status: false,
+          msg: req.__('Vous avez tenté de configurer une image n\'étant pas une image.'),
+          inputs: {}
+        })
+      response.pipe(file).on('error', function (err) {
+        console.error(err)
+        return res.json({
+          status: false,
+          msg: req.__('Une erreur est survenue lors de l\'enregistrement de l\'image.'),
+          inputs: {}
+        })
+      }).on('close', function () {
+        next()
+      })
+    })
+  },
 
   addContributor: function (req, res) {
     RequestManagerService.setRequest(req).setResponse(res).valid({
@@ -616,11 +649,7 @@ module.exports = {
           ['description', 'Vous devez spécifier une description'],
           {field: 'files', file: true, error: 'Vous devez envoyer des fichiers'},
         ]
-      }, function () {
-
-        savePlugin()
-
-      })
+      }, savePlugin)
 
     }
     else { // edit
@@ -661,44 +690,43 @@ module.exports = {
     }
 
     function updatePlugin (plugin) {
-      Plugin.update({id: plugin.id}, {
-        name: data.name,
-        price: data.price,
-        img: data.img,
-        description: data.description,
-        versions: plugin.versions
-      }).exec(function (err, pluginUpdated) {
+      var name = 'PLUGIN-' + plugin.id
+      self.uploadImage(name, req, res, function () {
+        Plugin.update({id: plugin.id}, {
+          name: data.name,
+          price: data.price,
+          img: data.img,
+          description: data.description,
+          versions: plugin.versions
+        }).exec(function (err, pluginUpdated) {
 
-        if (err) {
-          sails.log.error(err)
-          return res.serverError()
-        }
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
 
-        if (pluginUpdated[0].price > plugin.price)
-          MailService.send('developer/admin_price', {
-            name: plugin.name,
-            type: 'PLUGIN',
-            price: pluginUpdated[0].price,
-            oldPrice: plugin.price
-          }, req.__('Modification de prix d\'un plugin'), 'contact@eywek.fr')
+          if (pluginUpdated[0].price > plugin.price)
+            MailService.send('developer/admin_price', {
+              name: plugin.name,
+              type: 'PLUGIN',
+              price: pluginUpdated[0].price,
+              oldPrice: plugin.price
+            }, req.__('Modification de prix d\'un plugin'), 'contact@eywek.fr')
 
-        // Notification
-        NotificationService.success(req, req.__('Vous avez bien modifié votre plugin !'))
+          // Notification
+          NotificationService.success(req, req.__('Vous avez bien modifié votre plugin !'))
 
-        // render
-        res.json({
-          status: true,
-          msg: req.__('Vous avez bien modifié votre plugin !'),
-          inputs: {}
+          // render
+          res.json({
+            status: true,
+            msg: req.__('Vous avez bien modifié votre plugin !'),
+            inputs: {}
+          })
         })
-
       })
     }
 
     function savePlugin () {
-
-      //global.requirements = requirements
-
       // try to upload files
       req.file('files').upload({
 
@@ -758,13 +786,9 @@ module.exports = {
             msg: req.__('Vous avez bien ajouté votre plugin ! Il sera vérifié et validé sous peu.'),
             inputs: {}
           })
-
         })
-
       })
-
     }
-
   },
 
   updatePluginPage: function (req, res) {
@@ -1076,7 +1100,7 @@ module.exports = {
           ['description', 'Vous devez spécifier une description'],
           {field: 'files', file: true, error: 'Vous devez envoyer des fichiers'},
         ]
-      }, saveTheme())
+      }, saveTheme)
     }
     else { // edit
       RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
@@ -1117,42 +1141,43 @@ module.exports = {
     }
 
     function updateTheme (theme) {
-      Theme.update({id: theme.id}, {
-        name: data.name,
-        price: data.price,
-        img: data.img,
-        description: data.description,
-        versions: theme.versions
-      }).exec(function (err, themeUpdated) {
+      var name = 'THEME-' + theme.id
+      self.uploadImage(name, req, res, function () {
+        Theme.update({id: theme.id}, {
+          name: data.name,
+          price: data.price,
+          img: data.img,
+          description: data.description,
+          versions: theme.versions
+        }).exec(function (err, themeUpdated) {
 
-        if (err) {
-          sails.log.error(err)
-          return res.serverError()
-        }
+          if (err) {
+            sails.log.error(err)
+            return res.serverError()
+          }
 
-        if (themeUpdated[0].price > theme.price)
-          MailService.send('developer/admin_price', {
-            name: theme.name,
-            type: 'THEME',
-            price: themeUpdated[0].price,
-            oldPrice: theme.price
-          }, req.__('Modification de prix d\'un thème'), 'contact@eywek.fr')
+          if (themeUpdated[0].price > theme.price)
+            MailService.send('developer/admin_price', {
+              name: theme.name,
+              type: 'THEME',
+              price: themeUpdated[0].price,
+              oldPrice: theme.price
+            }, req.__('Modification de prix d\'un thème'), 'contact@eywek.fr')
 
-        // Notification
-        NotificationService.success(req, req.__('Vous avez bien modifié votre thème !'))
+          // Notification
+          NotificationService.success(req, req.__('Vous avez bien modifié votre thème !'))
 
-        // render
-        res.json({
-          status: true,
-          msg: req.__('Vous avez bien modifié votre thème !'),
-          inputs: {}
+          // render
+          res.json({
+            status: true,
+            msg: req.__('Vous avez bien modifié votre thème !'),
+            inputs: {}
+          })
         })
-
       })
     }
 
     function saveTheme () {
-
       // try to upload files
       req.file('files').upload({
 
@@ -1212,11 +1237,8 @@ module.exports = {
             msg: req.__('Vous avez bien ajouté votre thème ! Il sera vérifié et validé sous peu.'),
             inputs: {}
           })
-
         })
-
       })
-
     }
   },
 

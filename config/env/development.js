@@ -82,7 +82,8 @@ module.exports = {
       folders: {
         plugins: 'uploads/plugins',
         themes: 'uploads/themes',
-        custom: 'uploads/custom'
+        custom: 'uploads/custom',
+        imgs: '.tmp/public/img/market'
       }
     }
   },
