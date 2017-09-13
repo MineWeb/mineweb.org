@@ -150,7 +150,7 @@ module.exports = {
             purchase.voucher = 'fake'
 
           // Check if purchase.voucher exist
-          Voucher.findOne({code: purchase.voucher}).exec(function (err, voucher) {
+          Voucher.findOne({code: purchase.voucher, usedBy: null}).exec(function (err, voucher) {
 
             if (err) {
               sails.log.error(err)
