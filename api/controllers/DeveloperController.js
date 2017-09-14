@@ -12,7 +12,7 @@ var Entities = require('html-entities').AllHtmlEntities
 var htmlentities = new Entities()
 var http = require('http')
 var https = require('https')
-var url = require('url')
+var URL = require('url')
 var fs = require('fs')
 
 module.exports = {
