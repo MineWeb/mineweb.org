@@ -11,6 +11,8 @@ var slugify = require('slugify')
 var Entities = require('html-entities').AllHtmlEntities
 var htmlentities = new Entities()
 var http = require('http')
+var https = require('https')
+var url = require('url')
 var fs = require('fs')
 
 module.exports = {
@@ -26,8 +28,9 @@ module.exports = {
       })
     name += '.' + extension
     var file = fs.createWriteStream(path.join(__dirname, '../../', sails.config.developer.upload.folders.imgs, name))
-    http.get(fileToDownload, function(response) {
-      if (response.headers['content-type'] != 'image/jpeg' && response.headers['content-type'] != 'image/png')
+    var crawler = ((new URL(fileToDownload)).protocol == 'https') ? https : http
+    crawler.get(fileToDownload, function(response) {
+      if (response.headers['content-type'] !== 'image/jpeg' && response.headers['content-type'] !== 'image/png')
         return res.json({
           status: false,
           msg: req.__('Vous avez tenté de configurer une image n\'étant pas une image.'),
