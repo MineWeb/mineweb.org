@@ -649,11 +649,7 @@ module.exports = {
           ['description', 'Vous devez spécifier une description'],
           {field: 'files', file: true, error: 'Vous devez envoyer des fichiers'},
         ]
-      }, function () {
-
-        savePlugin()
-
-      })
+      }, savePlugin)
 
     }
     else { // edit
@@ -1104,7 +1100,7 @@ module.exports = {
           ['description', 'Vous devez spécifier une description'],
           {field: 'files', file: true, error: 'Vous devez envoyer des fichiers'},
         ]
-      }, saveTheme())
+      }, saveTheme)
     }
     else { // edit
       RequestManagerService.setRequest(req).setBody(data).setResponse(res).valid({
