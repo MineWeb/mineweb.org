@@ -12,7 +12,7 @@ var Entities = require('html-entities').AllHtmlEntities
 var htmlentities = new Entities()
 var http = require('http')
 var https = require('https')
-var URL = require('url')
+var url = require('url')
 var fs = require('fs')
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
       })
     name += '.' + extension
     var file = fs.createWriteStream(path.join(__dirname, '../../', sails.config.developer.upload.folders.imgs, name))
-    var crawler = ((new URL(fileToDownload)).protocol == 'https') ? https : http
+    var crawler = (url.parse(fileToDownload).protocol == 'https:') ? https : http
     crawler.get(fileToDownload, function(response) {
       if (response.headers['content-type'] !== 'image/jpeg' && response.headers['content-type'] !== 'image/png')
         return res.json({
