@@ -36,7 +36,7 @@ block content
                     h3 #{plugin.name}
                     div.img-container
                       img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
-                    p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 80, true)}
+                    p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 78, true)}
                     p.text-muted.market-item-infos
                       span.pull-left
                         | #{__('Prix :')}&nbsp;
@@ -70,7 +70,7 @@ block content
                     h3 #{theme.name}
                     div.img-container
                       img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
-                    p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 80, true)}
+                    p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 78, true)}
                     p.text-muted.market-item-infos
                       span.pull-left
                         | #{__('Prix :')}&nbsp;
@@ -90,6 +90,12 @@ block content
 
 block customCss
   style.
+    .market-item-desc {
+      word-break: break-all;
+      -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+      hyphens: auto;
+    }
     .img-container {
       height: 230px;
       overflow: hidden;
