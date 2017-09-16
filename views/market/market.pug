@@ -34,8 +34,9 @@ block content
 
                   div.col-md-4.text-center(style="margin-top:30px;")
                     h3 #{plugin.name}
-                    img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
-                    p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 50, true)}
+                    div.img-container
+                      img.img-rounded.img-responsive(src=plugin.img != null && plugin.img.length > 0 ? plugin.img : '/img/default_plugins.png')
+                    p.lead.text-muted.market-item-desc !{Utils.truncate(plugin.description.replace(/(<([^>]+)>)/ig, ''), 80, true)}
                     p.text-muted.market-item-infos
                       span.pull-left
                         | #{__('Prix :')}&nbsp;
@@ -67,8 +68,9 @@ block content
 
                   div.col-md-4.text-center(style="margin-top:30px;")
                     h3 #{theme.name}
-                    img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
-                    p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 50, true)}
+                    div.img-container
+                      img.img-rounded.img-responsive(src=theme.img != null && theme.img.length > 0 ? theme.img : '/img/default_plugins.png')
+                    p.lead.text-muted.market-item-desc !{Utils.truncate(theme.description.replace(/(<([^>]+)>)/ig, ''), 80, true)}
                     p.text-muted.market-item-infos
                       span.pull-left
                         | #{__('Prix :')}&nbsp;
@@ -85,3 +87,25 @@ block content
                     a.btn.btn-primary.btn-block(href='/market/theme/' + theme.slug)
                       i.fa.fa-plus
                       | &nbsp;#{__("Plus d'informations")}
+
+block customCss
+  style.
+    .img-container {
+      height: 230px;
+      overflow: hidden;
+    }
+    @media (max-width: 1200px) {
+      .img-container {
+        height: 190px;
+      }
+    }
+    @media (max-width: 992px) {
+      .img-container {
+        height: 150px;
+      }
+    }
+    @media (max-width: 768px) {
+      .img-container {
+        height: auto;
+      }
+    }
