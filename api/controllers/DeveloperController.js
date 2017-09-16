@@ -20,6 +20,7 @@ module.exports = {
   uploadImage: function (name, req, res, next) {
     var fileToDownload = req.body.img
     var extension = fileToDownload.split('.').pop()
+    // noinspection EqualityComparisonWithCoercionJS
     if (extension != 'png' && extension != 'jpg' && extension != 'jpeg')
       return res.json({
         status: false,
@@ -28,8 +29,15 @@ module.exports = {
       })
     name += '.' + extension
     var file = fs.createWriteStream(path.join(__dirname, '../../', sails.config.developer.upload.folders.imgs, name))
+    // noinspection EqualityComparisonWithCoercionJS
     var crawler = (url.parse(fileToDownload).protocol == 'https:') ? https : http
     crawler.get(fileToDownload, function(response) {
+      if (response.statusCode !== 200 || response.headers['content-length'] <= 0)
+        return res.json({
+          status: false,
+          msg: req.__('Vous avez tenté de configurer une image n\'étant pas disponible.'),
+          inputs: {}
+        })
       if (response.headers['content-type'] !== 'image/jpeg' && response.headers['content-type'] !== 'image/png')
         return res.json({
           status: false,
@@ -44,7 +52,15 @@ module.exports = {
           inputs: {}
         })
       }).on('close', function () {
+        sails.log.info('Uploaded ' + name + ' successfuly ! (' + response.headers['content-length'] + ' bytes)')
         next()
+      })
+    }).on('error', function (err) {
+      sails.log.error(err)
+      return res.json({
+        status: false,
+        msg: req.__('Vous avez tenté de configurer une image n\'étant pas disponible.'),
+        inputs: {}
       })
     })
   },
@@ -289,7 +305,6 @@ module.exports = {
   },
 
   index: function (req, res) {
-
     if (res.locals.user.developer === 'NONE') {
       return res.render('developer/candidate', {
         title: req.__('Devenir développeur')
@@ -425,11 +440,8 @@ module.exports = {
       })
     }
     else {
-
       return res.redirect('/user/profile')
-
     }
-
   },
 
   candidate: function (req, res) {
