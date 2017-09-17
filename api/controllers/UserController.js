@@ -572,6 +572,10 @@ module.exports = {
             return res.serverError('An error occured on token select')
           }
 
+          RememberTokens.destroy({ user: user.id }).exec(function (err) {
+            if (err)
+              sails.log.error(err)
+          })
 
           // On passe le token en utilisé
           Token.update({ id: token.id }, { usedAt: (new Date()), usedLocation: CloudflareService.getIP(req) }).exec(function (err, token) {
@@ -770,6 +774,11 @@ module.exports = {
           sails.log.error(err)
           return res.serverError()
         }
+
+        RememberTokens.destroy({ user: user.id }).exec(function (err) {
+          if (err)
+            sails.log.error(err)
+        })
 
         // On envoie une réponse à l'utilisateur
         return res.json({
