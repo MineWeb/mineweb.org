@@ -163,12 +163,12 @@ module.exports = {
 
         // find apiLogs
         function (callback) {
-          ApiLog.find({data: {id: license.id}}).sort('id DESC').limit(30).exec(callback)
+          ApiLog.find({license: license.id}).sort('id DESC').limit(30).exec(callback)
         },
 
         // find lastCheckDate
         function (callback) {
-          ApiLog.findOne({license: license.id, action: ['/key_verif', '/authentification'], status: true}).sort('id DESC').exec(callback)
+          ApiLog.findOne({license: license.id, action: ['/key_verif', '/authentication'], status: true}).sort('id DESC').exec(callback)
         }
 
       ], function (err, results) {
