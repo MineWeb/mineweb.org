@@ -28,8 +28,8 @@ module.exports = {
           operator = '>='
           split = [
             (parseInt(version.split('.')[0]) + 1),
-            version.split('.')[1],
-            version.split('.')[2]
+            0,
+            0
           ]
           version += ' (< ' + split.join('.') + ')'
         } else if (operator === '~') {
@@ -37,7 +37,7 @@ module.exports = {
           split = [
             version.split('.')[0],
             (parseInt(version.split('.')[1]) + 1),
-            version.split('.')[2]
+            0
           ]
           version += ' (< ' + split.join('.') + ')'
         }
