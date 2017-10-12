@@ -187,7 +187,7 @@ module.exports = {
             Plugin.findOne({id: plugin}).exec(function (err, plugin) {
               if (err)
                 return sails,log.error(err)
-              if (plugin)
+              else if (plugin)
                 return plugin.name
               return 'Plugin custom'
             })
@@ -195,8 +195,8 @@ module.exports = {
           themes: (results[2]) ? results[2].themes.map(function (theme) {
             Theme.findOne({id: theme}).exec(function (err, theme) {
               if (err)
-                return sails,log.error(err)
-              if (plugin)
+                sails,log.error(err)
+              else if (plugin)
                 return theme.name
               return 'Thème custom'
             })
