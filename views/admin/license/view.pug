@@ -77,6 +77,30 @@ block content
                         a.btn.btn-outline.btn-warning#suspend(href='/admin/license/suspend/' + license.id) #{__('Je veux suspendre cette licence')}
                         | &nbsp;
                     a.btn.btn-outline.btn-info#getDebug(href='/admin/license/get-debug/' + license.id) #{__('Récupérer des informations sur la licence')}
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__('Thème actif')}
+                      .col-sm-10
+                        input.form-control(type='text', value=license.current_theme, readonly)
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__("Nombre d'utilisateurs")}
+                      .col-sm-10
+                        input.form-control(type='text', value=license.users_count, readonly)
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__('Plugins installés')}
+                      .col-sm-10
+                        ul
+                          each plugin in license.plugins
+                            li #{plugin}
+                  .col-md-6
+                    .form-group
+                      label.col-sm-2.control-label #{__('Thèmes installés')}
+                      .col-sm-10
+                        ul
+                          each theme in license.themes
+                            li #{theme}
 
 
         .col-md-12#debugResponse(style='display:none;')
