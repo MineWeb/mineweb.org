@@ -176,7 +176,24 @@ module.exports = {
           sails.log.error(err)
           return res.serverError()
         }
-
+console.log((results[2]) ? results[2].plugins.map(function (plugin) {
+  Plugin.findOne({id: plugin}).exec(function (err, plugin) {
+    if (err)
+      sails.log.error(err)
+    else if (plugin)
+      return plugin.name
+    return 'Plugin custom'
+  })
+}) : [])
+console.log((results[2]) ? results[2].themes.map(function (theme) {
+  Theme.findOne({id: theme}).exec(function (err, theme) {
+    if (err)
+      sails.log.error(err)
+    else if (plugin)
+      return theme.name
+    return 'Thème custom'
+  })
+}) : [])
         license.host = self.getHost(license)
         res.view('admin/license/view', {
           title: req.__("Détails d'une licence"),
