@@ -177,37 +177,46 @@ module.exports = {
           return res.serverError()
         }
 
-        var plugins = (results[2]) ? results[2].plugins.map(function (plugin) {
-          Plugin.findOne({id: plugin}).exec(function (err, plugin) {
-            if (err)
-              sails.log.error(err)
-            else if (plugin)
-              return plugin.name
-            return 'Plugin custom'
-          })
-        }) : []
-        var themes = (results[2]) ? results[2].themes.map(function (theme) {
-          Theme.findOne({id: theme}).exec(function (err, theme) {
-            if (err)
-              sails.log.error(err)
-            else if (plugin)
-              return theme.name
-            return 'Thème custom'
-          })
-        }) : []
+        var plugins = []
+        var themes = []
+        if (results[2]) {
+            Plugin.find({id: results[2].plugins}).exec(function (err, pluginsList) {
+              if (err)
+                sails.log.error(err)
+              else if (plugins)
+                plugins = pluginsList.map(function (pl) {
+                  return pl.name
+                })
 
-        license.host = self.getHost(license)
-        res.view('admin/license/view', {
-          title: req.__("Détails d'une licence"),
-          payment: results[0],
-          license: license,
-          lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
-          plugins: plugins,
-          themes: themes,
-          current_theme: (results[2]) ? results[2].current_theme : "Bootstrap",
-          users_count: (results[2]) ? results[2].users_count : 0,
-          apiLogs: results[1] || []
-        })
+              Theme.find({id: results[2].themes}).exec(function (err, themesList) {
+                if (err)
+                  sails.log.error(err)
+                else if (plugins)
+                  themes = themesList.map(function (th) {
+                    return th.name
+                  })
+
+                send()
+              })
+            })
+        } else {
+          send()
+        }
+
+        function send() {
+          license.host = self.getHost(license)
+          res.view('admin/license/view', {
+            title: req.__("Détails d'une licence"),
+            payment: results[0],
+            license: license,
+            lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
+            plugins: plugins,
+            themes: themes,
+            current_theme: (results[2]) ? results[2].current_theme : "Bootstrap",
+            users_count: (results[2]) ? results[2].users_count : 0,
+            apiLogs: results[1] || []
+          })
+        }
       })
     })
   },
