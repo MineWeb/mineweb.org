@@ -186,7 +186,7 @@ module.exports = {
           plugins: (results[2]) ? results[2].plugins.map(function (plugin) {
             Plugin.findOne({id: plugin}).exec(function (err, plugin) {
               if (err)
-                return sails,log.error(err)
+                sails,log.error(err)
               else if (plugin)
                 return plugin.name
               return 'Plugin custom'
