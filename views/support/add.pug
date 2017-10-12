@@ -75,15 +75,14 @@ block custom
     $('select[name="category"]').on('change', function (event) {
       if ($(this).val() === 'SERVER') {
         var content = "Bonjour,\n\nJ'ai un problème lors de la liaison site-serveur, voici les informations nécessaires à la résolution de mon problème :\n\n" +
-          "IP: \n" +
-          "Port: \n" +
-          "Le port est ouvert car ...\n" +
-          "Les commandes /mineweb port et /mineweb setup on été faites: \n" +
-          "Erreur dans la console: \n" +
-          "Le serveur a bien été redémarré: \n" +
-          "Lien des logs de démarrage sur pastebin.com: \n" +
-          "Lien du fichier db.yml du plugin sur pastebin.com: \n\n" +
-          "Merci d'avance,\nCordialement."
+          "Quelle IP avez-vous mis ?\n" +
+          "Quel port ?\n" +
+          "Aucune erreur dans la console ?\n" +
+          "Quelle version de Spigot avez-vous ?\n" +
+          "Avez-vous essayé de rédemarrer le serveur ?\n" +
+          "Fournissez-nous des logs de démarrage sur pastebin.com\n" +
+          "Fournissez-nous le fichier config.json du plugin sur pastebin.com\n" +
+          "Fournissez-nous le fichier mineweb.log du plugin sur pastebin.com"
         $('textarea').val(content)
       }
       else {
