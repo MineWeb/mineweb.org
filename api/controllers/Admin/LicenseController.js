@@ -202,6 +202,7 @@ console.log((results[2]) ? results[2].themes.map(function (theme) {
           lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
           plugins: (results[2]) ? results[2].plugins.map(function (plugin) {
             Plugin.findOne({id: plugin}).exec(function (err, plugin) {
+              console.log(plugin)
               if (err)
                 sails.log.error(err)
               else if (plugin)
@@ -211,6 +212,7 @@ console.log((results[2]) ? results[2].themes.map(function (theme) {
           }) : [],
           themes: (results[2]) ? results[2].themes.map(function (theme) {
             Theme.findOne({id: theme}).exec(function (err, theme) {
+              console.log(theme)
               if (err)
                 sails.log.error(err)
               else if (plugin)
