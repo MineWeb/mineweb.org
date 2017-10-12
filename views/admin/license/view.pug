@@ -81,25 +81,25 @@ block content
                     .form-group
                       label.col-sm-2.control-label #{__('Thème actif')}
                       .col-sm-10
-                        input.form-control(type='text', value=license.current_theme, readonly)
+                        input.form-control(type='text', value=current_theme, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__("Nombre d'utilisateurs")}
                       .col-sm-10
-                        input.form-control(type='text', value=license.users_count, readonly)
+                        input.form-control(type='text', value=users_count, readonly)
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Plugins installés')}
                       .col-sm-10
                         ul
-                          each plugin in license.plugins
+                          each plugin in plugins
                             li #{plugin}
                   .col-md-6
                     .form-group
                       label.col-sm-2.control-label #{__('Thèmes installés')}
                       .col-sm-10
                         ul
-                          each theme in license.themes
+                          each theme in themes
                             li #{theme}
 
 
