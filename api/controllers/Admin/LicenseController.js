@@ -176,50 +176,34 @@ module.exports = {
           sails.log.error(err)
           return res.serverError()
         }
-console.log((results[2]) ? results[2].plugins.map(function (plugin) {
-  Plugin.findOne({id: plugin}).exec(function (err, plugin) {
-    if (err)
-      sails.log.error(err)
-    else if (plugin)
-      return plugin.name
-    return 'Plugin custom'
-  })
-}) : [])
-console.log((results[2]) ? results[2].themes.map(function (theme) {
-  Theme.findOne({id: theme}).exec(function (err, theme) {
-    if (err)
-      sails.log.error(err)
-    else if (plugin)
-      return theme.name
-    return 'Thème custom'
-  })
-}) : [])
+
+        var plugins = (results[2]) ? results[2].plugins.map(function (plugin) {
+          Plugin.findOne({id: plugin}).exec(function (err, plugin) {
+            if (err)
+              sails.log.error(err)
+            else if (plugin)
+              return plugin.name
+            return 'Plugin custom'
+          })
+        }) : []
+        var themes = (results[2]) ? results[2].themes.map(function (theme) {
+          Theme.findOne({id: theme}).exec(function (err, theme) {
+            if (err)
+              sails.log.error(err)
+            else if (plugin)
+              return theme.name
+            return 'Thème custom'
+          })
+        }) : []
+
         license.host = self.getHost(license)
         res.view('admin/license/view', {
           title: req.__("Détails d'une licence"),
           payment: results[0],
           license: license,
           lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
-          plugins: (results[2]) ? results[2].plugins.map(function (plugin) {
-            Plugin.findOne({id: plugin}).exec(function (err, plugin) {
-              console.log(plugin.name)
-              if (err)
-                sails.log.error(err)
-              else if (plugin)
-                return plugin.name
-              return 'Plugin custom'
-            })
-          }) : [],
-          themes: (results[2]) ? results[2].themes.map(function (theme) {
-            Theme.findOne({id: theme}).exec(function (err, theme) {
-              console.log(theme.name)
-              if (err)
-                sails.log.error(err)
-              else if (plugin)
-                return theme.name
-              return 'Thème custom'
-            })
-          }) : [],
+          plugins: plugins,
+          themes: themes,
           current_theme: (results[2]) ? results[2].current_theme : "Bootstrap",
           users_count: (results[2]) ? results[2].users_count : 0,
           apiLogs: results[1] || []
