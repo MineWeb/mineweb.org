@@ -192,16 +192,48 @@ module.exports = {
           return res.serverError()
         }
 
-        license.host = self.getHost(license)
-        res.view('admin/license/view', {
-          title: req.__("Détails d'une licence"),
-          payments: results[0],
-          license: license,
-          lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
-          apiLogs: results[1] || [],
-          paypal: (_.findWhere(results[0], {paymentType: 'PAYPAL'}) !== undefined),
-          dedipass: (_.findWhere(results[0], {paymentType: 'DEDIPASS'}) !== undefined)
-        })
+        var plugins = []
+        var themes = []
+        if (results[2]) {
+            Plugin.find({id: results[2].plugins}).exec(function (err, pluginsList) {
+              if (err)
+                sails.log.error(err)
+              else if (plugins)
+                plugins = pluginsList.map(function (pl) {
+                  return pl.name
+                })
+
+              Theme.find({id: results[2].themes}).exec(function (err, themesList) {
+                if (err)
+                  sails.log.error(err)
+                else if (plugins)
+                  themes = themesList.map(function (th) {
+                    return th.name
+                  })
+
+                send()
+              })
+            })
+        } else {
+          send()
+        }
+
+        function send() {
+          license.host = self.getHost(license)
+          res.view('admin/license/view', {
+            title: req.__("Détails d'une licence"),
+            payments: results[0],
+            license: license,
+            lastCheckDate: (results[2]) ? results[2].createdAt : (new Date()),
+            plugins: plugins,
+            themes: themes,
+            current_theme: (results[2]) ? results[2].current_theme : "Bootstrap",
+            users_count: (results[2]) ? results[2].users_count : 0,
+            apiLogs: results[1] || [],
+            paypal: (_.findWhere(results[0], {paymentType: 'PAYPAL'}) !== undefined),
+            dedipass: (_.findWhere(results[0], {paymentType: 'DEDIPASS'}) !== undefined)
+          })
+        }
       })
     })
   },
