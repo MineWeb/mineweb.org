@@ -126,7 +126,7 @@ block content
             .ibox-title
               h4 #{__('Paiement')}
             .ibox-content
-              if (!license.purchase || license.purchase.paymentType === 'FREE' || !payment)
+              if (!payments)
                 .alert.alert-warning #{__('Cette licence a été obtenue gratuitement (ajout manuel ou code promotionnel du prix total de la licence).')}
               else
                 .table-responsive
@@ -136,86 +136,87 @@ block content
                         th #{__('Type de paiement')}
                         th #{__("ID de l'achat")}
                         th #{__("ID du paiement")}
-                        if license.purchase.paymentType === 'PAYPAL'
+                        if paypal
                           th #{__('ID de la transaction PayPal')}
-                        if license.purchase.paymentType === 'PAYPAL'
                           th #{__("Montant payé par l'utilisateur")}
-                        if license.purchase.paymentType === 'PAYPAL'
                           th #{__("Taxes payée par l'utilisateur")}
                         th #{__('Montant reçu')}
-                        if license.purchase.paymentType === 'PAYPAL'
+                        if paypal
                           th #{__("Email PayPal de l'utilisateur")}
-                        if license.purchase.paymentType === 'DEDIPASS'
+                        if dedipass
                           th #{__("Code utilisé par l'utilisateur")}
-                        if license.purchase.paymentType === 'DEDIPASS'
                           th #{__("Palier utilisé par l'utilisateur")}
                         th #{__("Date du paiement")}
-                        if license.purchase.paymentType === 'PAYPAL'
+                        if paypal
                           th #{__('Statut du paiement')}
-                        if license.purchase.paymentType === 'PAYPAL' && payment.reversedReason
                           th #{__('Raison du litige')}
-                        if license.purchase.paymentType === 'PAYPAL' && payment.caseDate
                           th #{__('Date du litige')}
-                        if license.purchase.paymentType === 'PAYPAL' && payment.refundDate
                           th #{__('Date du remboursement')}
                         th #{__('Dernière mise à jour du paiement')}
                     tbody
-                      tr
-                        td #{license.purchase.paymentType === 'PAYPAL' ? 'PayPal' : 'Dédipass'}
-                        td #{license.purchase.id}
-                        td #{payment.id}
-                        if license.purchase.paymentType === 'PAYPAL'
-                          td #{payment.paymentId}
-                        if license.purchase.paymentType === 'PAYPAL'
-                          td.text-info #{payment.paymentAmount} €
-                        if license.purchase.paymentType === 'PAYPAL'
-                          td.text-danger #{payment.taxAmount} €
-                        td.text-success
+                      each purchase in payments
+                        tr
+                          td #{purchase.paymentType === 'PAYPAL' ? 'PayPal' : 'Dédipass'}
+                          td #{purchase.id}
+                          td #{purchase.payment.id}
+                          if purchase.paymentType === 'PAYPAL'
+                            td #{purchase.payment.paymentId}
                           if license.purchase.paymentType === 'PAYPAL'
-                            | #{payment.paymentAmount - payment.taxAmount} €
-                          else
-                            | #{payment.payout} €
-                        if license.purchase.paymentType === 'PAYPAL'
-                          td #{payment.buyerEmail}
-                        if license.purchase.paymentType === 'DEDIPASS'
-                          td #{payment.code}
-                        if license.purchase.paymentType === 'DEDIPASS'
-                          td #{payment.rate}
-                        td
-                          span.fa.fa-calendar
-                          | &nbsp;
+                            td.text-info #{payment.paymentAmount} €
                           if license.purchase.paymentType === 'PAYPAL'
-                            span.moment-date(data-format="Le {L} à {LT}") #{payment.paymentDate}
-                          else
-                            span.moment-date(data-format="Le {L} à {LT}") #{payment.createdAt}
-                        if license.purchase.paymentType === 'PAYPAL'
-                          td
-                            if payment.state === 'COMPLETED'
-                              span.label.label-success #{__('Complété')}
-                            else if payment.state === 'PENDING'
-                              span.label.label-warning #{__('En attente')}
-                            else if payment.state === 'REVERSED'
-                              span.label.label-warning #{__('Suspendu')}
-                            else if payment.state === 'REFUNDED'
-                              span.label.label-danger #{__('Remboursé')}
-                            else if payment.state === 'FAILED'
-                              span.label.label-danger #{__('Échoué')}
-                        if license.purchase.paymentType === 'PAYPAL' && payment.reversedReason
-                          td #{payment.reversedReason}
-                        if license.purchase.paymentType === 'PAYPAL' && payment.caseDate
+                            td.text-danger #{payment.taxAmount} €
+                          td.text-success
+                            if purchase.paymentType === 'PAYPAL'
+                              | #{purchase.payment.paymentAmount - purchase.payment.taxAmount} €
+                            else
+                              | #{purchase.payment.payout} €
+                          if purchase.paymentType === 'PAYPAL'
+                            td #{purchase.payment.buyerEmail}
+                          if purchase.paymentType === 'DEDIPASS'
+                            td #{purchase.payment.code}
+                          if purchase.paymentType === 'DEDIPASS'
+                            td #{purchase.payment.rate}
                           td
                             span.fa.fa-calendar
                             | &nbsp;
-                            span.moment-date(data-format="Le {L} à {LT}") #{payment.caseDate}
-                        if license.purchase.paymentType === 'PAYPAL' && payment.refundDate
+                            if purchase.paymentType === 'PAYPAL'
+                              span.moment-date(data-format="Le {L} à {LT}") #{purchase.payment.paymentDate}
+                            else
+                              span.moment-date(data-format="Le {L} à {LT}") #{purchase.payment.createdAt}
+                          if purchase.paymentType === 'PAYPAL'
+                            td
+                              if purchase.payment.state === 'COMPLETED'
+                                span.label.label-success #{__('Complété')}
+                              else if purchase.payment.state === 'PENDING'
+                                span.label.label-warning #{__('En attente')}
+                              else if purchase.payment.state === 'REVERSED'
+                                span.label.label-warning #{__('Suspendu')}
+                              else if purchase.payment.state === 'REFUNDED'
+                                span.label.label-danger #{__('Remboursé')}
+                              else if purchase.payment.state === 'FAILED'
+                                span.label.label-danger #{__('Échoué')}
+                          if purchase.paymentType === 'PAYPAL' && purchase.payment.reversedReason
+                            td #{purchase.payment.reversedReason}
+                          else
+                            td
+                          if purchase.paymentType === 'PAYPAL' && purchase.payment.caseDate
+                            td
+                              span.fa.fa-calendar
+                              | &nbsp;
+                              span.moment-date(data-format="Le {L} à {LT}") #{purchase.payment.caseDate}
+                          else
+                            td
+                          if purchase.paymentType === 'PAYPAL' && purchase.payment.refundDate
+                            td
+                              span.fa.fa-calendar
+                              | &nbsp;
+                              span.moment-date(data-format="Le {L} à {LT}") #{purchase.payment.refundDate}
+                          else
+                            td
                           td
                             span.fa.fa-calendar
                             | &nbsp;
-                            span.moment-date(data-format="Le {L} à {LT}") #{payment.refundDate}
-                        td
-                          span.fa.fa-calendar
-                          | &nbsp;
-                          span.moment-date(data-format="Le {L} à {LT}") #{payment.updatedAt}
+                            span.moment-date(data-format="Le {L} à {LT}") #{purchase.payment.updatedAt}
 
         .col-md-12
           .ibox.float-e-margins
