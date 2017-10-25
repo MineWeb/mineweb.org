@@ -187,10 +187,12 @@ block content
                             td #{purchase.payment.id}
                             if purchase.paymentType === 'PAYPAL'
                               td #{purchase.payment.paymentId}
-                            if license.purchase.paymentType === 'PAYPAL'
-                              td.text-info #{payment.paymentAmount} €
-                            if license.purchase.paymentType === 'PAYPAL'
-                              td.text-danger #{payment.taxAmount} €
+                              td.text-info #{purchase.payment.paymentAmount} €
+                              td.text-danger #{purchase.payment.taxAmount} €
+                            else if paypal
+                              td
+                              td
+                              td
                             td.text-success
                               if purchase.paymentType === 'PAYPAL'
                                 | #{purchase.payment.paymentAmount - purchase.payment.taxAmount} €
@@ -198,10 +200,14 @@ block content
                                 | #{purchase.payment.payout} €
                             if purchase.paymentType === 'PAYPAL'
                               td #{purchase.payment.buyerEmail}
+                            else if dedipass
+                              td
                             if purchase.paymentType === 'DEDIPASS'
                               td #{purchase.payment.code}
-                            if purchase.paymentType === 'DEDIPASS'
                               td #{purchase.payment.rate}
+                            else if paypal
+                              td
+                              td
                             td
                               span.fa.fa-calendar
                               | &nbsp;
@@ -221,6 +227,8 @@ block content
                                   span.label.label-danger #{__('Remboursé')}
                                 else if purchase.payment.state === 'FAILED'
                                   span.label.label-danger #{__('Échoué')}
+                            else if paypal
+                              td
                             if purchase.paymentType === 'PAYPAL' && purchase.payment.reversedReason
                               td #{purchase.payment.reversedReason}
                             else

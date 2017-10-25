@@ -154,6 +154,7 @@ module.exports = {
           var conditions = {itemId: license.id, type: 'LICENSE'};
           if (license.hosting)
             conditions = {or: [{itemId: license.hosting.id, type: 'HOSTING'}, {itemId: license.hosting.id, type: 'RENEW_LICENSE_HOSTED'}]}
+          console.log(conditions)
           Purchase.find(conditions).exec(function (err, purchases) {
             if (err) {
               sails.log.error(err)
@@ -161,8 +162,8 @@ module.exports = {
             }
 
             async.forEach(purchases, function (purchase, next) {
-              var model = (license.purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
-              model.findOne({purchase: purchase.id}).exec(function (err, purchaseFinded) {
+              var model = (purchase.paymentType === 'PAYPAL') ? PayPalHistory : DedipassHistory
+              model.findOne({id: purchase.paymentId}).exec(function (err, purchaseFinded) {
                 if (err) {
                   sails.log.error(err)
                   return res.serverError()
@@ -217,7 +218,7 @@ module.exports = {
         } else {
           send()
         }
-
+console.log(results[0])
         function send() {
           license.host = self.getHost(license)
           res.view('admin/license/view', {
