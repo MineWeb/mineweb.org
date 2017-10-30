@@ -432,7 +432,7 @@ module.exports = {
             user: data.userId,
             paymentId: params.txn_id,
             paymentAmount: params.mc_gross,
-            taxAmount: null,
+            taxAmount: params.mc_fee,
             buyerEmail: params.payer_email,
             paymentDate: (new Date(params.payment_date)),
             state: 'PENDING'
