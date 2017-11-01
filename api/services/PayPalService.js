@@ -10,5 +10,8 @@ module.exports = {
 
     return tax
 
+  },
+  round: function (amount) {
+    return Math.round(amount * 100) / 100;
   }
 }

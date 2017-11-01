@@ -145,7 +145,7 @@ block content
                   tr
                     td
                     th #{__('Total')}
-                    th.amount#paypalAmount #{PayPalService.calculateFees(theme.price) + theme.price} €
+                    th.amount#paypalAmount #{PayPalService.round(PayPalService.calculateFees(theme.price) + theme.price)} €
 
               hr
 
