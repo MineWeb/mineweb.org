@@ -320,7 +320,10 @@ block content
                           else
                             | N/A
                         td
-                          a(href='/market/plugin/' + purchase.item.slug) #{purchase.item.name}
+                          if purchase.item
+                            a(href='/market/plugin/' + purchase.item.slug) #{purchase.item.name}
+                          else
+                            | Plugin supprimé
                         td.moment-date(data-format=__('Le {L} à {LT}')) #{purchase.createdAt}
                         td
                           if purchase.paymentType !== 'PAYPAL' || (purchase.paymentType === 'PAYPAL' && purchase.payment.state === 'COMPLETED')
@@ -352,7 +355,10 @@ block content
                           else
                             | N/A
                         td
-                          a(href='/market/theme/' + purchase.item.slug) #{purchase.item.name}
+                          if purchase.item
+                            a(href='/market/theme/' + purchase.item.slug) #{purchase.item.name}
+                          else
+                            | Thème supprimé
                         td.moment-date(data-format=__('Le {L} à {LT}')) #{purchase.createdAt}
                         td
                           if purchase.paymentType !== 'PAYPAL' || (purchase.paymentType === 'PAYPAL' && purchase.payment.state === 'COMPLETED')
