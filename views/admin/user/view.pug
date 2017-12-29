@@ -321,7 +321,7 @@ block content
                             | N/A
                         td
                           if purchase.item
-                            a(href='/market/theme/' + purchase.item.slug) #{purchase.item.name}
+                            a(href='/market/plugin/' + purchase.item.slug) #{purchase.item.name}
                           else
                             | Plugin supprimé
                         td.moment-date(data-format=__('Le {L} à {LT}')) #{purchase.createdAt}
