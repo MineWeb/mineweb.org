@@ -53,11 +53,12 @@ module.exports = {
   },
 
   rentHosting: function (req, res) {
-    var renew = req.param('id')
-    return res.view('basic-pages/rent-hosting', {
-      title: renew ? 'Renouveler une licence hébergée' : 'Louer une licence hébergée',
-      renew: renew
-    })
+    return res.notFound()
+    // var renew = req.param('id')
+    // return res.view('basic-pages/rent-hosting', {
+    //   title: renew ? 'Renouveler une licence hébergée' : 'Louer une licence hébergée',
+    //   renew: renew
+    // })
   }
 
 }

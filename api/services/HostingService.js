@@ -18,7 +18,7 @@ module.exports = {
       if (err) {
         sails.log.error(err)
         return next()
-      }       
+      }
       return next()
       /*var out = stdout.split("\n")
       try {
@@ -320,44 +320,44 @@ module.exports = {
       /*
         Delete site after 7 days of state == 0
       */
-      function (callback) {
-        // Find hosting with expireAt <= now - 7 days && state == 0
-        License.find({
-          expireAt: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
-          state: false,
-          hosting: {'!': null}
-        }).populate(['user', 'hosting']).exec(function (err, licensesHosted) {
-          if (err)
-            sails.log.error(err)
-
-          if (licensesHosted !== undefined && licensesHosted.length > 0) {
-            var licensesHostedDeleted = 0
-            async.forEach(licensesHosted, function (license, next) {
-              var hosting = license.hosting
-              // Delete hosting (server && db)
-              HostingService.delete(hosting)
-              Hosting.destroy({id: hosting.id}).exec(function (err, hostingDestroyed) {
-                if (err)
-                  sails.log.error(err)
-
-                License.destroy({hosting: hosting.id}).exec(function (err, licenseDestroyed) {
-                  if (err)
-                    sails.log.error(err)
-
-                  // Save stats
-                  licensesHostedDeleted++
-                  next()
-                })
-              })
-            }, function () {
-              callback(null, licensesHostedDeleted)
-            })
-          }
-          else {
-            callback(null, 0)
-          }
-        })
-      }
+      // function (callback) {
+      //   // Find hosting with expireAt <= now - 7 days && state == 0
+      //   License.find({
+      //     expireAt: {'<=': moment().subtract(7, 'days').hours(0).minutes(0).seconds(0).format('YYYY-MM-DD HH:mm:ss')},
+      //     state: false,
+      //     hosting: {'!': null}
+      //   }).populate(['user', 'hosting']).exec(function (err, licensesHosted) {
+      //     if (err)
+      //       sails.log.error(err)
+      //
+      //     if (licensesHosted !== undefined && licensesHosted.length > 0) {
+      //       var licensesHostedDeleted = 0
+      //       async.forEach(licensesHosted, function (license, next) {
+      //         var hosting = license.hosting
+      //         // Delete hosting (server && db)
+      //         HostingService.delete(hosting)
+      //         Hosting.destroy({id: hosting.id}).exec(function (err, hostingDestroyed) {
+      //           if (err)
+      //             sails.log.error(err)
+      //
+      //           License.destroy({hosting: hosting.id}).exec(function (err, licenseDestroyed) {
+      //             if (err)
+      //               sails.log.error(err)
+      //
+      //             // Save stats
+      //             licensesHostedDeleted++
+      //             next()
+      //           })
+      //         })
+      //       }, function () {
+      //         callback(null, licensesHostedDeleted)
+      //       })
+      //     }
+      //     else {
+      //       callback(null, 0)
+      //     }
+      //   })
+      // }
 
     ], function (err, results) {
       // Group stats

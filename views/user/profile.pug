@@ -200,7 +200,7 @@ block content
                           td
                             div.btn-group-vertical
                               button.edit-host-hosting.btn.btn-info(data-hosting-id=hosting.hosting.id, data-hosting-host=hosting.host, data-hosting-hostType=hosting.hosting.hostType.toLowerCase()) #{__("Modifier le nom de domaine")}
-                              a(href='/hosting/renew/'+hosting.hosting.id).btn.btn-success #{__('Renouveler')}
+                              //a(href='/hosting/renew/'+hosting.hosting.id).btn.btn-success #{__('Renouveler')}
                         if hosting.suspended !== null
                           tr(style="position: absolute;margin-top: -112px;")
                             td(style='border-top: none;')
