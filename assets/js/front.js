@@ -1,7 +1,6 @@
 $(function () {
 
     rotatingText();
-    utils();
 
 });
 
@@ -15,34 +14,6 @@ function rotatingText() {
         animation: "fade",
         speed: 3000
     });
-}
-
-/* menu sliding */
-
-function menuSliding() {
-
-
-    $('.dropdown').on('show.bs.dropdown', function (e) {
-
-        if ($(window).width() > 750) {
-            $(this).find('.dropdown-menu').first().stop(true, true).slideDown();
-
-        }
-        else {
-            $(this).find('.dropdown-menu').first().stop(true, true).show();
-        }
-    }
-
-    );
-    $('.dropdown').on('hide.bs.dropdown', function (e) {
-        if ($(window).width() > 750) {
-            $(this).find('.dropdown-menu').first().stop(true, true).slideUp();
-        }
-        else {
-            $(this).find('.dropdown-menu').first().stop(true, true).hide();
-        }
-    });
-
 }
 
 /* animations */
@@ -76,55 +47,6 @@ function animations() {
         $(this).removeClass($(this).data('animate-hover'));
     });
 
-}
-
-/* counters */
-
-function counters() {
-
-    $('.counter').counterUp({
-        delay: 10,
-        time: 1000
-    });
-
-}
-
-function utils() {
-
-    /* tooltips */
-
-    $('[data-toggle="tooltip"]').tooltip();
-
-    /* click on the box activates the radio */
-
-    $('#checkout').on('click', '.box.shipping-method, .box.payment-method', function (e) {
-        var radio = $(this).find(':radio');
-        radio.prop('checked', true);
-    });
-    /* click on the box activates the link in it */
-
-    $('.box.clickable').on('click', function (e) {
-
-        window.location = $(this).find('a').attr('href');
-    });
-    /* external links in new window*/
-
-    $('.external').on('click', function (e) {
-
-        e.preventDefault();
-        window.open($(this).attr("href"));
-    });
-    /* animated scrolling */
-
-    $('.scroll-to').click(function (event) {
-        event.preventDefault();
-        var full_url = this.href;
-        var parts = full_url.split("#");
-        var trgt = parts[1];
-
-        $('body').scrollTo($('#' + trgt), 800, {offset: -80});
-
-    });
 }
 
 $.fn.alignElementsSameHeight = function () {
