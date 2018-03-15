@@ -44,7 +44,7 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  adapter: process.env.NODE_ENV === 'production' ? 'redis' : undefined,
+  adapter: /*process.env.NODE_ENV === 'production' ? 'redis' : */undefined,
 
   /***************************************************************************
   *                                                                          *
@@ -55,10 +55,10 @@ module.exports.session = {
   *                                                                          *
   ***************************************************************************/
 
-  host: '51.255.36.38',
-  port: 6379,
-  ttl: 60 * 60 * 24 * 7,
-  db: 0,
-  pass: undefined,
-  prefix: process.env.NODE_ENV === 'production' ? 'sess:' : 'dev-sess:',
+  // host: '51.255.36.38',
+  // port: 6379,
+  // ttl: 60 * 60 * 24 * 7,
+  // db: 0,
+  // pass: undefined,
+  // prefix: process.env.NODE_ENV === 'production' ? 'sess:' : 'dev-sess:',
 };

@@ -25,8 +25,8 @@ module.exports.bootstrap = function(cb) {
 		schedule.scheduleJob(cron.interval, cron.task);
 	});
 
-  UserLog.native(function (err, collection) {
-    collection.ensureIndex( { "createdAt": 1 }, { expireAfterSeconds: 604800 } ); // 1 week
+  // UserLog.native(function (err, collection) {
+  //   collection.ensureIndex( { "createdAt": 1 }, { expireAfterSeconds: 604800 } ); // 1 week
     cb();
-  });
+  // });
 };
