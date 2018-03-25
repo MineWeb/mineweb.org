@@ -57,6 +57,7 @@ module.exports.routes = {
   */
 
   '/purchase/:offer/free/:voucherCode/*': 'PurchaseController.getFree',
+  '/purchase/free': 'PurchaseController.getFreeLicense',
 
   '/purchase/checkVoucher/:voucherCode/:price': 'PurchaseController.checkVoucher',
   '/purchase/checkHostingSubdomainAvailability/:subdomain': 'PurchaseController.checkHostingSubdomainAvailability',

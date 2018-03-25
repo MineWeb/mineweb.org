@@ -790,6 +790,23 @@ module.exports = {
         })
       }
     })
-  }
+  },
 
+  getFreeLicense: function (req, res) {
+    PurchaseService.buy({
+      userId: req.session.userId,
+      offerType: 'LICENSE',
+      host: undefined,
+      paymentType: 'FREE'
+    }, function (success, purchaseId, itemId) {
+      if (success) {
+        // Redirect on profile with notification
+        NotificationService.success(req, req.__('Vous avez bien reçu votre produit !'))
+        res.redirect('/user/profile')
+      }
+      else {
+        return res.serverError('An error occured on purchase')
+      }
+    })
+  }
 }

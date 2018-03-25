@@ -53,70 +53,70 @@ block content
               | &nbsp;&nbsp;&nbsp;#{__('Nom de domaine')}
 
           hr
+          //
+          //h4 #{__('Choix du moyen de paiement')}
+          //
+          //div.warning-voucher(style='display:none;')
+          //  div.alert.alert-warning
+          //    b #{__('Attention !')}
+          //    | #{__('Vous ne pouvez pas payer avec le moyen de paiement "Dédipass" si vous utilisez un code promotionnel.')}
+          //
+          //div.col-md-6
+          //  a.btn-pay.active(data-payment-type="paypal")
+          //    i.pull-left.fa.fa-paypal
+          //    h5 PayPal
+          //    span #{__('Payez avec votre compte PayPal ou votre carte bancaire')}
+          //
+          //div.col-md-6
+          //  a.btn-pay(data-payment-type="dedipass")
+          //    i.pull-left.fa.fa-phone
+          //    h5 Dédipass
+          //    span #{__('Payez avec votre crédit mobile')}
+          //
+          //div.clearfix
+          //
+          //hr
+          //
+          //h4 #{__('Facture')}
+          //
+          //div.table-responsive
+          //
+          //  table.table.table-striped.table-bordered.invoice
+          //    thead
+          //      tr
+          //        th #{__('Description')}
+          //        th #{__("Prix à l'unité")}
+          //        th #{__('Total')}
+          //    tbody
+          //      tr
+          //        td !{__('Licence MineWeb')}
+          //        td #{License.price} €
+          //        td #{License.price} €
+          //      tr
+          //        td
+          //        td
+          //          div.input-group
+          //            input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
+          //            span.input-group-btn
+          //              button.btn.btn-secondary#checkVoucher(data-price=License.price) #{__('Utiliser')}
+          //        td.voucher-reduction - 0.00 €
+          //      tr#paypalFees
+          //        td
+          //        th #{__('Taxes')}
+          //        td#paypalFeesAmount(data-default-fees=PayPalService.calculateFees(License.price)) #{PayPalService.calculateFees(License.price)} €
+          //      tr
+          //        td
+          //        th #{__('Total')}
+          //        th.amount#paypalAmount #{PayPalService.calculateFees(License.price) + License.price} €
+          //        td.amount#dedipassAmount(style='display:none;', data-default-price=__("Dépend de Dédipass"))
+          //          em #{__("Dépend de Dédipass")}
+          //
+          //  hr
 
-          h4 #{__('Choix du moyen de paiement')}
+          div.col-md-4.pull-right
+            a.btn.btn-primary.btn-block(href='/purchase/free') #{__('Obtenir la licence')}
 
-          div.warning-voucher(style='display:none;')
-            div.alert.alert-warning
-              b #{__('Attention !')}
-              | #{__('Vous ne pouvez pas payer avec le moyen de paiement "Dédipass" si vous utilisez un code promotionnel.')}
-
-          div.col-md-6
-            a.btn-pay.active(data-payment-type="paypal")
-              i.pull-left.fa.fa-paypal
-              h5 PayPal
-              span #{__('Payez avec votre compte PayPal ou votre carte bancaire')}
-
-          div.col-md-6
-            a.btn-pay(data-payment-type="dedipass")
-              i.pull-left.fa.fa-phone
-              h5 Dédipass
-              span #{__('Payez avec votre crédit mobile')}
-
-          div.clearfix
-
-          hr
-
-          h4 #{__('Facture')}
-
-          div.table-responsive
-
-            table.table.table-striped.table-bordered.invoice
-              thead
-                tr
-                  th #{__('Description')}
-                  th #{__("Prix à l'unité")}
-                  th #{__('Total')}
-              tbody
-                tr
-                  td !{__('Licence MineWeb')}
-                  td #{License.price} €
-                  td #{License.price} €
-                tr
-                  td
-                  td
-                    div.input-group
-                      input(class="form-control", name="voucher", placeholder=__('Code de promotion (optionnel)'))
-                      span.input-group-btn
-                        button.btn.btn-secondary#checkVoucher(data-price=License.price) #{__('Utiliser')}
-                  td.voucher-reduction - 0.00 €
-                tr#paypalFees
-                  td
-                  th #{__('Taxes')}
-                  td#paypalFeesAmount(data-default-fees=PayPalService.calculateFees(License.price)) #{PayPalService.calculateFees(License.price)} €
-                tr
-                  td
-                  th #{__('Total')}
-                  th.amount#paypalAmount #{PayPalService.calculateFees(License.price) + License.price} €
-                  td.amount#dedipassAmount(style='display:none;', data-default-price=__("Dépend de Dédipass"))
-                    em #{__("Dépend de Dédipass")}
-
-            hr
-
-            div.col-md-4.pull-right
-              a.btn.btn-primary.btn-block(href='#', id="pay", data-offer="license", data-content-if-free=__('Obtenir la licence'), data-content-if-not-free=__('Passer au paiement')) #{__('Passer au paiement')}
-
-            div.clear-fix
+          div.clear-fix
 
 block custom
   script(type='text/javascript', src='/js/buy.js')

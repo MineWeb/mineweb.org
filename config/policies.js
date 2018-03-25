@@ -56,7 +56,8 @@ module.exports.policies = {
     paypal: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     dedipass: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
     dedipassIPN: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
-    getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
+    getFree: ['isAuthenticated', 'sessionAuth', 'flash', 'notification'],
+    getFreeLicense: ['isAuthenticated', 'sessionAuth', 'flash', 'notification']
   },
 
   TicketController: {

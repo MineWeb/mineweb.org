@@ -14,7 +14,7 @@ block content
                 h3 #{__('Licence MineWeb')}
               .panel-body.text-center
                 p.lead(style='font-size:40px')
-                  strong #{__('9.99€')}
+                  strong #{__('Gratuit')}
               ul.list-group.list-group-flush.text-center
                 li.list-group-item
                   i.fa.fa-check.text-success
@@ -30,7 +30,7 @@ block content
                   |  #{__('Documentation complète')}
               .panel-footer
                   a(href=req.session.authenticated !== undefined && req.session.authenticated ? '/purchase/license' : '#', onclick=req.session.authenticated !== undefined && req.session.authenticated ? '' : "toastr.error('"+__('Vous devez être connecté pour procéder à un achat !')+"')").btn.btn-lg.btn-block.btn-info #{__('ACHETER !')}
-          .col-xs-12.col-sm-12.col-md-6.col-lg-6.disabled(style='opacity:0.7')
+          .col-xs-12.col-sm-12.col-md-6.col-lg-6.disabled(style='opacity:0.5;cursor:not-allowed')
             .panel.price.panel-grey
               .panel-heading.text-center
                 h3 #{__('Licence hébergée MineWeb')}
@@ -51,7 +51,7 @@ block content
                   i.fa.fa-check.text-success
                   |  #{__('Documentation complète')}
               .panel-footer
-                button.btn.btn-lg.btn-block.btn-default.disabled Désactivé
+                button.btn.btn-lg.btn-block.btn-default.disabled Supprimé
                 //a(href=req.session.authenticated !== undefined && req.session.authenticated ? '/purchase/hosting' : '#', onclick=req.session.authenticated !== undefined && req.session.authenticated ? '' : "toastr.error('"+__('Vous devez être connecté pour procéder à un achat !')+"')").btn.btn-lg.btn-block.btn-primary #{__('LOUER !')}
 
           div.clearfix
