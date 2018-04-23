@@ -6,6 +6,24 @@
     "repo": "https://github.com/MineWeb/Theme-MineWeb"
   },
   {
+    "name": "Unruly",
+    "slug": "Theme-Unruly",
+    "free": true,
+    "repo": "https://github.com/MineWeb/Theme-Unruly"
+  },
+    {
+    "name": "Darker",
+    "slug": "Theme-Darker",
+    "free": true,
+    "repo": "https://github.com/MineWeb/Theme-Darker"
+  },
+    {
+    "name": "Awards",
+    "slug": "Theme-Awards",
+    "free": true,
+    "repo": "https://github.com/MineWeb/Theme-Awards"
+  },
+  {
     "name": "Master",
     "slug": "Master",
     "free": false,
