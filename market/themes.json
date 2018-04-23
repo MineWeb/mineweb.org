@@ -1,0 +1,23 @@
+[
+  {
+    "name": "MineWeb",
+    "slug": "Mineweb",
+    "free": true,
+    "repo": "https://github.com/MineWeb/Theme-MineWeb"
+  },
+  {
+    "name": "Master",
+    "slug": "Master",
+    "free": false,
+    "contact": [
+      {
+        "type": "discord",
+        "value": "Skill#9202"
+      },
+      {
+        "type": "email",
+        "value": "contact@skilldev.be"
+      }
+    ]
+  }
+]

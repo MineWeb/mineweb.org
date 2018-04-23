@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Boutique",
+    "slug": "Shop",
+    "free": true,
+    "repo": "https://github.com/MineWeb/Plugin-Shop"
+  },
+  {
+    "name": "Auth Mineweb",
+    "slug": "Auth",
+    "free": false,
+    "contact": [
+      {
+        "type": "discord",
+        "value": "NorthenFlo#6999"
+      },
+      {
+        "type": "email",
+        "value": "contact@empiregroup.eu"
+      }
+    ]
+  }
+]
