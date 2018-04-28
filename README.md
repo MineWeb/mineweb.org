@@ -18,7 +18,7 @@ Si votre plugin ou votre thème est gratuit, vous devez ajouter le repo de celui
 
 Le CMS autogère le téléchargement et les mise à jour des plugins et thèmes gratuit. Il se base sur la branche `master`.
 
-### Plugin et thème payamt
+### Plugin et thème payant
 
 Si votre plugin ou votre thème est payant, c'est à vous de gérer le paiement ainsi que la partie téléchargement et mise à jour. Il vous suffit de mettre dans le json un ou plusieurs moyen de contact comme ceci:
 
