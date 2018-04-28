@@ -12,6 +12,66 @@
     "repo": "MineWeb/Plugin-Vote"
   },
   {
+    "name": "Forum",
+    "slug": "Forum",
+    "free": true,
+    "repo": "MineWeb/Plugin-Forum"
+  },
+  {
+    "name": "Youtube",
+    "slug": "Youtube",
+    "free": true,
+    "repo": "MineWeb/Plugin-Youtube"
+  },
+  {
+    "name": "Status",
+    "slug": "Status",
+    "free": true,
+    "repo": "MineWeb/Plugin-Status"
+  },
+  {
+    "name": "Partenaire",
+    "slug": "Partenaire",
+    "free": true,
+    "repo": "MineWeb/Plugin-Partenaire"
+  },
+  {
+    "name": "Support",
+    "slug": "Support",
+    "free": true,
+    "repo": "MineWeb/Plugin-Support"
+  },
+  {
+    "name": "Classement factions",
+    "slug": "FactionRanking",
+    "free": true,
+    "repo": "MineWeb/Plugin-FactionRanking"
+  },
+  {
+    "name": "Liste des membres",
+    "slug": "ListMembers",
+    "free": true,
+    "repo": "MineWeb/Plugin-ListMembers"
+  },
+  {
+    "name": "News avancées",
+    "slug": "NewsAdvanced",
+    "free": true,
+    "repo": "MineWeb/Plugin-NewsAdvanced"
+  },
+  {
+    "name": "Code cadeau",
+    "slug": "CodeCadeau",
+    "free": true,
+    "repo": "MineWeb/Plugin-CodeCadeau"
+  },
+  {
+    "name": "Newsletter",
+    "slug": "NewsLetter",
+    "free": true,
+    "repo": "MineWeb/Plugin-NewsLetter"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
