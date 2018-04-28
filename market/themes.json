@@ -6,6 +6,12 @@
     "repo": "MineWeb/Theme-MineWeb"
   },
   {
+    "name": "Universal",
+    "slug": "Universal",
+    "free": true,
+    "repo": "MineWeb/Theme-Universal"
+  },
+  {
     "name": "Unruly",
     "slug": "Theme-Unruly",
     "free": true,
@@ -17,11 +23,35 @@
     "free": true,
     "repo": "MineWeb/Theme-Darker"
   },
-    {
+  {
     "name": "Awards",
     "slug": "Theme-Awards",
     "free": true,
     "repo": "MineWeb/Theme-Awards"
+  },
+  {
+    "name": "Mars",
+    "slug": "Theme-Mars",
+    "free": true,
+    "repo": "MineWeb/Theme-Mars"
+  },
+  {
+    "name": "Justice",
+    "slug": "Theme-Justice",
+    "free": true,
+    "repo": "MineWeb/Theme-Justice"
+  },
+  {
+    "name": "Royal",
+    "slug": "Theme-Royal",
+    "free": true,
+    "repo": "MineWeb/Theme-Royal"
+  },
+  {
+    "name": "Guide",
+    "slug": "Theme-Guide",
+    "free": true,
+    "repo": "MineWeb/Theme-Guide"
   },
   {
     "name": "Master",
