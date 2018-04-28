@@ -3,7 +3,7 @@
     "name": "Boutique",
     "slug": "Shop",
     "free": true,
-    "repo": "https://github.com/MineWeb/Plugin-Shop"
+    "repo": "MineWeb/Plugin-Shop"
   },
   {
     "name": "Auth Mineweb",
