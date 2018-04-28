@@ -6,6 +6,12 @@
     "repo": "MineWeb/Plugin-Shop"
   },
   {
+    "name": "Vote",
+    "slug": "Vote",
+    "free": true,
+    "repo": "MineWeb/Plugin-Vote"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
