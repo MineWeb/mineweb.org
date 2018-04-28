@@ -3,25 +3,25 @@
     "name": "MineWeb",
     "slug": "Mineweb",
     "free": true,
-    "repo": "https://github.com/MineWeb/Theme-MineWeb"
+    "repo": "MineWeb/Theme-MineWeb"
   },
   {
     "name": "Unruly",
     "slug": "Theme-Unruly",
     "free": true,
-    "repo": "https://github.com/MineWeb/Theme-Unruly"
+    "repo": "MineWeb/Theme-Unruly"
   },
     {
     "name": "Darker",
     "slug": "Theme-Darker",
     "free": true,
-    "repo": "https://github.com/MineWeb/Theme-Darker"
+    "repo": "MineWeb/Theme-Darker"
   },
     {
     "name": "Awards",
     "slug": "Theme-Awards",
     "free": true,
-    "repo": "https://github.com/MineWeb/Theme-Awards"
+    "repo": "Theme-Awards"
   },
   {
     "name": "Master",
