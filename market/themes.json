@@ -67,5 +67,16 @@
         "value": "contact@skilldev.be"
       }
     ]
+  },
+  {
+    "name": "Futile",
+    "slug": "Futile",
+    "free": false,
+    "contact": [
+      {
+        "type": "discord",
+        "value": "nivcoo#6882 , 0ddlyoko#6978"
+      }
+    ]
   }
 ]
