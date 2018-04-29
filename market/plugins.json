@@ -72,6 +72,12 @@
     "repo": "MineWeb/Plugin-NewsLetter"
   },
   {
+    "name": "Changelog",
+    "slug": "Changelog",
+    "free": true,
+    "repo": "MineWeb/Plugin-Changelog"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
