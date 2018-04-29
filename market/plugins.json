@@ -78,6 +78,18 @@
     "repo": "MineWeb/Plugin-Changelog"
   },
   {
+    "name": "FAQ",
+    "slug": "MyFaq",
+    "free": true,
+    "repo": "MineWeb/Plugin-MyFaq"
+  },
+  {
+    "name": "Home modal",
+    "slug": "MyHomeModal",
+    "free": true,
+    "repo": "MineWeb/Plugin-MyHomeModal"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
