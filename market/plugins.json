@@ -90,6 +90,12 @@
     "repo": "MineWeb/Plugin-MyHomeModal"
   },
   {
+    "name": "Stats",
+    "slug": "Stats",
+    "free": true,
+    "repo": "MineWeb/Plugin-Stats"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
