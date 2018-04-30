@@ -54,6 +54,12 @@
     "repo": "MineWeb/Theme-Guide"
   },
   {
+    "name": "Pluton",
+    "slug": "Theme-Pluton",
+    "free": true,
+    "repo": "MineWeb/Theme-Pluton"
+  },
+  {
     "name": "Master",
     "slug": "Master",
     "free": false,
