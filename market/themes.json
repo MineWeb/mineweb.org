@@ -60,6 +60,12 @@
     "repo": "MineWeb/Theme-Pluton"
   },
   {
+    "name": "MineFlat",
+    "slug": "Theme-MineFlat",
+    "free": true,
+    "repo": "MineWeb/Theme-MineFlat"
+  },
+  {
     "name": "Master",
     "slug": "Master",
     "free": false,
