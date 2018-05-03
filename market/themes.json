@@ -66,6 +66,12 @@
     "repo": "MineWeb/Theme-MineFlat"
   },
   {
+    "name": "MineStorm",
+    "slug": "Theme-MineStorm",
+    "free": true,
+    "repo": "MineWeb/Theme-MineStorm"
+  },
+  {
     "name": "Master",
     "slug": "Master",
     "free": false,
