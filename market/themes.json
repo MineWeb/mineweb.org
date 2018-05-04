@@ -3,7 +3,73 @@
     "name": "MineWeb",
     "slug": "Mineweb",
     "free": true,
-    "repo": "https://github.com/MineWeb/Theme-MineWeb"
+    "repo": "MineWeb/Theme-MineWeb"
+  },
+  {
+    "name": "Universal",
+    "slug": "Universal",
+    "free": true,
+    "repo": "MineWeb/Theme-Universal"
+  },
+  {
+    "name": "Unruly",
+    "slug": "Theme-Unruly",
+    "free": true,
+    "repo": "MineWeb/Theme-Unruly"
+  },
+    {
+    "name": "Darker",
+    "slug": "Theme-Darker",
+    "free": true,
+    "repo": "MineWeb/Theme-Darker"
+  },
+  {
+    "name": "Awards",
+    "slug": "Theme-Awards",
+    "free": true,
+    "repo": "MineWeb/Theme-Awards"
+  },
+  {
+    "name": "Mars",
+    "slug": "Theme-Mars",
+    "free": true,
+    "repo": "MineWeb/Theme-Mars"
+  },
+  {
+    "name": "Justice",
+    "slug": "Theme-Justice",
+    "free": true,
+    "repo": "MineWeb/Theme-Justice"
+  },
+  {
+    "name": "Royal",
+    "slug": "Theme-Royal",
+    "free": true,
+    "repo": "MineWeb/Theme-Royal"
+  },
+  {
+    "name": "Guide",
+    "slug": "Theme-Guide",
+    "free": true,
+    "repo": "MineWeb/Theme-Guide"
+  },
+  {
+    "name": "Pluton",
+    "slug": "Theme-Pluton",
+    "free": true,
+    "repo": "MineWeb/Theme-Pluton"
+  },
+  {
+    "name": "MineFlat",
+    "slug": "Theme-MineFlat",
+    "free": true,
+    "repo": "MineWeb/Theme-MineFlat"
+  },
+  {
+    "name": "MineStorm",
+    "slug": "Theme-MineStorm",
+    "free": true,
+    "repo": "MineWeb/Theme-MineStorm"
   },
   {
     "name": "Master",
@@ -17,6 +83,21 @@
       {
         "type": "email",
         "value": "contact@skilldev.be"
+      }
+    ]
+  },
+  {
+    "name": "Futile",
+    "slug": "Futile",
+    "free": false,
+    "contact": [
+      {
+        "type": "discord",
+        "value": "nivcoo#6882"
+      },
+      {
+        "type": "discord",
+        "value": "0ddlyoko#6978"
       }
     ]
   }
