@@ -30,6 +30,12 @@
     "repo": "MineWeb/Theme-Awards"
   },
   {
+    "name": "Maven",
+    "slug": "Theme-Maven",
+    "free": true,
+    "repo": "MineWeb/Theme-Maven"
+  },
+  {
     "name": "Mars",
     "slug": "Theme-Mars",
     "free": true,
