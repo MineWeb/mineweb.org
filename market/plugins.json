@@ -67,9 +67,9 @@
   },
   {
     "name": "Newsletter",
-    "slug": "NewsLetter",
+    "slug": "Newsletter",
     "free": true,
-    "repo": "MineWeb/Plugin-NewsLetter"
+    "repo": "MineWeb/Plugin-Newsletter"
   },
   {
     "name": "Changelog",
