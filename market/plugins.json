@@ -96,6 +96,12 @@
     "repo": "MineWeb/Plugin-Stats"
   },
   {
+    "name": "XenBridge",
+    "slug": "XenBridge",
+    "free": true,
+    "repo": "MineWeb/Plugin-XenBridge"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
