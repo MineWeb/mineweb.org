@@ -102,6 +102,18 @@
     "repo": "MineWeb/Plugin-XenBridge"
   },
   {
+    "name": "Discord",
+    "slug": "Discord",
+    "free": true,
+    "repo": "MineWeb/Plugin-Discord"
+  },
+  {
+    "name": "Intervention",
+    "slug": "Intervention",
+    "free": true,
+    "repo": "MineWeb/Plugin-Intervention"
+  },
+  {
     "name": "Auth Mineweb",
     "slug": "Auth",
     "free": false,
