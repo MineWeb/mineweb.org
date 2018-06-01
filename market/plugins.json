@@ -115,5 +115,20 @@
         "value": "contact@empiregroup.eu"
       }
     ]
+  },
+  {
+    "name": "ServerManager",
+    "slug": "ServerManager",
+    "free": false,
+    "contact": [
+      {
+        "type": "discord",
+        "value": "KiLO#0001"
+      },
+      {
+        "type": "email",
+        "value": "hi@kiloig.me"
+      }
+    ]
   }
 ]
