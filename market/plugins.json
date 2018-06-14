@@ -130,20 +130,5 @@
         "value": "hi@kiloig.me"
       }
     ]
-  },
-  {
-    "name": "Staff",
-    "slug": "Staff",
-    "free": false,
-    "contact": [
-      {
-        "type": "discord",
-        "value": "PipoSurYouTube#1903"
-      },
-      {
-        "type": "email",
-        "value": "contact@pipo.yt"
-      }
-    ]
   }
 ]
