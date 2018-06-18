@@ -93,18 +93,9 @@
     ]
   },
   {
-    "name": "Futile",
-    "slug": "Futile",
-    "free": false,
-    "contact": [
-      {
-        "type": "discord",
-        "value": "nivcoo#6882"
-      },
-      {
-        "type": "discord",
-        "value": "0ddlyoko#6978"
-      }
-    ]
+    "name": "Subtil",
+    "slug": "Theme-Subtil",
+    "free": true,
+    "repo": "MineWeb/Theme-Subtil"
   }
 ]
