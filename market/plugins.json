@@ -102,7 +102,7 @@
     "repo": "MineWeb/Plugin-XenBridge"
   },
   {
-    "name": "Auth Mineweb",
+    "name": "Auth",
     "slug": "Auth",
     "free": true,
     "repo": "MineWeb/Plugin-Auth"
