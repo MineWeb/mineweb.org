@@ -106,5 +106,17 @@
     "slug": "Auth",
     "free": true,
     "repo": "MineWeb/Plugin-Auth"
+  },
+  {
+    "name": "Discord",
+    "slug": "Discord",
+    "free": true,
+    "repo": "MineWeb/Plugin-Discord"
+  },
+  {
+    "name": "SignInUp",
+    "slug": "SignInUp",
+    "free": true,
+    "repo": "MineWeb/Plugin-SignInUp"
   }
 ]
