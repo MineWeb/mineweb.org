@@ -97,5 +97,11 @@
     "slug": "Theme-Subtil",
     "free": true,
     "repo": "MineWeb/Theme-Subtil"
+  },
+  {
+    "name": "Tactil",
+    "slug": "Theme-Tactil",
+    "free": true,
+    "repo": "MineWeb/Theme-Tactil"
   }
 ]
