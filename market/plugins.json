@@ -108,6 +108,12 @@
     "repo": "MineWeb/Plugin-Auth"
   },
   {
+    "name": "Sondage",
+    "slug": "Sondage",
+    "free": true,
+    "repo": "MineWeb/Plugin-Sondage"
+  },
+  {
     "name": "Discord",
     "slug": "Discord",
     "free": true,
