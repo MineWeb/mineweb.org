@@ -118,5 +118,11 @@
     "slug": "SignInUp",
     "free": true,
     "repo": "MineWeb/Plugin-SignInUp"
+  },
+  {
+    "name": "Staff",
+    "slug": "Staff",
+    "free": true,
+    "repo": "MineWeb/Plugin-Staff"
   }
 ]
