@@ -130,5 +130,11 @@
     "slug": "Staff",
     "free": true,
     "repo": "MineWeb/Plugin-Staff"
+  },
+  {
+    "name": "BattleLevels",
+    "slug": "BattleLevels",
+    "free": true,
+    "repo": "MineWeb/Plugin-BattleLevels"
   }
 ]
