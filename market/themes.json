@@ -103,5 +103,11 @@
     "slug": "Theme-Tactil",
     "free": true,
     "repo": "MineWeb/Theme-Tactil"
+  },
+  {
+    "name": "Futile",
+    "slug": "Theme-Futile",
+    "free": true,
+    "repo": "MineWeb/Theme-Futile"
   }
 ]
