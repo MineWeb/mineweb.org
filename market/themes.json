@@ -109,5 +109,59 @@
     "slug": "Theme-Futile",
     "free": true,
     "repo": "MineWeb/Theme-Futile"
+  }, 
+  {
+    "name": "DarkFlat",
+    "slug": "Theme-DarkFlat",
+    "free": true,
+    "repo": "MineWeb/Theme-DarkFlat"
+  },
+  {
+    "name": "Flat",
+    "slug": "Theme-Flat",
+    "free": true,
+    "repo": "MineWeb/Theme-Flat"
+  },
+  {
+    "name": "Flatcolor",
+    "slug": "Theme-Flatcolor",
+    "free": true,
+    "repo": "MineWeb/Theme-Flatcolor"
+  },
+  {
+    "name": "Grey",
+    "slug": "Theme-Grey",
+    "free": true,
+    "repo": "MineWeb/Theme-Grey"
+  },
+  {
+    "name": "Jupiter",
+    "slug": "Theme-Jupiter",
+    "free": true,
+    "repo": "MineWeb/Theme-Jupiter"
+  },
+  {
+    "name": "Kraken",
+    "slug": "Theme-Kraken",
+    "free": true,
+    "repo": "MineWeb/Theme-Kraken"
+  },
+  {
+    "name": "Kuro",
+    "slug": "Theme-Kuro",
+    "free": true,
+    "repo": "MineWeb/Theme-Kuro"
+  },
+  {
+    "name": "Multi",
+    "slug": "Theme-Multi",
+    "free": true,
+    "repo": "MineWeb/Theme-Multi"
+  },
+  {
+    "name": "Urban",
+    "slug": "Theme-Urban",
+    "free": true,
+    "repo": "MineWeb/Theme-Urban"
   }
 ]
