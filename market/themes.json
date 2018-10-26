@@ -163,5 +163,11 @@
     "slug": "Theme-Urban",
     "free": true,
     "repo": "MineWeb/Theme-Urban"
+  },
+  {
+    "name": "MineBox",
+    "slug": "Theme-MineBox",
+    "free": true,
+    "repo": "MineWeb/Theme-MineBox"
   }
 ]
