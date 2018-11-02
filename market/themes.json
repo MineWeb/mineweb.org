@@ -169,5 +169,11 @@
     "slug": "Theme-MineBox",
     "free": true,
     "repo": "MineWeb/Theme-MineBox"
+  },
+  {
+    "name": "BlackFyre",
+    "slug": "Theme-BlackFyre",
+    "free": true,
+    "repo": "MineWeb/Theme-BlackFyre"
   }
 ]
