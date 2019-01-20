@@ -142,5 +142,11 @@
     "slug": "Links",
     "free": true,
     "repo": "MineWeb/Plugin-Links"
+  },
+  {
+    "name": "Points",
+    "slug": "Points",
+    "free": true,
+    "repo": "MineWeb/Plugin-Points"
   }
 ]
