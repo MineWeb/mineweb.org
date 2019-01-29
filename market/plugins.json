@@ -144,6 +144,12 @@
     "repo": "MineWeb/Plugin-Links"
   },
   {
+    "name": "Wiki",
+    "slug": "Wiki",
+    "free": true,
+    "repo": "MineWeb/Plugin-Wiki"
+  },
+  {
     "name": "Points",
     "slug": "Points",
     "free": true,
