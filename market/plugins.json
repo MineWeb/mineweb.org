@@ -150,9 +150,9 @@
     "repo": "MineWeb/Plugin-Wiki"
   },
   {
-    "name": "Points",
-    "slug": "Points",
+    "name": "Pointz",
+    "slug": "Pointz",
     "free": true,
-    "repo": "MineWeb/Plugin-Points"
+    "repo": "MineWeb/Plugin-Pointz"
   }
 ]
