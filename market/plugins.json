@@ -24,10 +24,10 @@
     "repo": "MineWeb/Plugin-Youtube"
   },
   {
-    "name": "Status",
-    "slug": "Status",
+    "name": "ServerStatus",
+    "slug": "ServerStatus",
     "free": true,
-    "repo": "MineWeb/Plugin-Status"
+    "repo": "MineWeb/Plugin-ServerStatus"
   },
   {
     "name": "Partenaire",
