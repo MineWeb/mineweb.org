@@ -154,5 +154,11 @@
     "slug": "Pointz",
     "free": true,
     "repo": "MineWeb/Plugin-Pointz"
-  }
+  }, 
+  {
+    "name": "Intervention", 
+    "slug": "Intervention", 
+    "free": true, 
+    "repo": "MineWeb/Plugin-Intervention" 
+  } 
 ]
