@@ -175,5 +175,11 @@
     "slug": "Theme-BlackFyre",
     "free": true,
     "repo": "MineWeb/Theme-BlackFyre"
+  },
+    {
+    "name": "Spirit",
+    "slug": "Theme-Spirit",
+    "free": true,
+    "repo": "MineWeb/Theme-Spirit"
   }
 ]
