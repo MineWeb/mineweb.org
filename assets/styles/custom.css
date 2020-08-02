@@ -429,3 +429,25 @@ h4.modal-title {
   font-size: 24px;
   font-weight: 500;
 }
+
+
+.omgserv-button {
+  background-color: #e53810;
+  border-color: transparent;
+  position: relative;
+  padding-left: 35px;
+}
+.omgserv-button:hover, .omgserv-button:active, .omgserv-button:focus {
+  background-color: #000000;
+  color: #ffff;
+}
+.omgserv-button::before {
+  content: '';
+  background-image: url('/assets/img/omgserv.png');
+  background-size: cover;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
