@@ -154,6 +154,12 @@
     "slug": "Pointz",
     "free": true,
     "repo": "MineWeb/Plugin-Pointz"
+  },
+  {
+    "name": "Advent",
+    "slug": "Advent",
+    "free": true,
+    "repo": "MineWeb/Plugin-Advent"
   }, 
   {
     "name": "Intervention", 
