@@ -12,6 +12,12 @@
     "repo": "MineWeb/Theme-Universal"
   },
   {
+    "name": "Overage",
+    "slug": "Theme-Overage",
+    "free": true,
+    "repo": "MineWeb/Theme-Overage"
+  },
+  {
     "name": "Unruly",
     "slug": "Theme-Unruly",
     "free": true,
