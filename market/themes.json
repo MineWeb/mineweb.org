@@ -18,6 +18,12 @@
     "repo": "MineWeb/Theme-Overage"
   },
   {
+    "name": "Exile",
+    "slug": "Theme-Exile",
+    "free": true,
+    "repo": "MineWeb/Theme-Exile"
+  },
+  {
     "name": "Unruly",
     "slug": "Theme-Unruly",
     "free": true,
