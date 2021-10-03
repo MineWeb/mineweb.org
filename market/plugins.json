@@ -166,5 +166,11 @@
     "slug": "Intervention", 
     "free": true, 
     "repo": "MineWeb/Plugin-Intervention" 
-  }
+  },
+  {
+    "name": "Donation", 
+    "slug": "Donation", 
+    "free": true, 
+    "repo": "MineWeb/Plugin-Donation" 
+  } 
 ]
