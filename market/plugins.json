@@ -166,5 +166,11 @@
     "slug": "Intervention", 
     "free": true, 
     "repo": "MineWeb/Plugin-Intervention" 
+  }, 
+  {
+    "name": "Twitter", 
+    "slug": "Twitter", 
+    "free": true, 
+    "repo": "MineWeb/Plugin-Twitter" 
   }
 ]
