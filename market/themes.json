@@ -195,6 +195,12 @@
     "repo": "MineWeb/Theme-Spirit"
   },
     {
+    "name": "ORTHYONMC",
+    "slug": "Theme-Orthyonmc",
+    "free": false,
+    "repo": "MineWeb/Theme-Orthyonmc"
+  },
+    {
     "name": "Gloomy",
     "slug": "Theme-Gloomy",
     "free": true,
